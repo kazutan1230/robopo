@@ -1,0 +1,24 @@
+{
+  "name": "robopo",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:22-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "forwardPorts": [3000],
+  "remoteUser": "root",
+  "postCreateCommand": "npm install -g yarn && npm install",
+  "postStartCommand": "npm run dev",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "biomejs.biome",
+        "Codeium.codeium",
+        "editorconfig.editorconfig",
+        "github.vscode-github-actions",
+        "GitHub.vscode-pull-request-github",
+        "ms-azuretools.vscode-docker",
+        "MS-vsliveshare.vsliveshare"
+      ]
+    }
+  }
+}
