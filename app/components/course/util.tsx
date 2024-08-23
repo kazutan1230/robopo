@@ -12,35 +12,6 @@ export const initializeField = (): FieldState => {
   return field
 }
 
-// 指定された位置にpanelを置く処理を行う関数
-export const putPanel = (field: FieldState, row: number, col: number, mode: PanelValue): FieldState | null => {
-  const newField = field.map(row => [...row]) // フィールドのコピーを作成
-  if (field[row][col] !== null) {
-    newField[row][col] = null // panelを消す
-    return newField
-  }
-
-  // start以外の場合、panelに隣接しているかどうかを確認
-  if (mode !== "start") {
-    let nextTo = false // panelが隣接しているかどうかのフラグ
-    const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]] // 4方向を表す配列
-    // 各方向に対してループを行う
-    directions.forEach(([dx, dy]) => {
-      let x = row + dx
-      let y = col + dy
-      if(x >= 0 && x < MAX_FIELD_WIDTH && y >= 0 && y < MAX_FIELD_HEIGHT && field[x][y] !== null) {
-        nextTo = true
-        return
-      }
-    })
-    if (!nextTo) {
-      return null
-    }
-  }
-  newField[row][col] = mode // panelを置く
-  return newField
-}
-
 // field上にstartがあるかをチェックする関数
 export const isStart = (field: FieldState): boolean => {
   for(const row of field) {
@@ -59,6 +30,41 @@ export const isGoal = (field: FieldState): boolean => {
     }
   }
   return false
+}
+
+// 指定された位置にpanelを置く処理を行う関数
+export const putPanel = (field: FieldState, row: number, col: number, mode: PanelValue): FieldState | null => {
+  const newField = field.map(row => [...row]) // フィールドのコピーを作成
+  if (field[row][col] !== null) {
+    newField[row][col] = null // panelを消す
+    return newField
+  }
+
+    // start以外の場合、panelに隣接しているかどうかを確認
+  if (mode !== "start") {
+    // goalの場合、goalが既に配置されている場合は置けない
+    if (mode === "goal" && isGoal(field)) {
+      return null
+    }
+    let nextTo = false // panelが隣接しているかどうかのフラグ
+    const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]] // 4方向を表す配列
+    // 各方向に対してループを行う
+    directions.forEach(([dx, dy]) => {
+      let x = row + dx
+      let y = col + dy
+      if(x >= 0 && x < MAX_FIELD_WIDTH && y >= 0 && y < MAX_FIELD_HEIGHT && field[x][y] !== null) {
+        nextTo = true
+        return
+      }
+    }) 
+    if (!nextTo) {
+      return null
+    }
+  }else if (isStart(field)) {
+    return null
+  }
+  newField[row][col] = mode // panelを置く
+  return newField
 }
 
 // field状態を保存するためにstringにする関数

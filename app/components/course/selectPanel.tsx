@@ -34,6 +34,7 @@ export const SelectPanel = ({ field, setmode }: SelectPanelProps) => {
             className="radio checked:bg-blue-500"
             value="route"
             onChange={handleChange}
+            disabled={!isStart(field)}
           />
           <span className="label-text ml-2">Route</span>
         </label>
@@ -46,7 +47,7 @@ export const SelectPanel = ({ field, setmode }: SelectPanelProps) => {
             className="radio checked:bg-green-500"
             value="goal"
             onChange={handleChange}
-            disabled={isGoal(field)}
+            disabled={!isStart(field) || isGoal(field)}
           />
           <span className="label-text ml-2">Goal</span>
         </label>
