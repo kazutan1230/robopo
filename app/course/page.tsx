@@ -4,66 +4,22 @@ import { useState } from "react"
 import List from "@/app/course/list"
 import CourseEdit from "@/app/course/courseEdit"
 import MissionEdit from "@/app/course/missionEdit"
+import { initializeField, FieldState } from "@/app/components/course/util"
+import { finModal, saveModal } from "@/app/components/course/modals"
 
 export default function Course() {
 
   const [isEdit, setIsEdit] = useState(false)
   const [isMissionEdit, setIsMissionEdit] = useState(false)
-  const [modalOpen, setModalOpen] = useState(false)
-
-  type ModalProps = {
-    modalOpen: boolean
-    setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
-  }
-  // 保存するかどうか聞くmodal
-  const saveModal = ({ modalOpen, setModalOpen }: ModalProps) => {
-    const handleYes = () => {
-      setModalOpen(false)
-      setIsEdit(false)
-      setIsMissionEdit(false)
-    }
-
-    const handleNo = () => {
-      setModalOpen(false)
-      setIsEdit(false)
-    }
-
-    const handleCancel = () => {
-      setModalOpen(false)
-    }
-
-    return (
-      <dialog id="save-modal"
-        className={`modal modal- ${modalOpen ? 'modal-open' : ''}`}
-        onClose={() => setModalOpen(false)}
-      >
-        <div className="modal-box">
-          <p>保存しますか?しない場合、編集内容は失われます。</p>
-          <div className="modal-action">
-            <button
-              className="btn btn-accent"
-            >はい</button>
-            <button
-              className="btn"
-              onClick={handleNo}
-            >いいえ</button>
-            <button
-              className="btn"
-              onClick={handleCancel}
-            >キャンセル</button>
-          </div>
-        </div>
-        <form method="dialog" className="modal-backdrop" onClick={handleCancel}>
-          <button>close</button>
-        </form>
-      </dialog>
-    )
-  }
-
+  const [modalOpen, setModalOpen] = useState(0)
+  const [field, setField] = useState<FieldState>(initializeField())
+  const [name, setName] = useState<string>("")
+  // const [successOrNot, setSuccessOrNot] = useState<string | null>(null)
+  
   // コース編集ボタンクリック
   const handleCourseEditClick = () => {
     if (isEdit) {
-      setModalOpen(true)
+      setModalOpen(1)
     }else {
       setIsEdit(true)
     }
@@ -72,7 +28,7 @@ export default function Course() {
   return (
     <>
     {isEdit && isMissionEdit && <MissionEdit />}
-    {isEdit && !isMissionEdit && <CourseEdit />}
+    {isEdit && !isMissionEdit && <CourseEdit field={field} setField={setField}/>}
     {!isEdit && <List />}
 
     <button className="btn btn-primary min-w-28 max-w-fit mx-auto" onClick={() => handleCourseEditClick()}>
@@ -82,7 +38,25 @@ export default function Course() {
       {isMissionEdit ? 'ミッション編集を終了' : 'ミッション編集'}
     </button>
 
-    {saveModal({ modalOpen, setModalOpen })}
-  </>
+    { modalOpen === 1 && finModal({ setModalOpen, setIsEdit }) }
+    { modalOpen === 2 && saveModal({ setModalOpen, setIsEdit, name, setName, field }) }
+    {/* { modalOpen === 2 && saveModal({ setModalOpen, setIsEdit, name, setName, field, successOrNot, setSuccessOrNot }) } */}
+    {/* {successOrNot !== null &&
+                    <div role="alert" className="alert alert-success">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-6 w-6 shrink-0 stroke-current"
+                            fill="none"
+                            viewBox="0 0 24 24">
+                            <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>{successOrNot}</span>
+                    </div>
+                } */}
+    </>
   )
 }

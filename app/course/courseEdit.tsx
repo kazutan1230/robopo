@@ -1,13 +1,15 @@
 import { useState } from "react"
-import { initializeField,FieldState, PanelValue, putPanel } from "@/app/components/course/util"
+import { FieldState, PanelValue, putPanel } from "@/app/components/course/util"
 import { SelectPanel } from "@/app/components/course/selectPanel"
 import { Field } from "@/app/components/course/field"
 
-export default function CourseEdit() {
-    const [field, setField] = useState<FieldState>(initializeField())
+type CourseEditProps = {
+    field: FieldState
+    setField: React.Dispatch<React.SetStateAction<FieldState>>
+}
+export default function CourseEdit({ field, setField }: CourseEditProps) {
     const [mode, setMode] = useState<PanelValue>(null)
 
-    // const handlePanelClick = (row: number, col: number, mode: PanelValue) => {
     const handlePanelClick = (row: number, col: number) => {
         // panelが置けるかどうかをチェック
         const newField = putPanel(field, row, col, mode)

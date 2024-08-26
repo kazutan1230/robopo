@@ -67,14 +67,18 @@ export const putPanel = (field: FieldState, row: number, col: number, mode: Pane
   return newField
 }
 
-// field状態を保存するためにstringにする関数
-export const serializeField = (field: FieldState): string => {
-  return JSON.stringify(field)
+// FieldState型をString型に変換する関数
+export const serializeField = (fieldState: FieldState): string => {
+  return fieldState
+    .map(row => row.map(panel => panel === null ? "null" : panel).join(","))
+    .join(";")
 }
 
-// field状態を復元するためにstringからFieldStateにする関数
-export const deserializeField = (field: string): FieldState => {
-  return JSON.parse(field)
+// String型をFieldState型に変換する関数
+export const deserializeField = (str: string): FieldState => {
+  return str
+        .split(";")
+        .map(row => row.split(",").map(panel => panel === "null" ? null : panel as PanelValue))
 }
    
 
