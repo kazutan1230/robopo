@@ -74,7 +74,7 @@ export const saveModal = ({ setModalOpen, setIsEdit, name, setName, field }: Sav
             fieldValid: true,
             missionValid: true
         }
-        const res = await fetch("/api/course", {
+        const res = await fetch("/api/course/edit", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

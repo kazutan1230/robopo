@@ -1,5 +1,13 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createCourse } from "@/app/lib/db/queries/insert"
+import { db } from "@/app/lib/db/db"
+import { course, SelectCourse } from "@/app/lib/db/schema"
+
+export async function GET() {
+    const getCourses: SelectCourse[] = await db.select().from(course)
+    // console.log("getCourses: ", getCourses)
+    return Response.json( {getCourses})
+}
 
 export async function POST(req: NextRequest) {
     console.log("req.body: ", req.body)
