@@ -9,30 +9,16 @@ import {
 	deserializeField,
 	FieldState,
 } from "@/app/components/course/util"
-import { getCourse } from "@/app/course/listUtils"
 import { finModal, saveModal } from "@/app/components/course/modals"
+import { SelectCourse } from "@/app/lib/db/schema"
 
-export default function Edit() {
-	const searchParams = useSearchParams()
+export default function Editor() {
 	const [isMissionEdit, setIsMissionEdit] = useState(false)
 	const [modalOpen, setModalOpen] = useState(0)
 	const [field, setField] = useState<FieldState>(initializeField())
 	const [name, setName] = useState<string>("")
 
-	useEffect(() => {
-		async function fetchCourseData() {
-			const id = Number(searchParams.get("id"))
-			if (id) {
-				const course = await getCourse(id)
-				if (course) {
-					if (course.field) setField(deserializeField(course.field))
-					if (course.name) setName(course.name)
-				}
-			}
-		}
-		fetchCourseData()
-	}, [searchParams])
-
+	// コース編集ボタンクリック
 	const handleButtonClick = (id: number) => {
 		setModalOpen(id)
 	}
