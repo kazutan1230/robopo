@@ -3,13 +3,13 @@
 import type { SelectCourse } from "@/app/lib/db/schema"
 import { deleteCourseById, getCourseById } from "../lib/db/queries/queries"
 
-const baseUrl: string = process.env.API_URL || process.env.VERCEL_URL || "http://localhost:3000"
+const baseUrl: string = process.env.API_URL || process.env.VERCEL_URL || "http://localhost:3000/"
 
 // コース一覧情報を取得する関数
 export async function getCourseList(): Promise<{
     selectCourses: SelectCourse[]
 }> {
-    return fetch(`${baseUrl}/api/course/list`)
+    return fetch(`${baseUrl}api/course/list`)
         .then((res) => {
             if (!res.ok) {
                 return { selectCourses: [] }
@@ -29,7 +29,7 @@ export async function getCourseList(): Promise<{
 
 // IDを指定してDBからコースを取得する関数
 export const getCourse = async (id: number): Promise<SelectCourse | null> => {
-    return fetch(`${baseUrl}/api/course?id=${id}`)
+    return fetch(`${baseUrl}api/course?id=${id}`)
         .then((res) => {
             if (!res.ok) {
                 return null
