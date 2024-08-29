@@ -3,12 +3,17 @@
 import type { SelectCourse } from "@/app/lib/db/schema"
 import { deleteCourseById, getCourseById } from "../lib/db/queries/queries"
 
-const baseUrl: string = process.env.API_URL || process.env.VERCEL_URL || "http://localhost:3000/"
+const baseUrl: string =
+    process.env.API_URL ||
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
+    "http://localhost:3000/"
 
 // コース一覧情報を取得する関数
 export async function getCourseList(): Promise<{
     selectCourses: SelectCourse[]
 }> {
+    console.log("https://" + process.env.VERCEL_URL)
+    console.log("baseUrl: ", baseUrl)
     return fetch(`${baseUrl}/api/course/list`, { cache: "no-store" })
         .then((res) => {
             if (!res.ok) {
