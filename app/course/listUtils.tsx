@@ -9,7 +9,7 @@ const baseUrl: string = process.env.API_URL || process.env.VERCEL_URL || "http:/
 export async function getCourseList(): Promise<{
     selectCourses: SelectCourse[]
 }> {
-    return fetch(`${baseUrl}/api/course/list`)
+    return fetch(`${baseUrl}/api/course/list`, { cache: "no-store" })
         .then((res) => {
             if (!res.ok) {
                 return { selectCourses: [] }
