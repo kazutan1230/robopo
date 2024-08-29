@@ -4,11 +4,7 @@ import { useEffect, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import CourseEdit from "@/app/course/edit/courseEdit"
 import MissionEdit from "@/app/course/edit/missionEdit"
-import {
-	initializeField,
-	deserializeField,
-	FieldState,
-} from "@/app/components/course/util"
+import { initializeField, deserializeField, FieldState } from "@/app/components/course/util"
 import { getCourse } from "@/app/course/listUtils"
 import { finModal, saveModal } from "@/app/components/course/modals"
 
@@ -51,9 +47,7 @@ export default function Edit() {
 			) : (
 				<CourseEdit field={field} setField={setField} />
 			)}
-			<button
-				className="btn btn-primary min-w-28 max-w-fit mx-auto"
-				onClick={() => handleButtonClick(2)}>
+			<button className="btn btn-primary min-w-28 max-w-fit mx-auto" onClick={() => handleButtonClick(2)}>
 				コースを保存
 			</button>
 			<button
@@ -61,15 +55,12 @@ export default function Edit() {
 				onClick={() => setIsMissionEdit(!isMissionEdit)}>
 				{isMissionEdit ? "ミッション編集を終了" : "ミッション編集"}
 			</button>
-			<button
-				className="btn btn-primary min-w-28 max-w-fit mx-auto"
-				onClick={() => handleButtonClick(1)}>
+			<button className="btn btn-primary min-w-28 max-w-fit mx-auto" onClick={() => handleButtonClick(1)}>
 				一覧に戻る
 			</button>
 
 			{modalOpen === 1 && finModal({ setModalOpen })}
-			{modalOpen === 2 &&
-				saveModal({ setModalOpen, name, setName, field })}
+			{modalOpen === 2 && saveModal({ setModalOpen, name, setName, field })}
 		</>
 	)
 }
