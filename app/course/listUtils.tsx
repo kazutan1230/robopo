@@ -12,8 +12,7 @@ const baseUrl: string =
 export async function getCourseList(): Promise<{
     selectCourses: SelectCourse[]
 }> {
-    console.log("https://" + process.env.VERCEL_URL)
-    console.log("baseUrl: ", baseUrl)
+    console.log("fetch in getCourseList baseUrl: ", baseUrl)
     return fetch(`${baseUrl}/api/course/list`, { cache: "no-store" })
         .then((res) => {
             if (!res.ok) {
