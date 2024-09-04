@@ -19,7 +19,8 @@ export const MissionList = ({ missionState, point, radio, setRadio, setMission, 
   const [statePair, setMissionStatePair] = useState<MissionValue[][]>(missionStatePair(missionState))
 
   useEffect(() => {
-    setMissionStatePair(statePair)
+    const newStatePair = missionStatePair(missionState)
+    setMissionStatePair(newStatePair)
   }, [missionState])
 
   // ラジオボタンを押した時の動作
