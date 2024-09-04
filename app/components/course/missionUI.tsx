@@ -81,8 +81,8 @@ export const MissionUI = ({ missionState, setMissionState, selectedId, setRadio 
   return (
     <div>
       <div>MissionUI</div>
-      <div className="container grid grid-cols-3">
-        <label className="col-span-3 label">
+      <div className="container">
+        <label className="label">
           {selectedId === -2
             ? "スタートの向き"
             : selectedId === -3
@@ -91,65 +91,66 @@ export const MissionUI = ({ missionState, setMissionState, selectedId, setRadio 
             ? "上のいずれかを選択してください"
             : "ミッション選択"}
         </label>
-        {selectedId === -2 || selectedId === -3 ? (
-          <select className="col-span-3 select select-bordered" defaultValue={0}>
-            <option disabled value={0}>
-              選択してください
-            </option>
-            {(["u", "r", "d", "l"] as Exclude<MissionValue, null>[]).map((value) => (
-              <option key={value} value={value}>
-                {MissionString[value]}
-              </option>
-            ))}
-          </select>
-        ) : selectedId === null ? (
-          <p>上のいずれかを選択してください</p>
-        ) : (
-          <>
-            <select className="select select-bordered" defaultValue={0} onChange={handleMoveTurnChange}>
+        <div className="flex justify-start">
+          {selectedId === -2 || selectedId === -3 ? (
+            <select className="select select-bordered" defaultValue={0}>
               <option disabled value={0}>
                 選択してください
               </option>
-              {(["mf", "mb", "tr", "tl"] as Exclude<MissionValue, null>[]).map((value) => (
+              {(["u", "r", "d", "l"] as Exclude<MissionValue, null>[]).map((value) => (
                 <option key={value} value={value}>
                   {MissionString[value]}
                 </option>
               ))}
             </select>
-            {isMove ? (
-              <>
-                <select className="select select-bordered" defaultValue={0} onChange={handleParamChange}>
-                  <option disabled value={0}>
-                    選択してください
+          ) : selectedId === null ? (
+            <p>上のいずれかを選択してください</p>
+          ) : (
+            <>
+              <select className="select select-bordered" defaultValue={0} onChange={handleMoveTurnChange}>
+                <option disabled value={0}>
+                  選択
+                </option>
+                {(["mf", "mb", "tr", "tl"] as Exclude<MissionValue, null>[]).map((value) => (
+                  <option key={value} value={value}>
+                    {MissionString[value]}
                   </option>
-                  {[1, 2, 3, 4].map((num) => (
-                    <option key={num} value={num}>
-                      {num}
+                ))}
+              </select>
+              {isMove ? (
+                <>
+                  <select className="select select-bordered" defaultValue={0} onChange={handleParamChange}>
+                    <option disabled value={0}>
+                      選択
                     </option>
-                  ))}
-                </select>
-
-                <p className="self-center">パネル</p>
-              </>
-            ) : isTurn ? (
-              <>
-                <select className="select select-bordered" defaultValue={0} onChange={handleParamChange}>
-                  <option disabled value={0}>
-                    選択してください
-                  </option>
-                  {[90, 180, 270, 360, 450, 540].map((num) => (
-                    <option key={num} value={num}>
-                      {num}
+                    {[1, 2, 3, 4].map((num) => (
+                      <option key={num} value={num}>
+                        {num}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="self-center">パネル</p>
+                </>
+              ) : isTurn ? (
+                <>
+                  <select className="select select-bordered" defaultValue={0} onChange={handleParamChange}>
+                    <option disabled value={0}>
+                      選択してください
                     </option>
-                  ))}
-                </select>
-                <p className="self-center">度</p>
-              </>
-            ) : (
-              <p className="col-span-2 self-center">{"<"}-選択してください</p>
-            )}
-          </>
-        )}
+                    {[90, 180, 270, 360, 450, 540].map((num) => (
+                      <option key={num} value={num}>
+                        {num}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="self-center">度</p>
+                </>
+              ) : (
+                <p className="self-center">{"<"}-選択してください</p>
+              )}
+            </>
+          )}
+        </div>
       </div>
       <div className="grid grid-cols-4">
         <div></div>

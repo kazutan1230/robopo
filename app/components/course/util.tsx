@@ -128,28 +128,3 @@ export const missionStatePair = (missionState: MissionState): MissionValue[][] =
   }
   return pairs
 }
-
-// ゲームの勝者をチェックする関数
-// export const checkWinner = (field: FieldState): Player | "draw" | null => {
-//   const { black, white } = countStones(field);
-
-//   if (black + white === 64 || black === 0 || white === 0) { // 全てのマスが埋まったか、どちらかの石がなくなった場合
-//     if (black > white) return "black";
-//     if (white > black) return "white";
-//     return "draw";
-//   }
-
-//   return null; // ゲームがまだ続いている場合はnullを返す
-// };
-
-// 現在のプレイヤーが石を置ける場所があるかどうかをチェックする関数
-// export const canMakeMove = (field: FieldState, mode: Player): boolean => {
-//   for (let row = 0; row < 8; row++) {
-//     for (let col = 0; col < 8; col++) {
-//       if (makeMove(field, row, col, mode)) {
-//         return true; // 石を置ける場所がある場合はtrueを返す
-//       }
-//     }
-//   }
-//   return false; // 石を置ける場所がない場合はfalseを返す
-// };
