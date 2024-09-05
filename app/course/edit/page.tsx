@@ -44,20 +44,20 @@ export default function Edit() {
 
   return (
     <>
-      <div className="h-screen">
-        <div className="container w-full sm:max-h-screen sm:grid sm:grid-cols-2 gap-4">
-          <div>
+      <div className="h-screen w-screen">
+        <div className="sm:max-h-screen sm:grid sm:grid-cols-2 gap-4">
+          <div className="sm:w-4/5 sm:my-4 sm:justify-self-end">
             <CourseEdit field={field} setField={setField} />
           </div>
-          <div>
+          <div className="sm:w-4/5 sm:mx-4 sm:justify-self-start">
             <MissionEdit mission={mission} setMission={setMission} point={point} setPoint={setPoint} />
           </div>
         </div>
-        <div className="flex mx-auto p-4 mt-0 gap-4">
-          <button className="btn btn-primary min-w-28 max-w-fit mx-auto" onClick={() => handleButtonClick(2)}>
+        <div className="flex p-4 mt-0 gap-4 justify-center">
+          <button className="btn btn-primary min-w-28 max-w-fit" onClick={() => handleButtonClick(2)}>
             コースを保存
           </button>
-          <button className="btn btn-primary min-w-28 max-w-fit mx-auto" onClick={() => handleButtonClick(1)}>
+          <button className="btn btn-primary min-w-28 max-w-fit" onClick={() => handleButtonClick(1)}>
             一覧に戻る
           </button>
         </div>

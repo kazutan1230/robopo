@@ -11,11 +11,15 @@ export const List = () => {
   }>({ selectCourses: [] })
   const [checkedCount, setCheckedCount] = useState<number>(0)
   const [checkedIds, setCheckedIds] = useState<number[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
   const router = useRouter()
+
   useEffect(() => {
     async function fetchCourses() {
+      setLoading(true)
       const newCourseData: { selectCourses: SelectCourse[] } = await getCourseList()
       setCourseData(newCourseData)
+      setLoading(false)
     }
     fetchCourses()
   }, [])
@@ -58,7 +62,7 @@ export const List = () => {
     <>
       <form action={formAction}>
         <div className="grid grid-cols-3">
-          <div>
+          <div className="self-center mx-4">
             <p>選択したコースを</p>
           </div>
           <div>
@@ -92,6 +96,13 @@ export const List = () => {
               </tr>
             </thead>
             <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan={4} className="text-center">
+                    <span className="loading loading-spinner text-info"></span>
+                  </td>
+                </tr>
+              ) : null}
               {courseData ? (
                 courseData.selectCourses.map((courses: SelectCourse) => (
                   <tr key={courses.id} className="hover">

@@ -8,6 +8,9 @@ export default function Course() {
         コース新規作成
       </Link>
       <List />
+      <Link href="/" className="btn btn-primary min-w-28 max-w-fit mx-auto">
+        トップへ戻る
+      </Link>
     </>
   )
 }
