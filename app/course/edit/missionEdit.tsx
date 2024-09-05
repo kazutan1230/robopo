@@ -1,13 +1,13 @@
 import { useState } from "react"
 import { MissionUI } from "@/app/components/course/missionUI"
 import { MissionList } from "@/app/components/course/missionList"
-import { MissionState } from "@/app/components/course/util"
+import { MissionState, PointState } from "@/app/components/course/util"
 
 type MissionEditProps = {
   mission: MissionState
   setMission: React.Dispatch<React.SetStateAction<MissionState>>
-  point: string
-  setPoint: React.Dispatch<React.SetStateAction<string>>
+  point: PointState
+  setPoint: React.Dispatch<React.SetStateAction<PointState>>
 }
 
 export default function MissionEdit({ mission, setMission, point, setPoint }: MissionEditProps) {
@@ -23,18 +23,19 @@ export default function MissionEdit({ mission, setMission, point, setPoint }: Mi
     <div className="container mx-auto">
       <div className="card bg-base-100 w-full min-w-72 shadow-xl">
         <div className="card-body">
-          <MissionList
-            mission={mission}
-            point={point}
-            radio={radio}
-            setRadio={setRadio}
-            // setPoint={setPoint}
-          />
+          <MissionList mission={mission} point={point} radio={radio} setRadio={setRadio} />
         </div>
       </div>
       <div className="card bg-base-100 w-full min-w-72 shadow-xl">
         <div className="card-body">
-          <MissionUI mission={mission} setMission={setMission} selectedId={radio} setRadio={setRadio} />
+          <MissionUI
+            mission={mission}
+            setMission={setMission}
+            point={point}
+            setPoint={setPoint}
+            selectedId={radio}
+            setRadio={setRadio}
+          />
         </div>
       </div>
     </div>

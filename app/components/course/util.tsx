@@ -24,8 +24,8 @@ export const MissionString: { [key in Exclude<MissionValue, null>]: string | nul
 export type MissionState = MissionValue[]
 
 // Point
-export type Point = Number
-export type PointState = Point[]
+export type PointValue = number | null
+export type PointState = PointValue[]
 
 // 初期配置を表示する関数。ゆくゆくは保存済みコースを読み込めるようにする。
 export const initializeField = (): FieldState => {
@@ -115,7 +115,7 @@ export const deserializeMission = (str: string): MissionState => {
   return str.split(";").map((mission) => (mission === "null" ? null : (mission as MissionValue)))
 }
 
-// String型からStart時の向き以外その他のミッションの配列を取得する関数
+// String型からStartとGoal時の向き以外その他のミッションの配列を取得する関数
 export const missionStatePair = (missionState: MissionState): MissionValue[][] => {
   // missionStateに最初のミッション(StartとGoalの向きを除く)が設定されていない場合、空配列を返す
   if (missionState[3] === null) {
@@ -128,4 +128,14 @@ export const missionStatePair = (missionState: MissionState): MissionValue[][] =
     pairs.push([missionState[i], missionState[i + 1]])
   }
   return pairs
+}
+
+// PointStateをString型に変換する関数
+export const serializePoint = (pointState: PointState): string => {
+  return pointState.map((point) => (point === null ? "null" : point)).join(";")
+}
+
+// String型をPointState型に変換する関数
+export const deserializePoint = (str: string): PointState => {
+  return str.split(";").map((point) => (point === "null" ? null : (point as unknown as PointValue)))
 }

@@ -10,6 +10,8 @@ import {
   FieldState,
   deserializeMission,
   MissionState,
+  PointState,
+  deserializePoint,
 } from "@/app/components/course/util"
 import { getCourse } from "@/app/course/listUtils"
 import { finModal, saveModal } from "@/app/components/course/modals"
@@ -19,7 +21,7 @@ export default function Edit() {
   const [modalOpen, setModalOpen] = useState(0)
   const [field, setField] = useState<FieldState>(initializeField())
   const [mission, setMission] = useState<MissionState>([])
-  const [point, setPoint] = useState<string>("")
+  const [point, setPoint] = useState<PointState>([])
   const [name, setName] = useState<string>("")
 
   useEffect(() => {
@@ -30,7 +32,7 @@ export default function Edit() {
         if (course) {
           if (course.field) setField(deserializeField(course.field))
           if (course.mission) setMission(deserializeMission(course.mission))
-          if (course.point) setPoint(course.point)
+          if (course.point) setPoint(deserializePoint(course.point))
           if (course.name) setName(course.name)
         }
       }
@@ -64,7 +66,7 @@ export default function Edit() {
       </div>
 
       {modalOpen === 1 && finModal({ setModalOpen })}
-      {modalOpen === 2 && saveModal({ setModalOpen, name, setName, field, mission })}
+      {modalOpen === 2 && saveModal({ setModalOpen, name, setName, field, mission, point })}
     </>
   )
 }

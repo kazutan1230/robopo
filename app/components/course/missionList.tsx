@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
-import { MissionState, MissionString, MissionValue, missionStatePair } from "@/app/components/course/util"
+import { MissionState, MissionString, MissionValue, PointState, missionStatePair } from "@/app/components/course/util"
 
 type MissionEditProps = {
   mission: MissionState
-  point: string
+  point: PointState
   radio: number | null
   setRadio: React.Dispatch<React.SetStateAction<number | null>>
 }
@@ -52,7 +52,7 @@ export const MissionList = ({ mission, point, radio, setRadio }: MissionEditProp
               ) : (
                 <td>{MissionString[mission[0]]}</td>
               )}
-              <td>-</td>
+              <td>{point[0]}</td>
             </tr>
             {statePair.length > 0 ? (
               statePair.map((mission, index) => (
@@ -77,7 +77,7 @@ export const MissionList = ({ mission, point, radio, setRadio }: MissionEditProp
                       ? "度"
                       : "-"}
                   </td>
-                  <td>-</td>
+                  <td>{point[index + 2]}</td>
                 </tr>
               ))
             ) : (
@@ -100,7 +100,7 @@ export const MissionList = ({ mission, point, radio, setRadio }: MissionEditProp
               ) : (
                 <td>{MissionString[mission[1]]}</td>
               )}
-              <td>-</td>
+              <td>{point[1]}</td>
             </tr>
           </tbody>
         </table>
