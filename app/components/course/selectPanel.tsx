@@ -14,42 +14,42 @@ export const SelectPanel = ({ field, setmode }: SelectPanelProps) => {
   return (
     <form>
       <div className="form-control">
-        <label className="cursor-pointer label">
+        <label className="cursor-pointer label justify-start">
           <input
             type="radio"
             name="mode"
-            className="radio checked:bg-red-500"
+            className="radio checked:bg-red-500 mr-2"
             value="start"
             onChange={handleChange}
             disabled={isStart(field)}
           />
-          <span className="label-text ml-2">Start</span>
+          <span className="label-text">Start</span>
         </label>
       </div>
       <div className="form-control">
-        <label className="cursor-pointer label">
+        <label className="cursor-pointer label justify-start">
           <input
             type="radio"
             name="mode"
-            className="radio checked:bg-blue-500"
+            className="radio checked:bg-blue-500 mr-2"
             value="route"
             onChange={handleChange}
             disabled={!isStart(field)}
           />
-          <span className="label-text ml-2">Route</span>
+          <span className="label-text">Route</span>
         </label>
       </div>
       <div className="form-control">
-        <label className="cursor-pointer label">
+        <label className="cursor-pointer label justify-start">
           <input
             type="radio"
             name="mode"
-            className="radio checked:bg-green-500"
+            className="radio checked:bg-green-500 mr-2"
             value="goal"
             onChange={handleChange}
             disabled={!isStart(field) || isGoal(field)}
           />
-          <span className="label-text ml-2">Goal</span>
+          <span className="label-text">Goal</span>
         </label>
       </div>
     </form>
