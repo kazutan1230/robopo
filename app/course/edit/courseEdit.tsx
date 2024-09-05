@@ -17,21 +17,18 @@ export default function CourseEdit({ field, setField }: CourseEditProps) {
     if (newField) {
       setField(newField)
     }
-    // console.log("field" + field)
-    // console.log("newfield" + newField)
   }
 
   return (
     <>
-      <p>CourseEdit</p>
-      <p>{mode === "start" ? "Start" : mode === "goal" ? "Goal" : mode === "route" ? "Route" : "null"}</p>
-      <div className="container mx-auto p-4">
-        <div className="card bg-base-100 w-full shadow-xl">
+      <div className="container mx-auto">
+        <div className="card bg-base-100 w-full min-w-72 shadow-xl">
           <div className="card-body">
+            <p>CourseEdit</p>
             <Field field={field} onPanelClick={handlePanelClick} />
           </div>
         </div>
-        <div className="card bg-base-100 w-full shadow-xl">
+        <div className="card bg-base-100 w-full min-w-72 shadow-xl">
           <div className="card-body">
             <SelectPanel field={field} setmode={setMode} />
           </div>

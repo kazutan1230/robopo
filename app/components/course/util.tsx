@@ -8,7 +8,7 @@ export type FieldState = PanelValue[][]
 
 // Missionの種類 u:up上向き r:right右向き d:down下向き l:left左向き
 // mf:move_forward前進 mb:move_backward後退 tr:turn_right右転 tl:turn_left左転
-export type MissionValue = "u" | "r" | "d" | "l" | "mf" | "mb" | "tr" | "tl" | number | null
+export type MissionValue = "u" | "r" | "d" | "l" | "mf" | "mb" | "tr" | "tl" | "" | number | null
 export const MissionString: { [key in Exclude<MissionValue, null>]: string | null } = {
   u: "上向き",
   r: "右向き",
@@ -18,6 +18,7 @@ export const MissionString: { [key in Exclude<MissionValue, null>]: string | nul
   mb: "後進",
   tr: "右回転",
   tl: "左回転",
+  "": "空",
 }
 
 export type MissionState = MissionValue[]
@@ -116,13 +117,13 @@ export const deserializeMission = (str: string): MissionState => {
 
 // String型からStart時の向き以外その他のミッションの配列を取得する関数
 export const missionStatePair = (missionState: MissionState): MissionValue[][] => {
-  // missionStateが1の場合、空配列を返す
-  if (missionState.length <= 1) {
+  // missionStateに最初のミッション(StartとGoalの向きを除く)が設定されていない場合、空配列を返す
+  if (missionState[3] === null) {
     return []
   }
 
   const pairs = []
-  for (let i = 1; i < missionState.length; i += 2) {
+  for (let i = 2; i < missionState.length; i += 2) {
     // 多分、最後のpairは[ゴールの向き, null]になる
     pairs.push([missionState[i], missionState[i + 1]])
   }

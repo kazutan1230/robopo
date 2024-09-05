@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { useFormStatus } from "react-dom"
-import { FieldState, serializeField } from "@/app/components/course/util"
+import { FieldState, MissionState, serializeField, serializeMission } from "@/app/components/course/util"
 
 type FinModalProps = {
   setModalOpen: React.Dispatch<React.SetStateAction<number>>
@@ -11,6 +11,8 @@ type SaveModalProps = {
   name: string
   setName: React.Dispatch<React.SetStateAction<string>>
   field: FieldState
+  mission: MissionState
+  // point: string
   // successOrNot: string | null
   // setSuccessOrNot: React.Dispatch<React.SetStateAction<string | null>>
 }
@@ -52,7 +54,7 @@ export const finModal = ({ setModalOpen }: FinModalProps) => {
 }
 
 // コースを保存するmodal
-export const saveModal = ({ setModalOpen, name, setName, field }: SaveModalProps) => {
+export const saveModal = ({ setModalOpen, name, setName, field, mission }: SaveModalProps) => {
   const handleClick = async () => {
     if (name.trim() === "") {
       alert("コース名を入力してください")
@@ -63,6 +65,7 @@ export const saveModal = ({ setModalOpen, name, setName, field }: SaveModalProps
       name: name,
       field: serializeField(field),
       fieldValid: true,
+      mission: serializeMission(mission),
       missionValid: true,
     }
     const res = await fetch("/api/course", {

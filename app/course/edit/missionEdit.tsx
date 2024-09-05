@@ -1,20 +1,16 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { MissionUI } from "@/app/components/course/missionUI"
 import { MissionList } from "@/app/components/course/missionList"
-import { MissionState, deserializeMission } from "@/app/components/course/util"
+import { MissionState } from "@/app/components/course/util"
 
 type MissionEditProps = {
-  mission: string
-  setMission: React.Dispatch<React.SetStateAction<string>>
+  mission: MissionState
+  setMission: React.Dispatch<React.SetStateAction<MissionState>>
   point: string
   setPoint: React.Dispatch<React.SetStateAction<string>>
 }
 
 export default function MissionEdit({ mission, setMission, point, setPoint }: MissionEditProps) {
-  const initMission = deserializeMission(mission)
-
-  const [missionState, setMissionState] = useState<MissionState>(initMission)
-
   const [radio, setRadio] = useState<number | null>(null)
 
   // ラジオボタンを押した時の動作
@@ -24,25 +20,22 @@ export default function MissionEdit({ mission, setMission, point, setPoint }: Mi
   // ラジオボタン value=-3 はGoal
 
   return (
-    <div className="max-h-screen overflow-auto p-4">
-      <div>
-        <MissionList
-          missionState={missionState}
-          point={point}
-          radio={radio}
-          setRadio={setRadio}
-          setMission={setMission}
-          setPoint={setPoint}
-        />
+    <div className="container mx-auto">
+      <div className="card bg-base-100 w-full min-w-72 shadow-xl">
+        <div className="card-body">
+          <MissionList
+            mission={mission}
+            point={point}
+            radio={radio}
+            setRadio={setRadio}
+            // setPoint={setPoint}
+          />
+        </div>
       </div>
-      <div />
-      <div>
-        <MissionUI
-          missionState={missionState}
-          setMissionState={setMissionState}
-          selectedId={radio}
-          setRadio={setRadio}
-        />
+      <div className="card bg-base-100 w-full min-w-72 shadow-xl">
+        <div className="card-body">
+          <MissionUI mission={mission} setMission={setMission} selectedId={radio} setRadio={setRadio} />
+        </div>
       </div>
     </div>
   )

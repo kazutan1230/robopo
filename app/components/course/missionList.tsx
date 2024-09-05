@@ -1,27 +1,20 @@
 import { useEffect, useState } from "react"
-import {
-  MissionState,
-  // deserializeMission,
-  MissionString,
-  MissionValue,
-  missionStatePair,
-} from "@/app/components/course/util"
+import { MissionState, MissionString, MissionValue, missionStatePair } from "@/app/components/course/util"
 
 type MissionEditProps = {
-  missionState: MissionState
+  mission: MissionState
   point: string
   radio: number | null
   setRadio: React.Dispatch<React.SetStateAction<number | null>>
-  setMission: React.Dispatch<React.SetStateAction<string>>
-  setPoint: React.Dispatch<React.SetStateAction<string>>
 }
-export const MissionList = ({ missionState, point, radio, setRadio, setMission, setPoint }: MissionEditProps) => {
-  const [statePair, setMissionStatePair] = useState<MissionValue[][]>(missionStatePair(missionState))
+export const MissionList = ({ mission, point, radio, setRadio }: MissionEditProps) => {
+  const [statePair, setMissionStatePair] = useState<MissionValue[][]>(missionStatePair(mission))
 
   useEffect(() => {
-    const newStatePair = missionStatePair(missionState)
+    const newStatePair = missionStatePair(mission)
     setMissionStatePair(newStatePair)
-  }, [missionState])
+    console.log("statePair: ", statePair)
+  }, [mission])
 
   // ラジオボタンを押した時の動作
   // ラジオボタン value=0以上の整数 はmissionの順番
@@ -30,13 +23,13 @@ export const MissionList = ({ missionState, point, radio, setRadio, setMission, 
   // ラジオボタン value=-3 はGoal
   const handleRadioChange = (selectedIndex: number) => {
     setRadio(selectedIndex) // 選択されたインデックスを状態として保存
-    console.log("Selected mission index:", selectedIndex)
+    console.log("selectedid: ", selectedIndex)
   }
 
   return (
-    <div className="max-w-xl max-h-screen overflow-auto p-4">
+    <div className="max-w-xl max-h-64 overflow-auto p-4">
       <div>MissionEdit</div>
-      <div className="form-control overflow-x-auto">
+      <div className="form-control">
         <table className="table">
           <thead>
             <tr>
@@ -54,16 +47,15 @@ export const MissionList = ({ missionState, point, radio, setRadio, setMission, 
                 <input type="radio" name="radio-1" className="radio" value={-2} checked={radio === -2} readOnly />
               </th>
               <td>Start</td>
-              {/* ちょっとこの辺実際にmission入れてから動作見たい。 */}
-              {missionState[0] === null ? <td>-</td> : <td>{MissionString[missionState[0]]}</td>}
+              {mission[0] === null || mission[0] === undefined || mission[0] === "" ? (
+                <td>-</td>
+              ) : (
+                <td>{MissionString[mission[0]]}</td>
+              )}
               <td>-</td>
             </tr>
             {statePair.length > 0 ? (
-              // 最後の要素をここでrenderしないようにするつもり、
-              // sliceの第二引数が最後のrenderを指定しているようだが、
-              // -1か-2かどっちなのか分からんので、追々、修正すること。
               statePair.map((mission, index) => (
-                // statePair.slice(0, -1).map((mission, index) => (
                 <tr className="hover cursor-pointer" onClick={() => handleRadioChange(index)} key={index}>
                   <th>
                     <input
@@ -89,7 +81,6 @@ export const MissionList = ({ missionState, point, radio, setRadio, setMission, 
                 </tr>
               ))
             ) : (
-              // row 2
               <tr className="hover cursor-pointer" onClick={() => handleRadioChange(-1)}>
                 <th>
                   <input type="radio" name="radio-1" className="radio" value={-1} checked={radio === -1} readOnly />
@@ -104,12 +95,10 @@ export const MissionList = ({ missionState, point, radio, setRadio, setMission, 
                 <input type="radio" name="radio-1" className="radio" value={-3} checked={radio === -3} readOnly />
               </th>
               <td>Goal</td>
-              {/* ちょっとこの辺実際にmission入れてから動作見たい。 */}
-              {/* {<td>{MissionString ? [missionState[missionState.length - 1]] : "-"}</td>} */}
-              {missionState[missionState.length - 1] === null ? (
+              {mission[1] === null || mission[1] === undefined || mission[1] === "" ? (
                 <td>-</td>
               ) : (
-                <td>{MissionString ? [missionState[missionState.length - 1]] : "-"}</td>
+                <td>{MissionString[mission[1]]}</td>
               )}
               <td>-</td>
             </tr>
