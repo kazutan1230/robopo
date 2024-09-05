@@ -1,9 +1,11 @@
-import { MissionState, MissionString, MissionValue } from "@/app/components/course/util"
+import { MissionState, MissionString, MissionValue, PointState, PointValue } from "@/app/components/course/util"
 import { useState } from "react"
 
 type MissionUIProps = {
   mission: MissionState
   setMission: React.Dispatch<React.SetStateAction<MissionState>>
+  point: PointState
+  setPoint: React.Dispatch<React.SetStateAction<PointState>>
   selectedId: number | null
   setRadio: React.Dispatch<React.SetStateAction<number | null>>
 }
@@ -15,11 +17,12 @@ type MissionUIProps = {
 // ラジオボタン value=-2 はStart
 // ラジオボタン value=-3 はGoal
 
-export const MissionUI = ({ mission, setMission, selectedId, setRadio }: MissionUIProps) => {
+export const MissionUI = ({ mission, setMission, point, setPoint, selectedId, setRadio }: MissionUIProps) => {
   const [isMove, setIsMove] = useState<boolean>(false)
   const [isTurn, setIsTurn] = useState<boolean>(false)
   const [selectedMission, setSelectedMission] = useState<MissionValue | null>(null) // 選択されたミッション
   const [selectedParam, setSelectedParam] = useState<number | null>(null) // 選択されたミッションのパラメータ
+  const [selectedPoint, setSelectedPoint] = useState<PointValue | null>(null)
 
   const handleMissionChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     // 「選択」に変更された場合、MissionもParamもnullにして入れられないようにする。
@@ -29,6 +32,7 @@ export const MissionUI = ({ mission, setMission, selectedId, setRadio }: Mission
     if (event.target.value === "0") {
       setSelectedMission(null)
       setSelectedParam(null)
+      setSelectedPoint(null)
     }
     const value = event.target.value as MissionValue
 
@@ -48,11 +52,15 @@ export const MissionUI = ({ mission, setMission, selectedId, setRadio }: Mission
   const handleParamChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const value = parseInt(event.target.value)
     if (value === 0) {
-      console.log("value===0: ", value)
       setSelectedParam(null)
     } else {
       setSelectedParam(value)
     }
+  }
+
+  const handlePointChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = parseInt(event.target.value)
+    setSelectedPoint(value)
   }
 
   // UIをリセットする関数
@@ -61,6 +69,7 @@ export const MissionUI = ({ mission, setMission, selectedId, setRadio }: Mission
     setIsTurn(false)
     setSelectedMission(null)
     setSelectedParam(null)
+    setSelectedPoint(null)
     setRadio(null)
   }
 
@@ -75,44 +84,53 @@ export const MissionUI = ({ mission, setMission, selectedId, setRadio }: Mission
 
     if (selectedId === null) return
     const newMissionState = [...mission]
+    const newPointState = [...point]
 
-    if (isStartGoal() && id === "update") {
+    if (isStartGoal() && selectedPoint !== null && id === "update") {
       if (selectedId === -2) {
         // Startで更新ボタン押下時
         newMissionState[0] = selectedMission
+        newPointState[0] = selectedPoint
       } else {
         // Goalで更新ボタン押下時
         newMissionState[1] = selectedMission
+        newPointState[1] = selectedPoint
       }
-      setMission(newMissionState)
-      resetUI()
-    }
-    if (id === "add" && selectedMission !== null && selectedParam !== null) {
+    } else if (id === "add" && selectedMission !== null && selectedParam !== null && selectedPoint !== null) {
       // 追加ボタン押下時
       if (selectedId === -1) {
         // ミッションに何も入っていない時
         newMissionState[2] = selectedMission
         newMissionState[3] = selectedParam
+        newPointState[2] = selectedPoint
       } else {
         const insertIndex = 2 * selectedId + 4
         console.log("insertIndex: ", insertIndex)
         newMissionState.splice(insertIndex, 0, selectedMission, selectedParam)
+        newPointState.splice(selectedId + 3, 0, selectedPoint)
       }
-      setMission(newMissionState)
-      resetUI()
-    } else if (id === "update" && selectedMission !== null && selectedParam !== null && selectedId !== -1) {
+    } else if (
+      id === "update" &&
+      !isStartGoal() &&
+      selectedMission !== null &&
+      selectedParam !== null &&
+      selectedPoint !== null &&
+      selectedId !== -1
+    ) {
       // 更新ボタン押下時
       newMissionState[2 * selectedId + 2] = selectedMission
       newMissionState[2 * selectedId + 3] = selectedParam
-      setMission(newMissionState)
-      resetUI()
+      newPointState[selectedId + 2] = selectedPoint
     } else if (id === "delete" && selectedId !== -1) {
       // 削除ボタン押下時
-      newMissionState.splice(2 * selectedId, 2)
-      setMission(newMissionState)
-      resetUI()
+      newMissionState.splice(2 * selectedId + 2, 2)
+      newPointState.splice(selectedId + 2, 1)
     }
     console.log(newMissionState)
+    console.log(newPointState)
+    setMission(newMissionState)
+    setPoint(newPointState)
+    resetUI()
   }
 
   return (
@@ -140,9 +158,7 @@ export const MissionUI = ({ mission, setMission, selectedId, setRadio }: Mission
                 </option>
               ))}
             </select>
-          ) : selectedId === null ? (
-            <p>上のいずれかを選択してください</p>
-          ) : (
+          ) : selectedId === null ? null : (
             <>
               <select className="select select-bordered" defaultValue={0} onChange={handleMissionChange}>
                 {/* ここでdisabledにしておくとmissionListでラジオボタン切り替えた際にdefaultが選択してくださいにならないのが気に食わないので、disabledにしない */}
@@ -158,7 +174,7 @@ export const MissionUI = ({ mission, setMission, selectedId, setRadio }: Mission
               </select>
               {isMove ? (
                 <>
-                  <select className="select select-bordered" defaultValue={0} onChange={handleParamChange}>
+                  <select className="select select-bordered ml-2" defaultValue={0} onChange={handleParamChange}>
                     <option disabled value={0}>
                       選択
                     </option>
@@ -168,11 +184,11 @@ export const MissionUI = ({ mission, setMission, selectedId, setRadio }: Mission
                       </option>
                     ))}
                   </select>
-                  <p className="self-center">パネル</p>
+                  <p className="self-center ml-2">パネル</p>
                 </>
               ) : isTurn ? (
                 <>
-                  <select className="select select-bordered" defaultValue={0} onChange={handleParamChange}>
+                  <select className="select select-bordered ml-2" defaultValue={0} onChange={handleParamChange}>
                     <option disabled value={0}>
                       選択
                     </option>
@@ -182,13 +198,29 @@ export const MissionUI = ({ mission, setMission, selectedId, setRadio }: Mission
                       </option>
                     ))}
                   </select>
-                  <p className="self-center">度</p>
+                  <p className="self-center ml-2">度</p>
                 </>
               ) : (
                 <p className="self-center">{"<"}-選択してください</p>
               )}
             </>
           )}
+          {(isStartGoal() && selectedMission !== null) ||
+          (!isStartGoal() && selectedMission !== null && selectedParam !== null) ? (
+            <>
+              <select className="select select-bordered ml-2" defaultValue={0} onChange={handlePointChange}>
+                <option disabled value={0}>
+                  選択
+                </option>
+                {[0, 1, 2, 3, 4, 5, 6, 10].map((num) => (
+                  <option key={num} value={num}>
+                    {num}
+                  </option>
+                ))}
+              </select>
+              <p className="self-center ml-2">ポイント</p>
+            </>
+          ) : null}
         </div>
       </div>
       <div className="grid grid-cols-4">
