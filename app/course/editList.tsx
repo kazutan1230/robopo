@@ -2,7 +2,7 @@
 
 import type { SelectCourse } from "@/app/lib/db/schema"
 import { useEffect, useState } from "react"
-import { getCourseList, deleteCourse } from "@/app/course/listUtils"
+import { getCourseList, deleteCourse } from "@/app/components/course/listUtils"
 import { CourseList } from "@/app/components/course/courseList"
 import { useRouter } from "next/navigation"
 

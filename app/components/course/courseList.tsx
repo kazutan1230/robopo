@@ -1,5 +1,4 @@
 import type { SelectCourse } from "@/app/lib/db/schema"
-import { check } from "drizzle-orm/mysql-core"
 import React from "react"
 
 type CourseListProps = {
@@ -62,7 +61,8 @@ export const CourseList = ({ courseData, inputType, handleInputChange, checkedId
                 </th>
                 <td>{courses.id}</td>
                 <td>{courses.name}</td>
-                <td>
+                {/* SSRとCSRで時刻のズレでエラーが出るのでsuppressHydrationWarningする */}
+                <td suppressHydrationWarning>
                   {courses.createdAt
                     ? new Date(courses.createdAt).toLocaleString("ja-JP", {
                         year: "numeric",

@@ -1,19 +1,15 @@
 "use server"
 
 import type { SelectCourse } from "@/app/lib/db/schema"
-import { deleteCourseById, getCourseById } from "../lib/db/queries/queries"
-
-const baseUrl: string =
-  process.env.API_URL ||
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
-  "http://localhost:3000/"
+import { deleteCourseById } from "@/app/lib/db/queries/queries"
+import { BASE_URL } from "@/app/lib/const"
 
 // コース一覧情報を取得する関数
 export async function getCourseList(): Promise<{
   selectCourses: SelectCourse[]
 }> {
-  console.log("fetch in getCourseList baseUrl: ", baseUrl)
-  return fetch(`${baseUrl}/api/course/list`, { cache: "no-store" })
+  console.log("fetch in getCourseList BASE_URL: ", BASE_URL)
+  return fetch(`${BASE_URL}/api/course/list`, { cache: "no-store" })
     .then((res) => {
       if (!res.ok) {
         return { selectCourses: [] }
@@ -33,7 +29,7 @@ export async function getCourseList(): Promise<{
 
 // IDを指定してDBからコースを取得する関数
 export const getCourse = async (id: number): Promise<SelectCourse | null> => {
-  return fetch(`${baseUrl}/api/course?id=${id}`)
+  return fetch(`${BASE_URL}/api/course?id=${id}`)
     .then((res) => {
       if (!res.ok) {
         return null

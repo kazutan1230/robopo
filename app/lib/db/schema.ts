@@ -1,60 +1,54 @@
-import {
-	boolean,
-	integer,
-	pgTable,
-	serial,
-	text,
-	timestamp,
-} from "drizzle-orm/pg-core"
+import { boolean, integer, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core"
 
 export const competition = pgTable("competition", {
-	id: serial("id").primaryKey(),
-	name: text("name").notNull(),
-	isOpen: boolean("isopen").default(false).notNull(),
-	createdAt: timestamp("created_at").defaultNow(),
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  isOpen: boolean("isopen").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
 })
 
 export const course = pgTable("course", {
-	id: serial("id").primaryKey(),
-	name: text("name").notNull(),
-	field: text("field"),
-	fieldValid: boolean("fieldvalid").default(false).notNull(),
-	mission: text("mission"),
-	missionValid: boolean("missionvalid").default(false).notNull(),
-	point: text("point"),
-	createdAt: timestamp("created_at").defaultNow(),
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  field: text("field"),
+  fieldValid: boolean("fieldvalid").default(false).notNull(),
+  mission: text("mission"),
+  missionValid: boolean("missionvalid").default(false).notNull(),
+  point: text("point"),
+  createdAt: timestamp("created_at").defaultNow(),
 })
 
 export const player = pgTable("player", {
-	id: serial("id").primaryKey(),
-	name: text("name").notNull(),
-	zekken: integer("zekken"),
-	createdAt: timestamp("created_at").defaultNow(),
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  zekken: text("zekken"),
+  qr: text("qr"),
+  createdAt: timestamp("created_at").defaultNow(),
 })
 
 export const umpire = pgTable("umpire", {
-	id: serial("id").primaryKey(),
-	name: text("name").notNull(),
-	createdAt: timestamp("created_at").defaultNow(),
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
 })
 
 export const challenge = pgTable("challenge", {
-	id: serial("id").primaryKey(),
-	reslut1: text("result1").notNull(),
-	result2: text("result2"),
-	competitionId: integer("competition_id")
-		.notNull()
-		.references(() => competition.id, { onDelete: "cascade" }),
-	courseId: integer("course_id")
-		.notNull()
-		.references(() => course.id, { onDelete: "cascade" }),
-	playerId: integer("player_id")
-		.notNull()
-		.references(() => player.id, { onDelete: "cascade" }),
-	umpireId: integer("umpire_id")
-		.notNull()
-		.references(() => umpire.id, { onDelete: "cascade" }),
-	createdAt: timestamp("created_at").defaultNow(),
+  id: serial("id").primaryKey(),
+  reslut1: text("result1").notNull(),
+  result2: text("result2"),
+  competitionId: integer("competition_id")
+    .notNull()
+    .references(() => competition.id, { onDelete: "cascade" }),
+  courseId: integer("course_id")
+    .notNull()
+    .references(() => course.id, { onDelete: "cascade" }),
+  playerId: integer("player_id")
+    .notNull()
+    .references(() => player.id, { onDelete: "cascade" }),
+  umpireId: integer("umpire_id")
+    .notNull()
+    .references(() => umpire.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").defaultNow(),
 })
 
 export type InsertCompetition = typeof competition.$inferInsert

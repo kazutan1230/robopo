@@ -1,35 +1,28 @@
 "use client"
 
 import type { SelectCourse } from "@/app/lib/db/schema"
-import { useEffect, useState } from "react"
-import { getCourseList } from "@/app/course/listUtils"
+import { useState } from "react"
 import { CourseList } from "@/app/components/course/courseList"
 import { useRouter } from "next/navigation"
 
-export const ChallengeList = () => {
-  const [courseData, setCourseData] = useState<{ selectCourses: SelectCourse[] }>({ selectCourses: [] })
-  const [selectedIds, setSelectedIds] = useState<number | null>(null)
-  const [loading, setLoading] = useState<boolean>(true)
-  const router = useRouter()
+type ChallengeListProps = {
+  courseDataList: { selectCourses: SelectCourse[] }
+  setStep: React.Dispatch<React.SetStateAction<number>>
+}
 
-  useEffect(() => {
-    async function fetchCourses() {
-      setLoading(true)
-      const newCourseData: { selectCourses: SelectCourse[] } = await getCourseList()
-      setCourseData(newCourseData)
-      setLoading(false)
-    }
-    fetchCourses()
-  }, [])
+export const ChallengeList = ({ courseDataList, setStep }: ChallengeListProps) => {
+  const [selectedIds, setSelectedIds] = useState<number | null>(null)
+  const router = useRouter()
 
   const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedIds(Number(event.target.value))
   }
 
   const handleClickButton = () => {
-    if (selectedIds !== null) {
-      router.push(`/challenge/${selectedIds}`)
-    }
+    // if (selectedIds !== null) {
+    //   router.push(`/challenge/${selectedIds}`)
+    // }
+    setStep(1)
   }
 
   return (
@@ -45,11 +38,11 @@ export const ChallengeList = () => {
         </div>
       </div>
       <CourseList
-        courseData={courseData}
+        courseData={courseDataList}
         inputType="radio"
         handleInputChange={handleRadioChange}
         checkedIds={selectedIds !== null ? [selectedIds] : []} // selectedIdsを配列に変換する
-        loading={loading}
+        loading={false}
       />
     </>
   )

@@ -13,7 +13,7 @@ import {
   PointState,
   deserializePoint,
 } from "@/app/components/course/util"
-import { getCourse } from "@/app/course/listUtils"
+import { getCourse } from "@/app/components/course/listUtils"
 import { finModal, saveModal } from "@/app/components/course/modals"
 
 export default function Edit() {
