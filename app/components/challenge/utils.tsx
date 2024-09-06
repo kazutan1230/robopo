@@ -5,7 +5,6 @@ import { BASE_URL } from "@/app/lib/const"
 export async function getPlayerList(): Promise<{
   players: SelectPlayer[]
 }> {
-  console.log("fetch in getCourseList BASE_URL: ", BASE_URL)
   return fetch(`${BASE_URL}/api/player`, { cache: "no-store" })
     .then((res) => {
       if (!res.ok) {
@@ -15,7 +14,7 @@ export async function getPlayerList(): Promise<{
     })
     .then((data) => {
       // ここの形式が色々変わるみたいな気がする。
-      //   console.log("data: ", data)
+      // console.log("data: ", data)
       return { players: data.players }
     })
     .catch((err) => {

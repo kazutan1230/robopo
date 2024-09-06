@@ -5,7 +5,7 @@ import { View } from "@/app/challenge/view"
 
 export default async function Challenge() {
   const courseDataList: { selectCourses: SelectCourse[] } = await getCourseList()
-  const playerDataList: { players: SelectPlayer[] } = await getPlayerList()
+  const initialPlayerDataList: { players: SelectPlayer[] } = await getPlayerList()
 
-  return <View courseDataList={courseDataList} playerDataList={playerDataList} />
+  return <View courseDataList={courseDataList} initialPlayerDataList={initialPlayerDataList} />
 }

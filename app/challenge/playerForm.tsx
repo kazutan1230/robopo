@@ -1,14 +1,15 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import type { SelectPlayer } from "@/app/lib/db/schema"
+import { getPlayerList } from "@/app/components/challenge/utils"
 
 type PlayerFormProps = {
-  playerDataList: { players: SelectPlayer[] }
+  initialPlayerDataList: { players: SelectPlayer[] }
   setStep: React.Dispatch<React.SetStateAction<number>>
 }
 
-export default function PlayerForm({ playerDataList, setStep }: PlayerFormProps) {
+export default function PlayerForm({ initialPlayerDataList, setStep }: PlayerFormProps) {
   // 入力フィールドの状態を管理
   const [name, setName] = useState<string>("")
   const [zekken, setZekken] = useState<string>("")
@@ -16,7 +17,13 @@ export default function PlayerForm({ playerDataList, setStep }: PlayerFormProps)
   const [loading, setLoading] = useState<boolean>(false)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [playerDataList, setPlayerDataList] = useState<SelectPlayer[]>(initialPlayerDataList.players)
   const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null)
+
+  // 初期データをセット
+  useEffect(() => {
+    setPlayerDataList(initialPlayerDataList.players)
+  }, [initialPlayerDataList])
 
   // フォームの送信ハンドラ
   const handleSubmit = async (event: React.FormEvent) => {
@@ -45,6 +52,9 @@ export default function PlayerForm({ playerDataList, setStep }: PlayerFormProps)
         setName("")
         setZekken("")
         setQr("")
+        const newPlayerDataList: { players: SelectPlayer[] } = await getPlayerList()
+        setPlayerDataList(newPlayerDataList.players)
+        setSelectedPlayerId(newPlayerDataList.players[newPlayerDataList.players.length - 1].id)
       } else {
         // エラーメッセージを表示
         setErrorMessage(result.message || "登録中にエラーが発生しました")
@@ -64,6 +74,7 @@ export default function PlayerForm({ playerDataList, setStep }: PlayerFormProps)
 
   const handleDelete = async () => {
     try {
+      setLoading(true)
       const response = await fetch("/api/player", {
         method: "DELETE",
         headers: {
@@ -71,10 +82,16 @@ export default function PlayerForm({ playerDataList, setStep }: PlayerFormProps)
         },
         body: JSON.stringify({ id: selectedPlayerId }),
       })
-      const result = await response.json()
-      console.log("result: ", result)
+
+      if (response.ok) {
+        const newPlayerDataList: { players: SelectPlayer[] } = await getPlayerList()
+        setPlayerDataList(newPlayerDataList.players)
+        setSelectedPlayerId(null)
+      }
     } catch (error) {
       console.log("error: ", error)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -109,8 +126,8 @@ export default function PlayerForm({ playerDataList, setStep }: PlayerFormProps)
                 </td>
               </tr>
             ) : null}
-            {playerDataList.players.length > 0 ? (
-              playerDataList.players.map((player) => (
+            {playerDataList.length > 0 ? (
+              playerDataList.map((player) => (
                 <tr key={player.id} className="hover cursor-pointer" onClick={() => setSelectedPlayerId(player.id)}>
                   <th>
                     <label>
