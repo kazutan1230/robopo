@@ -1,27 +1,21 @@
 "use client"
 
 import type { SelectCourse } from "@/app/lib/db/schema"
-import { useState } from "react"
 import { CourseList } from "@/app/components/course/courseList"
-import { useRouter } from "next/navigation"
 
 type ChallengeListProps = {
   courseDataList: { selectCourses: SelectCourse[] }
   setStep: React.Dispatch<React.SetStateAction<number>>
+  courseId: number | null
+  setCourseId: React.Dispatch<React.SetStateAction<number | null>>
 }
 
-export const ChallengeList = ({ courseDataList, setStep }: ChallengeListProps) => {
-  const [selectedIds, setSelectedIds] = useState<number | null>(null)
-  const router = useRouter()
-
+export const ChallengeList = ({ courseDataList, setStep, courseId, setCourseId }: ChallengeListProps) => {
   const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedIds(Number(event.target.value))
+    setCourseId(Number(event.target.value))
   }
 
-  const handleClickButton = () => {
-    // if (selectedIds !== null) {
-    //   router.push(`/challenge/${selectedIds}`)
-    // }
+  const handleNextButton = () => {
     setStep(1)
   }
 
@@ -32,7 +26,7 @@ export const ChallengeList = ({ courseDataList, setStep }: ChallengeListProps) =
           <p>コースを選んでください</p>
         </div>
         <div>
-          <button type="button" className="btn btn-primary" disabled={selectedIds === null} onClick={handleClickButton}>
+          <button type="button" className="btn btn-primary" disabled={courseId === null} onClick={handleNextButton}>
             選手登録へ
           </button>
         </div>
@@ -41,7 +35,7 @@ export const ChallengeList = ({ courseDataList, setStep }: ChallengeListProps) =
         courseData={courseDataList}
         inputType="radio"
         handleInputChange={handleRadioChange}
-        checkedIds={selectedIds !== null ? [selectedIds] : []} // selectedIdsを配列に変換する
+        checkedIds={courseId !== null ? [courseId] : []} // selectedIdsを配列に変換する
         loading={false}
       />
     </>

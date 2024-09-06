@@ -5,11 +5,20 @@ import type { SelectPlayer } from "@/app/lib/db/schema"
 import { getPlayerList } from "@/app/components/challenge/utils"
 
 type PlayerFormProps = {
-  initialPlayerDataList: { players: SelectPlayer[] }
+  playerDataList: SelectPlayer[]
+  setPlayerDataList: React.Dispatch<React.SetStateAction<SelectPlayer[]>>
   setStep: React.Dispatch<React.SetStateAction<number>>
+  playerId: number | null
+  setPlayerId: React.Dispatch<React.SetStateAction<number | null>>
 }
 
-export default function PlayerForm({ initialPlayerDataList, setStep }: PlayerFormProps) {
+export default function PlayerForm({
+  playerDataList,
+  setPlayerDataList,
+  setStep,
+  playerId,
+  setPlayerId,
+}: PlayerFormProps) {
   // 入力フィールドの状態を管理
   const [name, setName] = useState<string>("")
   const [zekken, setZekken] = useState<string>("")
@@ -17,13 +26,12 @@ export default function PlayerForm({ initialPlayerDataList, setStep }: PlayerFor
   const [loading, setLoading] = useState<boolean>(false)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [playerDataList, setPlayerDataList] = useState<SelectPlayer[]>(initialPlayerDataList.players)
-  const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null)
+  // const [playerDataList, setPlayerDataList] = useState<SelectPlayer[]>(initialPlayerDataList.players)
 
   // 初期データをセット
   useEffect(() => {
-    setPlayerDataList(initialPlayerDataList.players)
-  }, [initialPlayerDataList])
+    setPlayerDataList(playerDataList)
+  }, [playerDataList])
 
   // フォームの送信ハンドラ
   const handleSubmit = async (event: React.FormEvent) => {
@@ -54,7 +62,7 @@ export default function PlayerForm({ initialPlayerDataList, setStep }: PlayerFor
         setQr("")
         const newPlayerDataList: { players: SelectPlayer[] } = await getPlayerList()
         setPlayerDataList(newPlayerDataList.players)
-        setSelectedPlayerId(newPlayerDataList.players[newPlayerDataList.players.length - 1].id)
+        setPlayerId(newPlayerDataList.players[newPlayerDataList.players.length - 1].id)
       } else {
         // エラーメッセージを表示
         setErrorMessage(result.message || "登録中にエラーが発生しました")
@@ -68,10 +76,12 @@ export default function PlayerForm({ initialPlayerDataList, setStep }: PlayerFor
   }
 
   const handlePlayerSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedPlayerId = parseInt(event.target.value)
-    setSelectedPlayerId(selectedPlayerId)
+    setPlayerId(Number(event.target.value))
   }
 
+  const handleNextButton = () => {
+    setStep(2)
+  }
   const handleDelete = async () => {
     try {
       setLoading(true)
@@ -80,13 +90,13 @@ export default function PlayerForm({ initialPlayerDataList, setStep }: PlayerFor
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ id: selectedPlayerId }),
+        body: JSON.stringify({ id: playerId }),
       })
 
       if (response.ok) {
         const newPlayerDataList: { players: SelectPlayer[] } = await getPlayerList()
         setPlayerDataList(newPlayerDataList.players)
-        setSelectedPlayerId(null)
+        setPlayerId(null)
       }
     } catch (error) {
       console.log("error: ", error)
@@ -98,12 +108,7 @@ export default function PlayerForm({ initialPlayerDataList, setStep }: PlayerFor
   return (
     <>
       <div className="overflow-x-auto overflow-y-auto max-h-96 mt-8">
-        <div className="grid grid-cols-2 gap-4">
-          <h2 className="text-xl font-semibold mb-4">プレイヤー一覧</h2>
-          <button type="button" className="btn btn-primary mx-auto" onClick={handleDelete}>
-            削除
-          </button>
-        </div>
+        <h2 className="text-xl font-semibold mb-4">プレイヤー一覧</h2>
         <table className="table">
           <thead>
             <tr>
@@ -128,14 +133,14 @@ export default function PlayerForm({ initialPlayerDataList, setStep }: PlayerFor
             ) : null}
             {playerDataList.length > 0 ? (
               playerDataList.map((player) => (
-                <tr key={player.id} className="hover cursor-pointer" onClick={() => setSelectedPlayerId(player.id)}>
+                <tr key={player.id} className="hover cursor-pointer" onClick={() => setPlayerId(player.id)}>
                   <th>
                     <label>
                       <input
                         type="radio"
                         name="selectedPlayer"
                         value={player.id}
-                        checked={selectedPlayerId === player.id}
+                        checked={playerId === player.id}
                         onChange={handlePlayerSelect}
                         className="h-4 w-4"
                       />
@@ -157,6 +162,31 @@ export default function PlayerForm({ initialPlayerDataList, setStep }: PlayerFor
           </tbody>
         </table>
       </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <button
+          type="button"
+          className="btn btn-primary mx-auto"
+          disabled={playerId === null}
+          onClick={() => setStep(2)}>
+          確認へ
+        </button>
+        <button type="button" className="btn btn-primary mx-auto" disabled={playerId === null} onClick={handleDelete}>
+          削除
+        </button>
+      </div>
+      <div>
+        <button
+          type="submit"
+          disabled={loading}
+          className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 disabled:opacity-50">
+          {loading ? "登録中..." : "↓新規登録"}
+        </button>
+      </div>
+
+      {successMessage && <div className="text-green-500 font-semibold">{successMessage}</div>}
+
+      {errorMessage && <div className="text-red-500 font-semibold">{errorMessage}</div>}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -200,20 +230,8 @@ export default function PlayerForm({ initialPlayerDataList, setStep }: PlayerFor
             className="mt-1 p-2 border border-gray-300 rounded-md w-full"
           />
         </div>
-
-        <div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 disabled:opacity-50">
-            {loading ? "登録中..." : "登録"}
-          </button>
-        </div>
-
-        {successMessage && <div className="text-green-500 font-semibold">{successMessage}</div>}
-
-        {errorMessage && <div className="text-red-500 font-semibold">{errorMessage}</div>}
       </form>
+
       <button type="button" className="btn btn-primary mx-auto" onClick={() => setStep(0)}>
         戻る
       </button>
