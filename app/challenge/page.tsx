@@ -1,13 +1,10 @@
 import Link from "next/link"
-import { EditList } from "@/app/course/editList"
+import { ChallengeList } from "@/app/challenge/challengeList"
 
 export default function Course() {
   return (
     <>
-      <Link href="/course/edit" className="btn btn-primary min-w-28 max-w-fit mx-auto">
-        コース新規作成
-      </Link>
-      <EditList />
+      <ChallengeList />
       <Link href="/" className="btn btn-primary min-w-28 max-w-fit mx-auto">
         トップへ戻る
       </Link>
