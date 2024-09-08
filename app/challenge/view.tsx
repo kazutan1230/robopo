@@ -4,6 +4,7 @@ import { useState } from "react"
 import type { SelectCourse, SelectPlayer } from "@/app/lib/db/schema"
 import { ChallengeList } from "@/app/challenge/challengeList"
 import PlayerForm from "@/app/challenge/playerForm"
+import { StartButton } from "@/app/components/parts/startButton"
 
 type ViewProps = {
   courseDataList: { selectCourses: SelectCourse[] }
@@ -38,16 +39,49 @@ export const View = ({ courseDataList, initialPlayerDataList }: ViewProps) => {
         />
       )}
       {step === 2 && courseId !== null && playerId !== null && (
+        <>
+          <div>
+            <h2>以下の内容でチャレンジを開始します。</h2>
+            <p>コース: {courseDataList.selectCourses.find((course) => course.id === courseId)?.name}</p>
+            <p>選手: {playerDataList.find((player) => player.id === playerId)?.name}</p>
+          </div>
+          <button
+            type="button"
+            className="btn btn-primary min-w-28 max-w-fit mx-auto"
+            onClick={() => {
+              setStep(3)
+            }}>
+            スタート画面へ
+          </button>
+        </>
+      )}
+
+      {step === 3 && (
         <div>
-          <h2>以下の内容でチャレンジを開始します。</h2>
-          <p>コース: {courseDataList.selectCourses.find((course) => course.id === courseId)?.name}</p>
-          <p>選手: {playerDataList.find((player) => player.id === playerId)?.name}</p>
+          <h2>押したら始まります。</h2>
+          <StartButton setStep={setStep} />
         </div>
       )}
 
-      <Link href="/" className="btn btn-primary min-w-28 max-w-fit mx-auto">
-        トップへ戻る
-      </Link>
+      {step === 4 && (
+        <div>
+          <h2>チャレンジしています。</h2>
+          <button
+            type="button"
+            className="btn btn-primary min-w-28 max-w-fit mx-auto"
+            onClick={() => {
+              setStep(0)
+            }}>
+            終了
+          </button>
+        </div>
+      )}
+
+      {step !== 4 && (
+        <Link href="/" className="btn btn-primary min-w-28 max-w-fit mx-auto">
+          トップへ戻る
+        </Link>
+      )}
     </>
   )
 }

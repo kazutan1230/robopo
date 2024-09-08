@@ -8,6 +8,10 @@ export const Header = () => {
     setOpen(!isOpen)
   }
 
+  const handleMenuClose = () => {
+    setOpen(false)
+  }
+
   return (
     <header className="flex h-14">
       <h1 className="flex font-semibold items-center mx-auto text-center text-2xl w-fit">
@@ -23,7 +27,7 @@ export const Header = () => {
         }>
         <ul className={isOpen ? "flex h-screen justify-center items-center flex-col gap-6 text-xl" : "block"}>
           <li>
-            <Link href="/" className="btn btn-primary mt-5 mx-3">
+            <Link href="/" className="btn btn-primary mt-5 mx-3" onClick={handleMenuClose}>
               Home
             </Link>
           </li>
