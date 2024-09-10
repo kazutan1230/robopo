@@ -8,17 +8,21 @@ export default function Home() {
         <Link href="/challenge" className="btn btn-primary min-w-28 max-w-fit mx-auto">
           採点
         </Link>
-        <Link href="/" className="btn btn-primary min-w-28 max-w-fit mx-auto">
-          {/* <Link href="/summary" className="btn btn-primary min-w-28 max-w-fit mx-auto"> */}
+        <button className="btn btn-primary min-w-28 max-w-fit mx-auto" disabled>
           集計結果
-        </Link>
+        </button>
+        {/* <Link href="/summary" className="btn btn-primary min-w-28 max-w-fit mx-auto">
+          集計結果
+        </Link> */}
         <Link href="/course" className="btn btn-primary min-w-28 max-w-fit mx-auto">
           コース作成
         </Link>
-        <Link href="/" className="btn btn-primary min-w-28 max-w-fit mx-auto">
-          {/* <Link href="/competition" className="btn btn-primary min-w-28 max-w-fit mx-auto"> */}
+        <button className="btn btn-primary min-w-28 max-w-fit mx-auto" disabled>
           大会管理
-        </Link>
+        </button>
+        {/* <Link href="/competition" className="btn btn-primary min-w-28 max-w-fit mx-auto">
+          大会管理
+        </Link> */}
       </div>
     </>
   )

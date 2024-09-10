@@ -10,7 +10,7 @@ type ChallengeListProps = {
   setCourseId: React.Dispatch<React.SetStateAction<number | null>>
 }
 
-export const ChallengeList = ({ courseDataList, setStep, courseId, setCourseId }: ChallengeListProps) => {
+const ChallengeList = ({ courseDataList, setStep, courseId, setCourseId }: ChallengeListProps) => {
   const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCourseId(Number(event.target.value))
   }
@@ -21,7 +21,7 @@ export const ChallengeList = ({ courseDataList, setStep, courseId, setCourseId }
 
   return (
     <>
-      <div className="grid grid-cols-3">
+      <div className="grid justify-items-center">
         <div className="self-center mx-4">
           <p>コースを選んでください</p>
         </div>
@@ -41,3 +41,5 @@ export const ChallengeList = ({ courseDataList, setStep, courseId, setCourseId }
     </>
   )
 }
+
+export default ChallengeList

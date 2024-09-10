@@ -14,7 +14,7 @@ export const Header = () => {
 
   return (
     <header className="flex h-14">
-      <h1 className="flex font-semibold items-center mx-auto text-center text-2xl w-fit">
+      <h1 className="flex mt-4 font-semibold items-center mx-auto text-center text-2xl w-fit">
         ロボサバ大会集計アプリ
         <br />
         ROBOPO

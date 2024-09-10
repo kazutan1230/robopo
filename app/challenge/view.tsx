@@ -2,9 +2,10 @@
 import Link from "next/link"
 import { useState } from "react"
 import type { SelectCourse, SelectPlayer } from "@/app/lib/db/schema"
-import { ChallengeList } from "@/app/challenge/challengeList"
+import ChallengeList from "@/app/challenge/challengeList"
 import PlayerForm from "@/app/challenge/playerForm"
-import { StartButton } from "@/app/components/parts/startButton"
+import Challenge from "@/app/challenge/challenge"
+import CircleButton from "@/app/components/parts/circleButton"
 
 type ViewProps = {
   courseDataList: { selectCourses: SelectCourse[] }
@@ -59,13 +60,23 @@ export const View = ({ courseDataList, initialPlayerDataList }: ViewProps) => {
       {step === 3 && (
         <div>
           <h2>押したら始まります。</h2>
-          <StartButton setStep={setStep} />
+          <CircleButton
+            onClick={() => setStep(4)}
+            classNameText="mt-20 mb-20 w-48 h-48 text-3xl bg-gradient-to-r from-green-400 to-green-600 text-white"
+            buttonText="スタート"
+          />
         </div>
       )}
 
       {step === 4 && (
         <div>
-          <h2>チャレンジしています。</h2>
+          {/* <p>{courseDataList.selectCourses.find((course) => course.id === courseId)?.mission}</p>
+          <p>{courseDataList.selectCourses.find((course) => course.id === courseId)?.point}</p> */}
+          <Challenge
+            setStep={setStep}
+            mission={courseDataList.selectCourses.find((course) => course.id === courseId)?.mission}
+            point={courseDataList.selectCourses.find((course) => course.id === courseId)?.point}
+          />
           <button
             type="button"
             className="btn btn-primary min-w-28 max-w-fit mx-auto"

@@ -12,13 +12,7 @@ type PlayerFormProps = {
   setPlayerId: React.Dispatch<React.SetStateAction<number | null>>
 }
 
-export default function PlayerForm({
-  playerDataList,
-  setPlayerDataList,
-  setStep,
-  playerId,
-  setPlayerId,
-}: PlayerFormProps) {
+const PlayerForm = ({ playerDataList, setPlayerDataList, setStep, playerId, setPlayerId }: PlayerFormProps) => {
   // 入力フィールドの状態を管理
   const [name, setName] = useState<string>("")
   const [zekken, setZekken] = useState<string>("")
@@ -238,3 +232,5 @@ export default function PlayerForm({
     </>
   )
 }
+
+export default PlayerForm

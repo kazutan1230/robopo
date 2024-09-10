@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react"
-import { MissionState, MissionString, MissionValue, PointState, missionStatePair } from "@/app/components/course/util"
+import {
+  MissionState,
+  MissionString,
+  MissionValue,
+  PointState,
+  missionStatePair,
+  panelOrDegree,
+} from "@/app/components/course/util"
 
 type MissionEditProps = {
   mission: MissionState
@@ -71,11 +78,7 @@ export const MissionList = ({ mission, point, radio, setRadio }: MissionEditProp
                   <td>
                     {mission[0] === null ? "-" : MissionString[mission[0]]}
                     {mission[1] === null ? "-" : mission[1]}
-                    {mission[0] === "mf" || mission[0] === "mb"
-                      ? "パネル"
-                      : mission[0] === "tr" || mission[0] === "tl"
-                      ? "度"
-                      : "-"}
+                    {panelOrDegree(mission[0])}
                   </td>
                   <td>{point[index + 2]}</td>
                 </tr>
