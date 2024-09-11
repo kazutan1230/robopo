@@ -34,7 +34,7 @@ export const umpire = pgTable("umpire", {
 
 export const challenge = pgTable("challenge", {
   id: serial("id").primaryKey(),
-  reslut1: integer("result1").notNull(),
+  result1: integer("result1").notNull(),
   result2: integer("result2"),
   competitionId: integer("competition_id")
     .notNull()

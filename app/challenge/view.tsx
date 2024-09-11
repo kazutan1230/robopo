@@ -17,8 +17,8 @@ export const View = ({ courseDataList, initialPlayerDataList }: ViewProps) => {
   const [courseId, setCourseId] = useState<number | null>(null)
   const [playerId, setPlayerId] = useState<number | null>(null)
   const [playerDataList, setPlayerDataList] = useState<SelectPlayer[]>(initialPlayerDataList.players)
-  const compeId: number = 0 //一旦0
-  const umpireId: number = 0 //一旦0
+  const compeId: number = 1 //一旦1
+  const umpireId: number = 1 //一旦1
 
   return (
     <>
@@ -68,23 +68,16 @@ export const View = ({ courseDataList, initialPlayerDataList }: ViewProps) => {
         </div>
       )}
 
-      {step === 4 && (
+      {step === 4 && courseId !== null && playerId !== null && (
         <div>
-          {/* <p>{courseDataList.selectCourses.find((course) => course.id === courseId)?.mission}</p>
-          <p>{courseDataList.selectCourses.find((course) => course.id === courseId)?.point}</p> */}
           <Challenge
-            setStep={setStep}
             mission={courseDataList.selectCourses.find((course) => course.id === courseId)?.mission}
             point={courseDataList.selectCourses.find((course) => course.id === courseId)?.point}
+            compeId={compeId}
+            courseId={courseId}
+            playerId={playerId}
+            umpireId={umpireId}
           />
-          <button
-            type="button"
-            className="btn btn-primary min-w-28 max-w-fit mx-auto"
-            onClick={() => {
-              setStep(0)
-            }}>
-            終了
-          </button>
         </div>
       )}
 

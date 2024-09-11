@@ -1,5 +1,5 @@
 import { db } from "@/app/lib/db/db"
-import { course, SelectCourse, player } from "@/app/lib/db/schema"
+import { course, SelectCourse, player, challenge } from "@/app/lib/db/schema"
 import { eq } from "drizzle-orm"
 
 // IDを指定してDBからコースを削除する関数
@@ -31,4 +31,10 @@ export const getPlayerByQR = async (qr: string) => {
 export const getPlayerById = async (id: number) => {
   const result = await db.select().from(player).where(eq(player.id, id)).limit(1)
   return result.length > 0 ? result[0] : null
+}
+
+// IDを指定してDBからChallengeを削除する関数
+export const deleteChallengeById = async (id: number) => {
+  const result = await db.delete(challenge).where(eq(challenge.id, id)).returning({ deleatedId: challenge.id })
+  return result
 }
