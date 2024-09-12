@@ -21,13 +21,23 @@ export const MissionString: { [key in Exclude<MissionValue, null>]: string | nul
   "": "空",
 }
 
+// Mission
+// start時の向き, goal時の向き, 以後ルート上のmission…
 export type MissionState = MissionValue[]
 
 // Point
+// start時のポイント(ハンデ的な?機能), goal時のポイント, 以後missionクリア毎ポイント…
 export type PointValue = number | null
 export type PointState = PointValue[]
 
-// 初期配置を表示する関数。ゆくゆくは保存済みコースを読み込めるようにする。
+// パネルか度かを表示する
+export const panelOrDegree = (mission: MissionValue) => {
+  if (mission === "mf" || mission === "mb") return "パネル"
+  else if (mission === "tr" || mission === "tl") return "度"
+  else return "-"
+}
+
+// 初期配置を表示する関数。
 export const initializeField = (): FieldState => {
   const field: FieldState = Array(MAX_FIELD_WIDTH)
     .fill(null)

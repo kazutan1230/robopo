@@ -1,18 +1,28 @@
 import { db } from "@/app/lib/db/db"
-import { 
-    // InsertCompetition,
-    InsertCourse,
-    // InsertPlayer,
-    // InsertUmpire,
-    // InsertChallenge,
-    // competition,
-    course
-    // player,
-    // umpire,
-    // challenge
+import {
+  // InsertCompetition,
+  InsertCourse,
+  InsertPlayer,
+  // InsertUmpire,
+  InsertChallenge,
+  // competition,
+  course,
+  player,
+  // umpire,
+  challenge,
 } from "@/app/lib/db/schema"
 
 export async function createCourse(data: Omit<InsertCourse, "id">) {
-    const result =await db.insert(course).values(data)
-    return result
+  const result = await db.insert(course).values(data)
+  return result
+}
+
+export async function createPlayer(data: Omit<InsertPlayer, "id">) {
+  const result = await db.insert(player).values(data)
+  return result
+}
+
+export async function createChallenge(data: Omit<InsertChallenge, "id">) {
+  const result = await db.insert(challenge).values(data)
+  return result
 }

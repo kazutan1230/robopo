@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { List } from "@/app/components/course/list"
+import { EditList } from "@/app/course/editList"
 
 export default function Course() {
   return (
@@ -7,7 +7,7 @@ export default function Course() {
       <Link href="/course/edit" className="btn btn-primary min-w-28 max-w-fit mx-auto">
         コース新規作成
       </Link>
-      <List />
+      <EditList />
       <Link href="/" className="btn btn-primary min-w-28 max-w-fit mx-auto">
         トップへ戻る
       </Link>
