@@ -21,7 +21,7 @@ export const View = ({ courseDataList, initialPlayerDataList }: ViewProps) => {
   const umpireId: number = 1 //一旦1
 
   return (
-    <>
+    <div className="flex flex-col flex justify-center items-center overflow-y-auto w-full">
       {step === 0 && (
         <ChallengeList
           courseDataList={courseDataList}
@@ -41,14 +41,16 @@ export const View = ({ courseDataList, initialPlayerDataList }: ViewProps) => {
       )}
       {step === 2 && courseId !== null && playerId !== null && (
         <>
-          <div>
+          <div className="grid gap-6 items-center justify-center px-4 py-6 sm:px-6 lg:px-8 text-center">
             <h2>以下の内容でチャレンジを開始します。</h2>
-            <p>コース: {courseDataList.selectCourses.find((course) => course.id === courseId)?.name}</p>
-            <p>選手: {playerDataList.find((player) => player.id === playerId)?.name}</p>
+            <p className="text-2xl">
+              コース: {courseDataList.selectCourses.find((course) => course.id === courseId)?.name}
+            </p>
+            <p className="text-2xl">選手: {playerDataList.find((player) => player.id === playerId)?.name}</p>
           </div>
           <button
             type="button"
-            className="btn btn-primary min-w-28 max-w-fit mx-auto"
+            className="btn btn-primary min-w-28 max-w-fit mx-auto text-3xl m-5 mb-20"
             onClick={() => {
               setStep(3)
             }}>
@@ -82,10 +84,10 @@ export const View = ({ courseDataList, initialPlayerDataList }: ViewProps) => {
       )}
 
       {step !== 4 && (
-        <Link href="/" className="btn btn-primary min-w-28 max-w-fit mx-auto">
+        <Link href="/" className="btn btn-primary min-w-28 max-w-fit mx-auto mt-5">
           トップへ戻る
         </Link>
       )}
-    </>
+    </div>
   )
 }

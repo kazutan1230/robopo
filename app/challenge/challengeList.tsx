@@ -21,7 +21,7 @@ const ChallengeList = ({ courseDataList, setStep, courseId, setCourseId }: Chall
 
   return (
     <>
-      <div className="grid justify-items-center">
+      <div className="grid grid-cols-2 justify-items-center">
         <div className="self-center mx-4">
           <p>コースを選んでください</p>
         </div>

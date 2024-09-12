@@ -1,61 +1,44 @@
 "use client"
 import Link from "next/link"
+import Image from "next/image"
 import { useState } from "react"
+import DropdownMenu from "@/app/components/parts/dropdownMenu"
 
 export const Header = () => {
   const [isOpen, setOpen] = useState(false)
+
   const handleMenuOpen = () => {
+    console.log("isopenbf", isOpen)
     setOpen(!isOpen)
+    console.log("isopenaf", isOpen)
   }
 
   const handleMenuClose = () => {
+    console.log("isopenbf", isOpen)
     setOpen(false)
+    console.log("isopenaf", isOpen)
   }
 
   return (
-    <header className="flex h-14">
-      <h1 className="flex mt-4 font-semibold items-center mx-auto text-center text-2xl w-fit">
+    <header className="flex flex-col md:flex-row h-28 md:h-14 mb-5 justify-between items-center">
+      <div className="flex justify-between w-full items-center md:w-auto md:justify-start">
+        {/* Logo */}
+        <Link href="/" className="inline-block mx-auto md:mx-0">
+          <Image src="/logo.png" alt="Logo" className="dark:invert" width={50} height={50} />
+        </Link>
+        {/* メニューボタン (スマホ表示) */}
+        <DropdownMenu />
+      </div>
+      {/* タイトル */}
+      <h1 className="mt-4 md:mt-0 font-semibold items-center mx-auto text-center text-2xl">
         ロボサバ大会集計アプリ
-        <br />
+        <br className="md:hidden" />
         ROBOPO
       </h1>
-      <nav
-        className={
-          isOpen
-            ? "z-50 trasition duration-500 ease-in-out bg-blue-100 fixed top-0 right-0 bottom-100 left-0 h-1/2 flex flex-col"
-            : "fixed right-[-400%] md:right-[0%] md:z-50"
-        }>
-        <ul className={isOpen ? "flex h-screen justify-center items-center flex-col gap-6 text-xl" : "block"}>
-          <li>
-            <Link href="/" className="btn btn-primary mt-5 mx-3" onClick={handleMenuClose}>
-              Home
-            </Link>
-          </li>
-        </ul>
-      </nav>
-      {/* メニューボタン */}
-      <button className="fixed right-[5%] z-50 space-y-2 md:hidden" onClick={handleMenuOpen}>
-        <svg
-          className="w-[48px] h-[48px] text-gray-800 dark:text-white"
-          aria-hidden="true"
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          fill="none"
-          viewBox="0 0 24 24">
-          {isOpen ? (
-            <path
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M6 18 17.94 6M18 18 6.06 6"
-            />
-          ) : (
-            <path stroke="currentColor" strokeLinecap="round" strokeWidth="2" d="M5 7h14M5 12h14M5 17h14" />
-          )}
-        </svg>
-      </button>
+      {/* HOMEボタン (PC表示) */}
+      <Link href="/" className="hidden md:inline-block btn btn-primary mt-5 mx-3 p-2 text-xl">
+        Home
+      </Link>
     </header>
   )
 }

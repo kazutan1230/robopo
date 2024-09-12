@@ -16,16 +16,13 @@ export default function RootLayout({
 }: // modal
 Readonly<{
   children: React.ReactNode
-  // modal: React.ReactNode;
 }>) {
   return (
     <html lang="ja" className={inter.className}>
       <body className="font-zenKakuGothicNew">
-        <Header />
-        {/* <main className="max-w-screen-md mx-auto text-xs sm:px-12 lg:text-base"> */}
-        <main className="grid gap-6 items-center justify-center px-4 py-6 sm:px-6 lg:px-8">
+        <main className="max-w-screen-xl mx-auto text-xs sm:px-12 lg:text-base w-screen h-screen">
+          <Header />
           <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
-          {/* {modal} */}
           {/* <ScrollToTop /> */}
         </main>
         {/* <Footer /> */}

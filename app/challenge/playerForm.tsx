@@ -101,9 +101,9 @@ const PlayerForm = ({ playerDataList, setPlayerDataList, setStep, playerId, setP
 
   return (
     <>
-      <div className="overflow-x-auto overflow-y-auto max-h-96 mt-8">
-        <h2 className="text-xl font-semibold mb-4">プレイヤー一覧</h2>
-        <table className="table">
+      <h2 className="text-center text-xl font-semibold">プレイヤー一覧</h2>
+      <div className=" overflow-x-auto w-full h-96 m-3">
+        <table className="table table-pin-rows">
           <thead>
             <tr>
               <th>
@@ -169,20 +169,20 @@ const PlayerForm = ({ playerDataList, setPlayerDataList, setStep, playerId, setP
           削除
         </button>
       </div>
-      <div>
-        <button
-          type="submit"
-          disabled={loading}
-          className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 disabled:opacity-50">
-          {loading ? "登録中..." : "↓新規登録"}
-        </button>
-      </div>
 
       {successMessage && <div className="text-green-500 font-semibold">{successMessage}</div>}
 
       {errorMessage && <div className="text-red-500 font-semibold">{errorMessage}</div>}
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        {/* <div> */}
+        <button
+          type="submit"
+          disabled={loading}
+          className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 disabled:opacity-50 mt-4">
+          {loading ? "登録中..." : "↓新規登録"}
+        </button>
+        {/* </div> */}
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-gray-700">
             名前
@@ -226,7 +226,7 @@ const PlayerForm = ({ playerDataList, setPlayerDataList, setStep, playerId, setP
         </div>
       </form>
 
-      <button type="button" className="btn btn-primary mx-auto" onClick={() => setStep(0)}>
+      <button type="button" className="btn btn-primary mx-auto m-5" onClick={() => setStep(0)}>
         戻る
       </button>
     </>

@@ -4,9 +4,19 @@ type FailureModalProps = {
   loading: boolean
   isSuccess: boolean
   message: string
+  result1Point: number | null
+  result2Point: number | null
 }
 
-const FailureModal = ({ setModalOpen, handleSubmit, loading, isSuccess, message }: FailureModalProps) => {
+const FailureModal = ({
+  setModalOpen,
+  handleSubmit,
+  loading,
+  isSuccess,
+  message,
+  result1Point,
+  result2Point,
+}: FailureModalProps) => {
   const handleClick = () => {
     setModalOpen(false)
   }
@@ -23,6 +33,8 @@ const FailureModal = ({ setModalOpen, handleSubmit, loading, isSuccess, message 
         ) : (
           <>
             <p>結果を送信してチャレンジを終了しますか?</p>
+            <p>1回目: {result1Point}ポイント</p>
+            {result2Point !== null && <p>2回目: {result2Point}ポイント</p>}
             <div className="modal-action">
               <button className="btn btn-accent" onClick={handleSubmit}>
                 {loading ? <span className="loading loading-spinner"></span> : "はい"}
@@ -34,9 +46,6 @@ const FailureModal = ({ setModalOpen, handleSubmit, loading, isSuccess, message 
           </>
         )}
       </div>
-      <form method="dialog" className="modal-backdrop" onClick={handleClick}>
-        <button>close</button>
-      </form>
     </dialog>
   )
 }

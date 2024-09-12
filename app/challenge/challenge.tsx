@@ -118,27 +118,28 @@ const Challenge = ({ mission, point, compeId, courseId, playerId, umpireId }: Ch
 
     return (
       <>
-        <div className="grid justify-items-center">
+        <div className="grid justify-items-center h-full">
           {isGoal ? (
             <>
-              <div className="grid justify-items-center mx-4">
+              {/* <div className="flex flex-col justify-items-center gap-4 mx-4"> */}
+              <div className="grid gap-6 items-center justify-center px-4 py-6 sm:px-6 lg:px-8 text-center">
                 <p className="text-3xl font-bold text-orange-600">おめでとう!</p>
                 {pointState[1] !== null && pointState[1] > 0 && (
                   <p className="text-2xl font-bold text-orange-600">ゴールポイント: {pointState[1]}ポイント</p>
                 )}
                 <p className="text-2xl font-bold text-orange-600">結果: クリア {pointCount}ポイント</p>
+                {isSuccess ? (
+                  // チャレンジ終了後、画面読み込み直して初期状態に戻る
+                  <button className="btn btn-accent mx-auto text-2xl" onClick={() => window.location.reload()}>
+                    コース一覧に戻る
+                  </button>
+                ) : (
+                  <button className="btn btn-accent mx-auto text-2xl" onClick={handleSubmit} disabled={loading}>
+                    {loading ? <span className="loading loading-spinner"></span> : "結果送信"}
+                  </button>
+                )}
+                {message && <p className="mx-auto mt-12">{message}</p>}
               </div>
-              {isSuccess ? (
-                // チャレンジ終了後、画面読み込み直して初期状態に戻る
-                <button className="btn btn-accent mx-auto text-2xl" onClick={() => window.location.reload()}>
-                  コース一覧に戻る
-                </button>
-              ) : (
-                <button className="btn btn-accent mx-auto text-2xl" onClick={handleSubmit} disabled={loading}>
-                  {loading ? <span className="loading loading-spinner"></span> : "結果送信"}
-                </button>
-              )}
-              {message && <p className="mx-auto mt-12">{message}</p>}
             </>
           ) : (
             <>
@@ -187,6 +188,8 @@ const Challenge = ({ mission, point, compeId, courseId, playerId, umpireId }: Ch
               loading={loading}
               isSuccess={isSuccess}
               message={message}
+              result1Point={calcPoint(pointState, result1 - 1)}
+              result2Point={result2 !== null ? calcPoint(pointState, result2 - 1) : null}
             />
           )}
         </div>

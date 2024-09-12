@@ -46,12 +46,12 @@ export default function Edit() {
 
   return (
     <>
-      <div className="h-screen w-screen">
+      <div className="h-full w-full">
         <div className="sm:max-h-screen sm:grid sm:grid-cols-2 gap-4">
-          <div className="sm:w-4/5 sm:my-4 sm:justify-self-end">
+          <div className="sm:w-full sm:justify-self-end">
             <CourseEdit field={field} setField={setField} />
           </div>
-          <div className="sm:w-4/5 sm:mx-4 sm:justify-self-start">
+          <div className="sm:w-full sm:mx-4 sm:justify-self-start">
             <MissionEdit mission={mission} setMission={setMission} point={point} setPoint={setPoint} />
           </div>
         </div>
