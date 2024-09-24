@@ -1,6 +1,10 @@
 // コース作成の最大サイズ
-export const MAX_FIELD_WIDTH: number = 5
-export const MAX_FIELD_HEIGHT: number = 5
+export const MAX_FIELD_WIDTH: number = 3
+export const MAX_FIELD_HEIGHT: number = 3
+
+// パネルのサイズ
+export const PANEL_WIDTH: number = 80
+export const PANEL_HEIGHT: number = 80
 
 // Panelの種類
 export type PanelValue = "start" | "goal" | "route" | null

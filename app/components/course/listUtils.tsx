@@ -29,7 +29,7 @@ export async function getCourseList(): Promise<{
 
 // IDを指定してDBからコースを取得する関数
 export const getCourse = async (id: number): Promise<SelectCourse | null> => {
-  return fetch(`${BASE_URL}/api/course?id=${id}`)
+  return fetch(`${BASE_URL}/api/course?id=${id}`, { cache: "no-store" })
     .then((res) => {
       if (!res.ok) {
         return null

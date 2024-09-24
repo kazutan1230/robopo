@@ -18,7 +18,7 @@ export const TableExample = ({ competitionId, courseId }: tableExampleProps) => 
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await fetch(`/api/summary/${competitionId}/${courseId}`)
+      const res = await fetch(`/api/summary/${competitionId}/${courseId}`, { cache: "no-store" })
       const data = await res.json()
       setPlayerStats(data)
     }

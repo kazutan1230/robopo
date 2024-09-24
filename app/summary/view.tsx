@@ -17,5 +17,5 @@ export const View = ({ courseDataList, playerDataList }: ViewProps) => {
   const competitionId: number = 1 //一旦1
   const umpireId: number = 1 //一旦1
 
-  return <TableExample competitionId={competitionId} courseId="55" />
+  return <TableExample competitionId={competitionId} courseId="65" />
 }
