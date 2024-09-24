@@ -150,6 +150,7 @@ export const serializePoint = (pointState: PointState): string => {
 }
 
 // String型をPointState型に変換する関数
-export const deserializePoint = (str: string): PointState => {
+export const deserializePoint = (str: string | null): PointState => {
+  if (!str) return []
   return str.split(";").map((point) => (point === "null" ? null : (point as unknown as PointValue)))
 }
