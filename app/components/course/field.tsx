@@ -1,6 +1,5 @@
-import { FieldState } from "@/app/components/course/util"
+import { FieldState, MAX_FIELD_WIDTH, MAX_FIELD_HEIGHT, PANEL_WIDTH, PANEL_HEIGHT } from "@/app/components/course/utils"
 import { Panel } from "@/app/components/course/panel"
-import { MAX_FIELD_WIDTH, MAX_FIELD_HEIGHT, PANEL_WIDTH, PANEL_HEIGHT } from "@/app/components/course/util"
 
 type FieldProps = {
   field: FieldState

@@ -1,4 +1,4 @@
-import { PanelValue, PANEL_WIDTH, PANEL_HEIGHT } from "@/app/components/course/util"
+import { PanelValue, PANEL_WIDTH, PANEL_HEIGHT } from "@/app/components/course/utils"
 
 type PanelProps = {
   value: PanelValue

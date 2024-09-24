@@ -1,6 +1,7 @@
+import { CourseSummary } from "@/app/components/summary/utils"
 import { db } from "@/app/lib/db/db"
 import { course, SelectCourse, player, challenge } from "@/app/lib/db/schema"
-import { eq } from "drizzle-orm"
+import { eq, and, sql } from "drizzle-orm"
 
 // IDを指定してDBからコースを削除する関数
 // @/app/lib/db/queries/delete.tsを作成して移動させる方がいいかもしれない。
@@ -36,5 +37,24 @@ export const getPlayerById = async (id: number) => {
 // IDを指定してDBからChallengeを削除する関数
 export const deleteChallengeById = async (id: number) => {
   const result = await db.delete(challenge).where(eq(challenge.id, id)).returning({ deleatedId: challenge.id })
+  return result
+}
+
+// 特定の competition_id と course_id に基づくデータを取得
+export const getCourseSummary = async (competitionId: number, courseId: number) => {
+  // SQLで結合し、result1 の最大値と result2 の集計結果を取得
+  const result = await db
+    .select({
+      playerId: player.id,
+      playerName: player.name,
+      playerZekken: player.zekken,
+      maxResult: sql`GREATEST(MAX(${challenge.result1}), MAX(${challenge.result2}))`.as("maxResult"),
+      challengeCount: sql`SUM(CASE WHEN ${challenge.result2} IS NULL THEN 1 ELSE 2 END)`.as("challengeCount"),
+    })
+    .from(player)
+    .where(and(eq(challenge.competitionId, competitionId), eq(challenge.courseId, courseId)))
+    .leftJoin(challenge, eq(player.id, challenge.playerId))
+    .groupBy(player.id)
+    .orderBy(player.id)
   return result
 }

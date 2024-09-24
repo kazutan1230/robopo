@@ -7,7 +7,7 @@ import {
   deserializePoint,
   missionStatePair,
   panelOrDegree,
-} from "@/app/components/course/util"
+} from "@/app/components/course/utils"
 import FailureModal from "@/app/challenge/failureModal"
 import { calcPoint } from "@/app/components/challenge/utils"
 type ChallengeProps = {

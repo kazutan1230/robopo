@@ -1,11 +1,13 @@
-import { getCourseList } from "@/app/components/course/listUtils"
-import { getPlayerList } from "@/app/components/challenge/utils"
-import type { SelectCourse, SelectPlayer } from "@/app/lib/db/schema"
+import Link from "next/link"
 import { View } from "@/app/summary/view"
 
 export default async function Summary() {
-  const courseDataList: { selectCourses: SelectCourse[] } = await getCourseList()
-  const playerDataList: { players: SelectPlayer[] } = await getPlayerList()
-
-  return <View courseDataList={courseDataList} playerDataList={playerDataList} />
+  return (
+    <>
+      <View />
+      <Link href="/" className="btn btn-primary min-w-28 max-w-fit mx-auto mt-10">
+        トップへ戻る
+      </Link>
+    </>
+  )
 }

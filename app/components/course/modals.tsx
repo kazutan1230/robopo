@@ -7,7 +7,7 @@ import {
   serializeField,
   serializeMission,
   serializePoint,
-} from "@/app/components/course/util"
+} from "@/app/components/course/utils"
 
 type FinModalProps = {
   setModalOpen: React.Dispatch<React.SetStateAction<number>>
