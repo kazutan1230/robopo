@@ -3,14 +3,17 @@ import CircleButton from "@/app/components/parts/circleButton"
 import {
   MissionString,
   PointState,
+  deserializeField,
   deserializeMission,
   deserializePoint,
   missionStatePair,
   panelOrDegree,
 } from "@/app/components/course/utils"
+import { Field } from "@/app/components/course/field"
 import FailureModal from "@/app/challenge/failureModal"
 import { calcPoint } from "@/app/components/challenge/utils"
 type ChallengeProps = {
+  field: string | null | undefined
   mission: string | null | undefined
   point: string | null | undefined
   compeId: number
@@ -19,8 +22,16 @@ type ChallengeProps = {
   umpireId: number
 }
 
-const Challenge = ({ mission, point, compeId, courseId, playerId, umpireId }: ChallengeProps) => {
-  if (mission !== null && mission !== undefined && point !== null && point !== undefined) {
+const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireId }: ChallengeProps) => {
+  if (
+    field !== null &&
+    field !== undefined &&
+    mission !== null &&
+    mission !== undefined &&
+    point !== null &&
+    point !== undefined
+  ) {
+    const fieldValue = deserializeField(field)
     const missionPair = missionStatePair(deserializeMission(mission))
     const pointState: PointState = deserializePoint(point)
     const [isRetry, setIsRetry] = useState<boolean>(false)
@@ -117,6 +128,11 @@ const Challenge = ({ mission, point, compeId, courseId, playerId, umpireId }: Ch
       }
     }
 
+    // パネルをクリックした時
+    const handlePanelClick = () => {
+      console.log("param")
+    }
+
     return (
       <>
         <div className="grid justify-items-center h-full">
@@ -155,6 +171,7 @@ const Challenge = ({ mission, point, compeId, courseId, playerId, umpireId }: Ch
                 </p>
                 <p>{pointState[nowMission + 2]}ポイント</p>
               </div>
+              <Field field={fieldValue} isEdit={false} onPanelClick={handlePanelClick} />
 
               <CircleButton
                 onClick={handleNext}

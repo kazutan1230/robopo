@@ -61,7 +61,7 @@ export const View = ({ courseDataList, initialPlayerDataList }: ViewProps) => {
 
       {step === 3 && (
         <div>
-          <h2>押したら始まります。</h2>
+          <h2>スタートを押すと始まります。</h2>
           <CircleButton
             onClick={() => setStep(4)}
             classNameText="mt-20 mb-20 w-48 h-48 text-3xl bg-gradient-to-r from-green-400 to-green-600 text-white"
@@ -73,6 +73,7 @@ export const View = ({ courseDataList, initialPlayerDataList }: ViewProps) => {
       {step === 4 && courseId !== null && playerId !== null && (
         <div>
           <Challenge
+            field={courseDataList.selectCourses.find((course) => course.id === courseId)?.field}
             mission={courseDataList.selectCourses.find((course) => course.id === courseId)?.mission}
             point={courseDataList.selectCourses.find((course) => course.id === courseId)?.point}
             compeId={compeId}
