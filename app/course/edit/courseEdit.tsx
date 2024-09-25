@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { FieldState, PanelValue, putPanel } from "@/app/components/course/util"
+import { FieldState, PanelValue, putPanel } from "@/app/components/course/utils"
 import { SelectPanel } from "@/app/components/course/selectPanel"
 import { Field } from "@/app/components/course/field"
 

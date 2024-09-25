@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { MissionUI } from "@/app/components/course/missionUI"
 import { MissionList } from "@/app/components/course/missionList"
-import { MissionState, PointState } from "@/app/components/course/util"
+import { MissionState, PointState } from "@/app/components/course/utils"
 
 type MissionEditProps = {
   mission: MissionState

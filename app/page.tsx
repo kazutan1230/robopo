@@ -9,12 +9,9 @@ export default function Home() {
           <Link href="/challenge" className="btn btn-primary min-w-36 min-h-20 text-3xl max-w-fit mx-5">
             採点
           </Link>
-          <button className="btn btn-primary min-w-36 min-h-20 text-3xl max-w-fit mx-5" disabled>
+          <Link href="/summary" className="btn btn-primary min-w-36 min-h-20 text-3xl max-w-fit mx-5">
             集計結果
-          </button>
-          {/* <Link href="/summary" className="btn btn-primary min-w-36 min-h-20 text-3xl max-w-fit mx-5">
-            集計結果
-          </Link> */}
+          </Link>
         </div>
         <div className="flex justify-center w-full mt-10">
           <Link href="/course" className="btn btn-primary min-w-36 min-h-20 text-3xl max-w-fit mx-5">

@@ -3,19 +3,6 @@ import { createChallenge } from "@/app/lib/db/queries/insert"
 
 export const revalidate = 0
 
-// export async function GET(request: NextRequest) {
-//   const searchParams = request.nextUrl.searchParams
-//   const rawId = searchParams.get("id")
-//   const id = rawId ? parseInt(rawId) : 0
-
-//   if (id !== 0) {
-//     const course = await getCourseById(id)
-//     return NextResponse.json({ getCourse: course })
-//   } else {
-//     return NextResponse.json({ getCourse: null })
-//   }
-// }
-
 export async function POST(req: NextRequest) {
   const reqbody = await req.json()
   const { result1, result2, competitionId, courseId, playerId, umpireId } = reqbody

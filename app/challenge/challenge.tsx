@@ -7,7 +7,7 @@ import {
   deserializePoint,
   missionStatePair,
   panelOrDegree,
-} from "@/app/components/course/util"
+} from "@/app/components/course/utils"
 import FailureModal from "@/app/challenge/failureModal"
 import { calcPoint } from "@/app/components/challenge/utils"
 type ChallengeProps = {
@@ -36,7 +36,8 @@ const Challenge = ({ mission, point, compeId, courseId, playerId, umpireId }: Ch
 
     const handleNext = () => {
       if (nowMission < missionPair.length && pointState[nowMission + 2] !== null) {
-        const point = calcPoint(pointState, nowMission)
+        // ポイントを加算
+        const point = calcPoint(pointState, nowMission + 1)
         setPointCount(point)
         // これでゴールか
         if (nowMission === missionPair.length - 1) {
@@ -66,7 +67,7 @@ const Challenge = ({ mission, point, compeId, courseId, playerId, umpireId }: Ch
           // リトライか
           setResult2(result2 - 1)
         }
-        const point = calcPoint(pointState, nowMission - 2)
+        const point = calcPoint(pointState, nowMission - 1)
         setPointCount(point)
         setNowMission(nowMission - 1)
       }

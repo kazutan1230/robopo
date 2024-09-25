@@ -12,7 +12,7 @@ import {
   MissionState,
   PointState,
   deserializePoint,
-} from "@/app/components/course/util"
+} from "@/app/components/course/utils"
 import { getCourse } from "@/app/components/course/listUtils"
 import { finModal, saveModal } from "@/app/components/course/modals"
 

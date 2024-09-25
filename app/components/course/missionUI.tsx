@@ -1,4 +1,4 @@
-import { MissionState, MissionString, MissionValue, PointState, PointValue } from "@/app/components/course/util"
+import { MissionState, MissionString, MissionValue, PointState, PointValue } from "@/app/components/course/utils"
 import { useState } from "react"
 
 type MissionUIProps = {

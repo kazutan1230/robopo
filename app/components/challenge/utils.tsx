@@ -1,6 +1,6 @@
 import { SelectPlayer } from "@/app/lib/db/schema"
 import { BASE_URL } from "@/app/lib/const"
-import { PointState } from "@/app/components/course/util"
+import { PointState } from "@/app/components/course/utils"
 
 // コース一覧情報を取得する関数
 export async function getPlayerList(): Promise<{
@@ -26,15 +26,14 @@ export async function getPlayerList(): Promise<{
 
 // 進んだmissionの数によって獲得したポイントを計算する
 // pointStateは start, goal, mission...の順でポイントが入ってる。
-// index = 0からが最初のmissionでそのpointは pointState[2], index = i のポイントは pointState[i+2]
-// 最後のmissionは index = pointState.length-3 になるので、その時は goalのポイント pointState[1]を足す
-// indexが合わない時は null 返しているが変更するかも。
-export const calcPoint = (pointState: PointState, index: number) => {
-  if (index > pointState.length - 2) return null
-  let point = 0
-  for (let i = 0; i <= index; i++) {
-    point += Number(pointState[i + 2])
-    if (i === pointState.length - 3) point += Number(pointState[1])
+// index = 2からが最初のmissionでそのpointは pointState[2], index = i のポイントは pointState[i]
+// 最後のmissionは index = pointState.length-1 になるので、その時は goalのポイント pointState[1]を足す
+export const calcPoint = (pointState: PointState, index: number | null) => {
+  if (index === null) return 0
+  let point = Number(pointState[0]) //初期値はstartの値(ハンデ的な)
+  for (let i = 2; i < index + 2; i++) {
+    point += Number(pointState[i])
+    if (i === pointState.length - 1) point += Number(pointState[1]) //goalの点を加算
   }
   return point
 }

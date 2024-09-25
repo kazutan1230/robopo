@@ -6,7 +6,7 @@ import {
   PointState,
   missionStatePair,
   panelOrDegree,
-} from "@/app/components/course/util"
+} from "@/app/components/course/utils"
 
 type MissionEditProps = {
   mission: MissionState
@@ -20,7 +20,6 @@ export const MissionList = ({ mission, point, radio, setRadio }: MissionEditProp
   useEffect(() => {
     const newStatePair = missionStatePair(mission)
     setMissionStatePair(newStatePair)
-    console.log("statePair: ", statePair)
   }, [mission])
 
   // ラジオボタンを押した時の動作
@@ -30,7 +29,6 @@ export const MissionList = ({ mission, point, radio, setRadio }: MissionEditProp
   // ラジオボタン value=-3 はGoal
   const handleRadioChange = (selectedIndex: number) => {
     setRadio(selectedIndex) // 選択されたインデックスを状態として保存
-    console.log("selectedid: ", selectedIndex)
   }
 
   return (
