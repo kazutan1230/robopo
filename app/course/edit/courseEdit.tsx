@@ -25,7 +25,7 @@ export default function CourseEdit({ field, setField }: CourseEditProps) {
         <div className="card bg-base-100 w-full min-w-72 shadow-xl">
           <div className="card-body">
             <p>CourseEdit</p>
-            <Field field={field} isEdit={true} onPanelClick={handlePanelClick} />
+            <Field type="edit" field={field} onPanelClick={handlePanelClick} />
           </div>
         </div>
         <div className="card bg-base-100 w-full min-w-72 shadow-xl">

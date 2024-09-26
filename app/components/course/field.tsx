@@ -1,38 +1,47 @@
-import { FieldState, MAX_FIELD_WIDTH, MAX_FIELD_HEIGHT, PANEL_WIDTH, PANEL_HEIGHT } from "@/app/components/course/utils"
+import React from "react"
+import {
+  MAX_FIELD_WIDTH,
+  MAX_FIELD_HEIGHT,
+  PANEL_WIDTH,
+  PANEL_HEIGHT,
+  FieldState,
+  MissionValue,
+} from "@/app/components/course/utils"
 import { Panel } from "@/app/components/course/panel"
 import { Robot } from "@/app/components/course/robot"
-import { useState } from "react"
 
-type FieldProps = {
+type EditProps = {
+  type: "edit"
   field: FieldState
-  isEdit: boolean
   onPanelClick: (row: number, col: number) => void
 }
 
-// Fieldを表すコンポーネント
-export const Field = ({ field, isEdit, onPanelClick }: FieldProps) => {
-  const [botPosition, setBotPosition] = useState({ row: 0, col: 0 })
+type ChallengeProps = {
+  type: "challenge"
+  field: FieldState
+  botPosition: { row: number; col: number }
+  botDirection: MissionValue
+  onPanelClick: (row: number, col: number) => void
+}
 
-  const handlePanelClick = (row: number, col: number) => {
-    // Editモードでなければbotを動かす。
-    if (!isEdit) {
-      setBotPosition({ row, col })
-    }
-    onPanelClick(row, col)
-  }
+type Props = EditProps | ChallengeProps
+
+// Fieldを表すコンポーネント
+export const Field = (props: Props) => {
   return (
     <div
       className={"relative grid grid-cols-" + MAX_FIELD_WIDTH + " grid-rows-" + MAX_FIELD_HEIGHT + " mx-auto"}
       style={{ width: MAX_FIELD_WIDTH * PANEL_WIDTH + "px", height: MAX_FIELD_HEIGHT * PANEL_HEIGHT + "px" }}>
-      {field.map((row, rowIndex) =>
+      {props.field.map((row, rowIndex) =>
         row.map((panel, colIndex) => (
-          <Panel key={`${rowIndex}-${colIndex}`} value={panel} onClick={() => handlePanelClick(rowIndex, colIndex)} />
+          <Panel key={`${rowIndex}-${colIndex}`} value={panel} onClick={() => props.onPanelClick(rowIndex, colIndex)} />
         ))
       )}
-      {/* Editモードでなければbotを表示 */}
-      {!isEdit && <Robot row={botPosition.row} col={botPosition.col} />}
+      {/* challengeの時はbotを表示 */}
+      {props.type === "challenge" && (
+        <Robot row={props.botPosition.row} col={props.botPosition.col} direction={props.botDirection} />
+      )}
     </div>
   )
 }
-
 export default Field
