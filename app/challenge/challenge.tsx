@@ -3,14 +3,19 @@ import CircleButton from "@/app/components/parts/circleButton"
 import {
   MissionString,
   PointState,
+  deserializeField,
   deserializeMission,
   deserializePoint,
   missionStatePair,
   panelOrDegree,
+  findStart,
+  getRobotPosition,
 } from "@/app/components/course/utils"
+import { Field } from "@/app/components/course/field"
 import FailureModal from "@/app/challenge/failureModal"
 import { calcPoint } from "@/app/components/challenge/utils"
 type ChallengeProps = {
+  field: string | null | undefined
   mission: string | null | undefined
   point: string | null | undefined
   compeId: number
@@ -19,9 +24,18 @@ type ChallengeProps = {
   umpireId: number
 }
 
-const Challenge = ({ mission, point, compeId, courseId, playerId, umpireId }: ChallengeProps) => {
-  if (mission !== null && mission !== undefined && point !== null && point !== undefined) {
-    const missionPair = missionStatePair(deserializeMission(mission))
+const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireId }: ChallengeProps) => {
+  if (
+    field !== null &&
+    field !== undefined &&
+    mission !== null &&
+    mission !== undefined &&
+    point !== null &&
+    point !== undefined
+  ) {
+    const fieldState = deserializeField(field)
+    const missionState = deserializeMission(mission)
+    const missionPair = missionStatePair(missionState)
     const pointState: PointState = deserializePoint(point)
     const [isRetry, setIsRetry] = useState<boolean>(false)
     const [isGoal, setIsGoal] = useState<boolean>(false)
@@ -34,24 +48,41 @@ const Challenge = ({ mission, point, compeId, courseId, playerId, umpireId }: Ch
     const [message, setMessage] = useState<string>("")
     const [modalOpen, setModalOpen] = useState<boolean>(false)
 
-    const handleNext = () => {
+    const start = findStart(fieldState)
+    const [botPosition, setBotPosition] = useState({ row: start?.[0] || 0, col: start?.[1] || 0 })
+    const [botDirection, setBotDirection] = useState(missionState[0])
+
+    // クリックされたpanelの情報を入れる
+    const handleNext = (row: number, col: number) => {
       if (nowMission < missionPair.length && pointState[nowMission + 2] !== null) {
-        // ポイントを加算
-        const point = calcPoint(pointState, nowMission + 1)
-        setPointCount(point)
-        // これでゴールか
-        if (nowMission === missionPair.length - 1) {
-          // 全クリアでゴールポイントを加算
-          setIsGoal(true)
-        } else {
-          setNowMission(nowMission + 1)
-        }
-        // 一回目か
-        if (!isRetry) {
-          setResult1(result1 + 1)
-        } else if (result2 !== null) {
-          // リトライか
-          setResult2(result2 + 1)
+        const [newRow, newCol, direction] = getRobotPosition(
+          start?.[0] || 0,
+          start?.[1] || 0,
+          missionState,
+          nowMission + 1
+        )
+        if (newRow === row && newCol === col) {
+          // ポイントを加算
+          const point = calcPoint(pointState, nowMission + 1)
+          setPointCount(point)
+          // これでゴールか
+          if (nowMission === missionPair.length - 1) {
+            // 全クリアでゴールポイントを加算
+            setIsGoal(true)
+          } else {
+            setNowMission(nowMission + 1)
+          }
+          // 一回目か
+          if (!isRetry) {
+            setResult1(result1 + 1)
+          } else if (result2 !== null) {
+            // リトライか
+            setResult2(result2 + 1)
+          }
+          // ロボットを動かす
+          setBotPosition({ row: row, col: col })
+          setBotDirection(direction)
+          console.log("row, col, direction", row, col, direction)
         }
       } else {
         setNowMission(0)
@@ -67,8 +98,15 @@ const Challenge = ({ mission, point, compeId, courseId, playerId, umpireId }: Ch
           // リトライか
           setResult2(result2 - 1)
         }
+        // ポイントを戻す
         const point = calcPoint(pointState, nowMission - 1)
         setPointCount(point)
+        // ロボットを戻す
+        const [row, col, direction] = getRobotPosition(start?.[0] || 0, start?.[1] || 0, missionState, nowMission - 1)
+        setBotPosition({ row: row, col: col })
+        setBotDirection(direction)
+        console.log("row, col, direction", row, col, direction)
+        // nowMissionを戻す
         setNowMission(nowMission - 1)
       }
     }
@@ -79,6 +117,8 @@ const Challenge = ({ mission, point, compeId, courseId, playerId, umpireId }: Ch
       setResult2(0)
       setPointCount(0)
       setNowMission(0)
+      setBotPosition({ row: start?.[0] || 0, col: start?.[1] || 0 })
+      setBotDirection(missionState[0])
     }
 
     // 結果送信
@@ -115,6 +155,11 @@ const Challenge = ({ mission, point, compeId, courseId, playerId, umpireId }: Ch
       } finally {
         setLoading(false)
       }
+    }
+
+    // パネルをクリックした時
+    const handlePanelClick = () => {
+      console.log("param")
     }
 
     return (
@@ -155,12 +200,14 @@ const Challenge = ({ mission, point, compeId, courseId, playerId, umpireId }: Ch
                 </p>
                 <p>{pointState[nowMission + 2]}ポイント</p>
               </div>
-
-              <CircleButton
-                onClick={handleNext}
-                classNameText="mt-12 mb-12 w-36 h-36 text-6xl bg-gradient-to-r from-green-400 to-green-600 text-white"
-                buttonText="OK"
+              <Field
+                type="challenge"
+                field={fieldState}
+                botPosition={botPosition}
+                botDirection={botDirection}
+                onPanelClick={(row, col) => handleNext(row, col)}
               />
+
               <p className="text-3xl font-bold text-orange-600">現在: {pointCount}ポイント</p>
               <div className="grid grid-cols-2 gap-4 p-4">
                 <button

@@ -69,6 +69,16 @@ export const isGoal = (field: FieldState): boolean => {
   return false
 }
 
+// field上のstartの位置を返す関数
+export const findStart = (field: FieldState): [number, number] | null => {
+  for (let i = 0; i < MAX_FIELD_WIDTH; i++) {
+    for (let j = 0; j < MAX_FIELD_HEIGHT; j++) {
+      if (field[i][j] === "start") return [i, j]
+    }
+  }
+  return null
+}
+
 // 指定された位置にpanelを置く処理を行う関数
 export const putPanel = (field: FieldState, row: number, col: number, mode: PanelValue): FieldState | null => {
   const newField = field.map((row) => [...row]) // フィールドのコピーを作成
@@ -153,4 +163,118 @@ export const serializePoint = (pointState: PointState): string => {
 export const deserializePoint = (str: string | null): PointState => {
   if (!str) return []
   return str.split(";").map((point) => (point === "null" ? null : (point as unknown as PointValue)))
+}
+
+// 現在のrowとcolとdirectionとmissionPairから次のpositionとdirectionを取得する関数
+export const getNextPosition = (
+  row: number,
+  col: number,
+  direction: MissionValue,
+  mission0: MissionValue,
+  mission1: MissionValue
+): [number, number, MissionValue] => {
+  // mission0, mission1の向きによって次のpositionとdirectionを決定する
+  const mission1Num = Number(mission1)
+  if (isNaN(mission1Num)) return [row, col, direction]
+
+  switch (mission0) {
+    case "mf":
+      switch (direction) {
+        case "u":
+          return [row - mission1Num, col, "u"]
+        case "r":
+          return [row, col + mission1Num, "r"]
+        case "d":
+          return [row + mission1Num, col, "d"]
+        case "l":
+          return [row, col - mission1Num, "l"]
+        default:
+          return [row, col, direction]
+      }
+    case "mb":
+      switch (direction) {
+        case "u":
+          return [row + mission1Num, col, "u"]
+        case "r":
+          return [row, col - mission1Num, "r"]
+        case "d":
+          return [row - mission1Num, col, "d"]
+        case "l":
+          return [row, col + mission1Num, "l"]
+        default:
+          return [row, col, direction]
+      }
+    case "tr":
+      return [row, col, getDirection(direction, "tr", mission1Num)]
+    case "tl":
+      return [row, col, getDirection(direction, "tl", mission1Num)]
+    default:
+      return [row, col, direction]
+  }
+}
+
+// directionと回転方向、回転角度(90度単位)から次のdirectionを取得する関数
+const getDirection = (direction: MissionValue, rotate: MissionValue, angle: MissionValue): MissionValue => {
+  if (typeof angle !== "number") return direction
+  let temp: number
+  switch (direction) {
+    case "u":
+      temp = 0
+      break
+    case "r":
+      temp = 90
+      break
+    case "d":
+      temp = 180
+      break
+    case "l":
+      temp = 270
+      break
+    default:
+      temp = 0
+  }
+
+  switch (rotate) {
+    case "tr":
+      temp += angle
+      break
+    case "tl":
+      temp -= angle
+      break
+    default:
+      break
+  }
+
+  temp = temp % 360
+  if (temp < 0) temp += 360
+  switch (temp) {
+    case 0:
+      return "u"
+    case 90:
+      return "r"
+    case 180:
+      return "d"
+    case 270:
+      return "l"
+    default:
+      return "u"
+  }
+}
+
+// 初期配置と現在のmissionStateからRobotのpositionとdirectionを取得する関数
+export const getRobotPosition = (
+  startRow: number,
+  startCol: number,
+  missionState: MissionState,
+  nowMission: number
+): [number, number, MissionValue] => {
+  // 初期配置
+  let row: number = startRow
+  let col: number = startCol
+  let direction: MissionValue = missionState[0]
+  const missionPair = missionStatePair(missionState)
+  for (let i = 0; i < nowMission; i++) {
+    ;[row, col, direction] = getNextPosition(row, col, direction, missionPair[i][0], missionPair[i][1])
+  }
+  return [row, col, direction]
 }
