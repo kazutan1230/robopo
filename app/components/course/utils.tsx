@@ -278,3 +278,25 @@ export const getRobotPosition = (
   }
   return [row, col, direction]
 }
+
+// courseとmissionの有効性を確認する関数
+export const checkValidity = (field: FieldState, mission: MissionState): boolean => {
+  // startとgoalの存在を確認
+  if (!isStart(field) || !isGoal(field)) return false
+  // 全てのmissionにおいてコース上か確認する
+  const missionPair = missionStatePair(mission)
+  const start = findStart(field)
+  for (let i = 0; i < missionPair.length; i++) {
+    const [row, col, dir] = getRobotPosition(start?.[0] || 0, start?.[1] || 0, mission, i)
+    console.log("i, row, col, field[row][col]", i, row, col, field[row][col])
+    // コース上に存在しない場合はfalse
+    if (field[row][col] !== "start" && field[row][col] !== "goal" && field[row][col] !== "route") return false
+    // 最後のmissionでgoal上に存在しない場合はfalse
+    if (i === missionPair.length - 1) {
+      const [lastRow, lastCol, lastDir] = getNextPosition(row, col, dir, missionPair[i][0], missionPair[i][1])
+      if (field[lastRow][lastCol] !== "goal") return false
+    }
+  }
+  // 全checkが通ったらtrue
+  return true
+}

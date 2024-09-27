@@ -1,26 +1,10 @@
-"use client"
 import Link from "next/link"
 import Image from "next/image"
-import { useState } from "react"
 import DropdownMenu from "@/app/components/parts/dropdownMenu"
 
 export const Header = () => {
-  const [isOpen, setOpen] = useState(false)
-
-  const handleMenuOpen = () => {
-    console.log("isopenbf", isOpen)
-    setOpen(!isOpen)
-    console.log("isopenaf", isOpen)
-  }
-
-  const handleMenuClose = () => {
-    console.log("isopenbf", isOpen)
-    setOpen(false)
-    console.log("isopenaf", isOpen)
-  }
-
   return (
-    <header className="flex flex-row h-24 md:h-14 mb-5 items-center relative">
+    <header className="flex flex-row h-24 md:h-14 items-center relative">
       {/* Logo & DropdownMenu */}
       <div className="flex items-center w-auto">
         {/* Logo */}
