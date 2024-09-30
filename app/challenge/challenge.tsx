@@ -1,5 +1,4 @@
 import { useState } from "react"
-import CircleButton from "@/app/components/parts/circleButton"
 import {
   MissionString,
   PointState,
@@ -12,7 +11,7 @@ import {
   getRobotPosition,
 } from "@/app/components/course/utils"
 import { Field } from "@/app/components/course/field"
-import FailureModal from "@/app/challenge/failureModal"
+import ChallengeModal from "@/app/challenge/challengeModal"
 import { calcPoint } from "@/app/components/challenge/utils"
 type ChallengeProps = {
   field: string | null | undefined
@@ -69,15 +68,18 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
           if (nowMission === missionPair.length - 1) {
             // 全クリアでゴールポイントを加算
             setIsGoal(true)
-          } else {
-            setNowMission(nowMission + 1)
+            setModalOpen(true)
           }
+          // goalの時もnowMissionを進めるから不具合あるかも。
+          setNowMission(nowMission + 1)
           // 一回目か
           if (!isRetry) {
             setResult1(result1 + 1)
+            console.log("result1", result1)
           } else if (result2 !== null) {
             // リトライか
             setResult2(result2 + 1)
+            console.log("result2", result2)
           }
           // ロボットを動かす
           setBotPosition({ row: row, col: col })
@@ -108,6 +110,10 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
         console.log("row, col, direction", row, col, direction)
         // nowMissionを戻す
         setNowMission(nowMission - 1)
+        // goalしたのを戻す
+        if (isGoal) {
+          setIsGoal(false)
+        }
       }
     }
 
@@ -157,87 +163,88 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
       }
     }
 
-    // パネルをクリックした時
-    const handlePanelClick = () => {
-      console.log("param")
-    }
-
     return (
       <>
         <div className="grid justify-items-center h-full">
-          {isGoal ? (
-            <>
-              {/* <div className="flex flex-col justify-items-center gap-4 mx-4"> */}
-              <div className="grid gap-6 items-center justify-center px-4 py-6 sm:px-6 lg:px-8 text-center">
-                <p className="text-3xl font-bold text-orange-600">おめでとう!</p>
-                {pointState[1] !== null && pointState[1] > 0 && (
-                  <p className="text-2xl font-bold text-orange-600">ゴールポイント: {pointState[1]}ポイント</p>
-                )}
-                <p className="text-2xl font-bold text-orange-600">結果: クリア {pointCount}ポイント</p>
-                {isSuccess ? (
-                  // チャレンジ終了後、画面読み込み直して初期状態に戻る
-                  <button className="btn btn-accent mx-auto text-2xl" onClick={() => window.location.reload()}>
-                    コース一覧に戻る
-                  </button>
-                ) : (
-                  <button className="btn btn-accent mx-auto text-2xl" onClick={handleSubmit} disabled={loading}>
-                    {loading ? <span className="loading loading-spinner"></span> : "結果送信"}
-                  </button>
-                )}
-                {message && <p className="mx-auto mt-12">{message}</p>}
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="grid justify-items-center mx-4">
-                <p>{isRetry ? "やり直し中" : "チャレンジ中"}</p>
-                <p>↓ミッション↓</p>
-                <p className="text-3xl font-bold text-orange-600">
-                  {nowMission + 1} :{" "}
-                  {missionPair[nowMission][0] === null ? "-" : MissionString[missionPair[nowMission][0]]}
-                  {missionPair[nowMission][1] === null ? "-" : missionPair[nowMission][1]}
-                  {missionPair[nowMission][0] === null ? "-" : panelOrDegree(missionPair[nowMission][0])}
-                </p>
-                <p>{pointState[nowMission + 2]}ポイント</p>
-              </div>
-              <Field
-                type="challenge"
-                field={fieldState}
-                botPosition={botPosition}
-                botDirection={botDirection}
-                onPanelClick={(row, col) => handleNext(row, col)}
-              />
+          <>
+            <div className="grid justify-items-center mx-4">
+              {isGoal ? (
+                <>
+                  <p className="text-3xl font-bold text-orange-600">おめでとう!</p>
+                  {pointState[1] !== null && pointState[1] > 0 && (
+                    <p className="text-2xl font-bold text-orange-600">ゴールポイント: {pointState[1]}ポイント</p>
+                  )}
+                  <p className="text-2xl font-bold text-orange-600">結果: クリア {pointCount}ポイント</p>
+                  {isSuccess ? (
+                    // チャレンジ終了後、画面読み込み直して初期状態に戻る
+                    <button className="btn btn-accent mx-auto text-2xl" onClick={() => window.location.reload()}>
+                      コース一覧に戻る
+                    </button>
+                  ) : (
+                    <button
+                      className="btn btn-accent mx-auto text-2xl"
+                      onClick={() => setModalOpen(true)}
+                      disabled={loading}>
+                      {loading ? <span className="loading loading-spinner"></span> : "結果送信"}
+                    </button>
+                  )}
+                  {message && <p className="mx-auto mt-12">{message}</p>}
+                </>
+              ) : (
+                <>
+                  <p>{isRetry ? "やり直し中" : "チャレンジ中"}</p>
+                  <p>↓ミッション↓</p>
+                  <p className="text-3xl font-bold text-orange-600">
+                    {nowMission + 1} :{" "}
+                    {missionPair[nowMission][0] === null ? "-" : MissionString[missionPair[nowMission][0]]}
+                    {missionPair[nowMission][1] === null ? "-" : missionPair[nowMission][1]}
+                    {missionPair[nowMission][0] === null ? "-" : panelOrDegree(missionPair[nowMission][0])}
+                  </p>
+                  <p>{pointState[nowMission + 2]}ポイント</p>
+                </>
+              )}
+            </div>
+            <Field
+              type="challenge"
+              field={fieldState}
+              botPosition={botPosition}
+              botDirection={botDirection}
+              onPanelClick={(row, col) => handleNext(row, col)}
+            />
 
-              <p className="text-3xl font-bold text-orange-600">現在: {pointCount}ポイント</p>
-              <div className="grid grid-cols-2 gap-4 p-4">
-                <button
-                  type="button"
-                  id="add"
-                  className="btn btn-primary mx-auto"
-                  onClick={handleBack}
-                  disabled={nowMission === 0}>
-                  1つ戻る
+            <p className="text-3xl font-bold text-orange-600">現在: {pointCount}ポイント</p>
+            <div className="grid grid-cols-2 gap-4 p-4">
+              <button
+                type="button"
+                id="add"
+                className="btn btn-primary mx-auto"
+                onClick={handleBack}
+                disabled={nowMission === 0}>
+                1つ戻る
+              </button>
+              <button
+                type="button"
+                className="btn btn-neutral mx-auto"
+                onClick={() => setModalOpen(true)}
+                disabled={isGoal}>
+                失敗
+              </button>
+              {!isRetry && (
+                <button type="button" className="btn btn-primary mx-auto " onClick={handleRetry}>
+                  やり直し
                 </button>
-                <button type="button" className="btn btn-neutral mx-auto" onClick={() => setModalOpen(true)}>
-                  失敗
-                </button>
-                {!isRetry && (
-                  <button type="button" className="btn btn-primary mx-auto " onClick={handleRetry}>
-                    やり直し
-                  </button>
-                )}
-              </div>
-            </>
-          )}
+              )}
+            </div>
+          </>
           {modalOpen && (
-            <FailureModal
+            <ChallengeModal
               setModalOpen={setModalOpen}
               handleSubmit={handleSubmit}
               loading={loading}
               isSuccess={isSuccess}
               message={message}
-              result1Point={calcPoint(pointState, result1 - 1)}
-              result2Point={result2 !== null ? calcPoint(pointState, result2 - 1) : null}
+              result1Point={isRetry ? calcPoint(pointState, result1) : pointCount}
+              result2Point={isRetry ? pointCount : null}
             />
           )}
         </div>
