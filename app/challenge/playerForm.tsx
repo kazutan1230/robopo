@@ -73,9 +73,6 @@ const PlayerForm = ({ playerDataList, setPlayerDataList, setStep, playerId, setP
     setPlayerId(Number(event.target.value))
   }
 
-  const handleNextButton = () => {
-    setStep(2)
-  }
   const handleDelete = async () => {
     try {
       setLoading(true)
@@ -102,7 +99,7 @@ const PlayerForm = ({ playerDataList, setPlayerDataList, setStep, playerId, setP
   return (
     <>
       <h2 className="text-center text-xl font-semibold">プレイヤー一覧</h2>
-      <div className=" overflow-x-auto w-full h-96 m-3">
+      <div className=" overflow-x-auto w-full h-80 sm:h-96 m-3">
         <table className="table table-pin-rows">
           <thead>
             <tr>
