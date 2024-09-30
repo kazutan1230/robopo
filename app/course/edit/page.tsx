@@ -14,7 +14,7 @@ import {
   deserializePoint,
 } from "@/app/components/course/utils"
 import { getCourse } from "@/app/components/course/listUtils"
-import { finModal, saveModal } from "@/app/components/course/modals"
+import { finModal, saveModal, validationModal } from "@/app/components/course/modals"
 
 export default function Edit() {
   const searchParams = useSearchParams()
@@ -56,6 +56,9 @@ export default function Edit() {
           </div>
         </div>
         <div className="flex p-4 mt-0 gap-4 justify-center">
+          <button className="btn btn-primary min-w-28 max-w-fit" onClick={() => handleButtonClick(3)}>
+            有効性チェック
+          </button>
           <button className="btn btn-primary min-w-28 max-w-fit" onClick={() => handleButtonClick(2)}>
             コースを保存
           </button>
@@ -67,6 +70,7 @@ export default function Edit() {
 
       {modalOpen === 1 && finModal({ setModalOpen })}
       {modalOpen === 2 && saveModal({ setModalOpen, name, setName, field, mission, point })}
+      {modalOpen === 3 && validationModal({ setModalOpen, field, mission })}
     </>
   )
 }

@@ -7,6 +7,7 @@ import {
   serializeField,
   serializeMission,
   serializePoint,
+  checkValidity,
 } from "@/app/components/course/utils"
 
 type FinModalProps = {
@@ -24,15 +25,17 @@ type SaveModalProps = {
   // setSuccessOrNot: React.Dispatch<React.SetStateAction<string | null>>
 }
 
+type ValidationModalProps = {
+  setModalOpen: React.Dispatch<React.SetStateAction<number>>
+  field: FieldState
+  mission: MissionState
+}
+
 // 終了前に保存するかどうか聞くmodal
 export const finModal = ({ setModalOpen }: FinModalProps) => {
   const handleYes = () => {
     setModalOpen(2)
   }
-
-  // const handleNo = () => {
-  //     setModalOpen(0)
-  // }
 
   const handleCancel = () => {
     setModalOpen(0)
@@ -137,6 +140,48 @@ export const saveModal = ({ setModalOpen, name, setName, field, mission, point }
         </form>
       </div>
       <form method="dialog" className="modal-backdrop">
+        <button>close</button>
+      </form>
+    </dialog>
+  )
+}
+
+// コースを検証した結果を表示するmodal
+export const validationModal = ({ setModalOpen, field, mission }: ValidationModalProps) => {
+  const check = checkValidity(field, mission)
+  const handleYes = () => {
+    setModalOpen(2)
+  }
+
+  const handleCancel = () => {
+    setModalOpen(0)
+  }
+  return (
+    <dialog id="validation-modal" className="modal modal-open" onClose={() => setModalOpen(0)}>
+      <div className="modal-box">
+        {check ? (
+          <>
+            <p>コースとミッションは有効です。</p>
+            <p>保存しますか?保存していない編集内容は失われます。</p>
+            <div className="modal-action">
+              <button className="btn btn-accent" onClick={handleYes}>
+                はい
+              </button>
+              <button className="btn" onClick={handleCancel}>
+                編集に戻る
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <p>コースとミッションが有効ではありません。</p>
+            <button className="btn" onClick={handleCancel}>
+              閉じる
+            </button>
+          </>
+        )}
+      </div>
+      <form method="dialog" className="modal-backdrop" onClick={handleCancel}>
         <button>close</button>
       </form>
     </dialog>

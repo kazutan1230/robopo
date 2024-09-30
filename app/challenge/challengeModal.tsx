@@ -1,4 +1,4 @@
-type FailureModalProps = {
+type ChallengeModalProps = {
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
   handleSubmit: () => void
   loading: boolean
@@ -8,7 +8,7 @@ type FailureModalProps = {
   result2Point: number | null
 }
 
-const FailureModal = ({
+const ChallengeModal = ({
   setModalOpen,
   handleSubmit,
   loading,
@@ -16,12 +16,12 @@ const FailureModal = ({
   message,
   result1Point,
   result2Point,
-}: FailureModalProps) => {
+}: ChallengeModalProps) => {
   const handleClick = () => {
     setModalOpen(false)
   }
   return (
-    <dialog id="failure-modal" className="modal modal-open" onClose={() => setModalOpen(false)}>
+    <dialog id="challenge-modal" className="modal modal-open" onClose={() => setModalOpen(false)}>
       <div className="modal-box">
         {isSuccess ? (
           <>
@@ -50,4 +50,4 @@ const FailureModal = ({
   )
 }
 
-export default FailureModal
+export default ChallengeModal

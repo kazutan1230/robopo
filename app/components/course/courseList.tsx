@@ -22,7 +22,7 @@ export const CourseList = ({ courseData, inputType, handleInputChange, checkedId
   }
 
   return (
-    <div className="overflow-x-auto overflow-y-auto max-h-96">
+    <div className="overflow-x-auto overflow-y-auto max-h-80 sm:max-h-96">
       <table className="table table-pin-rows">
         <thead>
           <tr>
