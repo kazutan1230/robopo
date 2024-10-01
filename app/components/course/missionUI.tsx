@@ -25,6 +25,7 @@ export const MissionUI = ({ mission, setMission, point, setPoint, selectedId, se
   const [selectedPoint, setSelectedPoint] = useState<PointValue | null>(null)
 
   const handleMissionChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    console.log("event.target.value: ", event.target.value)
     // 「選択」に変更された場合、MissionもParamもnullにして入れられないようにする。
     // 「選択」をdisabledにすれば良いやんと思うかもしれないが、
     // リストでラジオボタンを切り替えた時の動作に不満があるので、
@@ -40,6 +41,9 @@ export const MissionUI = ({ mission, setMission, point, setPoint, selectedId, se
     if (value === "mf" || value === "mb") {
       setIsMove(true)
       setIsTurn(false)
+      // 前後進の場合、1パネル 1ポイントをここで入れる。
+      setSelectedParam(1)
+      setSelectedPoint(1)
     } else if (value === "tr" || value === "tl") {
       setIsTurn(true)
       setIsMove(false)
@@ -86,14 +90,19 @@ export const MissionUI = ({ mission, setMission, point, setPoint, selectedId, se
     const newMissionState = [...mission]
     const newPointState = [...point]
 
-    if (isStartGoal() && selectedPoint !== null && id === "update") {
+    // if (isStartGoal() && selectedPoint !== null && id === "update") {
+    if (isStartGoal() && id === "update") {
       if (selectedId === -2) {
         // Startで更新ボタン押下時
         newMissionState[0] = selectedMission
-        newPointState[0] = selectedPoint
+        newPointState[0] = 0
+        // start時point選択機能が必要になれば付ける。
+        // newPointState[0] = selectedPoint
       } else {
         // Goalで更新ボタン押下時
-        newMissionState[1] = selectedMission
+        newMissionState[1] = null
+        // goal時向き自動で決まるので、設定しないことにする。
+        // newMissionState[1] = selectedMission
         newPointState[1] = selectedPoint
       }
     } else if (id === "add" && selectedMission !== null && selectedParam !== null && selectedPoint !== null) {
@@ -137,34 +146,72 @@ export const MissionUI = ({ mission, setMission, point, setPoint, selectedId, se
     <div>
       <div>MissionUI</div>
       <div className="container">
-        <label className="label">
-          {selectedId === -2
-            ? "スタートの向き"
-            : selectedId === -3
-            ? "ゴールの向き"
-            : selectedId === null
-            ? "上のいずれかを選択してください"
-            : "ミッション選択"}
-        </label>
-        <div className="flex justify-start">
-          {isStartGoal() ? (
-            <select className="select select-bordered" defaultValue={0} onChange={handleMissionChange}>
-              {/* ここでdisabledにしておくとmissionListでラジオボタン切り替えた際にdefaultが選択してくださいにならないのが気に食わないので、disabledにしない */}
-              {/* <option disabled value={0}> */}
-              <option value={0}>選択してください</option>
-              {(["u", "r", "d", "l"] as Exclude<MissionValue, null>[]).map((value) => (
-                <option key={value} value={value}>
-                  {MissionString[value]}
-                </option>
-              ))}
-            </select>
-          ) : selectedId === null ? null : (
-            <>
-              <select className="select select-bordered" defaultValue={0} onChange={handleMissionChange}>
+        {selectedId === -2 ? (
+          <>
+            <label className="label">スタートの向き</label>
+            <div className="flex justify-start">
+              <select className="select select-bordered" onChange={handleMissionChange}>
                 {/* ここでdisabledにしておくとmissionListでラジオボタン切り替えた際にdefaultが選択してくださいにならないのが気に食わないので、disabledにしない */}
-                {/* <option disabled value={0}>
+                {/* <option disabled value={0}> */}
+                <option disabled selected value={0}>
+                  選択してください
+                </option>
+                {(["u", "r", "d", "l"] as Exclude<MissionValue, null>[]).map((value) => (
+                  <option key={value} value={value}>
+                    {MissionString[value]}
+                  </option>
+                ))}
+              </select>
+              {/* start時point選択機能が必要になれば付ける */}
+              {/* {selectedMission !== null ? (
+                <>
+                  <select
+                    className="select select-bordered ml-2"
+                    defaultValue={0}
+                    onChange={handlePointChange}
+                    >
+                    <option disabled value={0}>
+                      選択
+                    </option>
+                    {[0, 1, 2, 3, 4, 5].map((num) => (
+                      <option key={num} value={num}>
+                        {num}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="self-center ml-2">
+                    ポイント
+                  </p>
+                </>
+              ) : null} */}
+            </div>
+          </>
+        ) : selectedId === -3 ? (
+          <>
+            <label className="label">ゴールポイント</label>
+            <div className="flex justify-start">
+              <select className="select select-bordered ml-2" onChange={handlePointChange}>
+                {/* ここでdisabledにしておくとmissionListでラジオボタン切り替えた際にdefaultが選択してくださいにならないのが気に食わないので、disabledにしない */}
+                <option disabled selected value={undefined}>
                   選択
-                </option> */}
+                </option>
+                {[5, 10].map((num) => (
+                  <option key={num} value={num}>
+                    {num}
+                  </option>
+                ))}
+              </select>
+              <p className="self-center ml-2">ポイント</p>
+            </div>
+          </>
+        ) : selectedId === null ? (
+          <label className="label">上のいずれかを選択してください</label>
+        ) : (
+          <>
+            <label className="label">ミッション選択</label>
+            <div className="flex justify-start">
+              <select className="select select-bordered" defaultValue={0} onChange={handleMissionChange}>
+                {/* ここでdisabledにしておくとmissionListでラジオボタン切り替えた際にdefaultが選択にならないのが気に食わないので、disabledにしない */}
                 <option value={0}>選択</option>
                 {(["mf", "mb", "tr", "tl"] as Exclude<MissionValue, null>[]).map((value) => (
                   <option key={value} value={value}>
@@ -174,56 +221,57 @@ export const MissionUI = ({ mission, setMission, point, setPoint, selectedId, se
               </select>
               {isMove ? (
                 <>
-                  <select className="select select-bordered ml-2" defaultValue={0} onChange={handleParamChange}>
-                    <option disabled value={0}>
-                      選択
-                    </option>
-                    {[1, 2, 3, 4].map((num) => (
+                  {/* 前後進の場合、1パネル 1ポイント */}
+                  <select className="select select-bordered ml-2" defaultValue={1} onChange={handleParamChange}>
+                    {[1].map((num) => (
                       <option key={num} value={num}>
                         {num}
                       </option>
                     ))}
                   </select>
                   <p className="self-center ml-2">パネル</p>
+                  <select className="select select-bordered ml-2" defaultValue={1} onChange={handlePointChange}>
+                    {[1].map((num) => (
+                      <option key={num} value={num}>
+                        {num}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="self-center ml-2">ポイント</p>{" "}
                 </>
               ) : isTurn ? (
                 <>
-                  <select className="select select-bordered ml-2" defaultValue={0} onChange={handleParamChange}>
-                    <option disabled value={0}>
+                  <select className="select select-bordered ml-2" onChange={handleParamChange}>
+                    <option disabled selected value={0}>
                       選択
                     </option>
-                    {[90, 180, 270, 360, 450, 540].map((num) => (
+                    {[90, 180, 270, 360].map((num) => (
                       <option key={num} value={num}>
                         {num}
                       </option>
                     ))}
                   </select>
                   <p className="self-center ml-2">度</p>
+                  <select className="select select-bordered" onChange={handlePointChange}>
+                    <option disabled selected value={0}>
+                      選択
+                    </option>
+                    {[0, 1, 2, 3].map((num) => (
+                      <option key={num} value={num}>
+                        {num}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="self-center ml-2">ポイント</p>
                 </>
               ) : (
                 <p className="self-center">{"<"}-選択してください</p>
               )}
-            </>
-          )}
-          {(isStartGoal() && selectedMission !== null) ||
-          (!isStartGoal() && selectedMission !== null && selectedParam !== null) ? (
-            <>
-              <select className="select select-bordered ml-2" defaultValue={0} onChange={handlePointChange}>
-                <option disabled value={0}>
-                  選択
-                </option>
-                {[0, 1, 2, 3, 4, 5, 6, 10].map((num) => (
-                  <option key={num} value={num}>
-                    {num}
-                  </option>
-                ))}
-              </select>
-              <p className="self-center ml-2">ポイント</p>
-            </>
-          ) : null}
-        </div>
+            </div>
+          </>
+        )}
       </div>
-      <div className="grid grid-cols-4">
+      <div className="grid grid-cols-4 mt-2">
         <div></div>
         <button
           type="button"
@@ -238,7 +286,12 @@ export const MissionUI = ({ mission, setMission, point, setPoint, selectedId, se
           id="update"
           className="btn btn-primary mx-auto"
           onClick={handleButtonClick}
-          disabled={selectedId === null || selectedId === -1}>
+          disabled={
+            selectedId === null ||
+            selectedId === -1 ||
+            (selectedId === -2 && selectedMission === null) ||
+            (selectedId === -3 && selectedPoint === null)
+          }>
           更新
         </button>
         <button
