@@ -9,6 +9,7 @@ import {
 } from "@/app/components/course/utils"
 import { Panel } from "@/app/components/course/panel"
 import { Robot } from "@/app/components/course/robot"
+import { NextArrow } from "@/app/components/course/nextArrow"
 
 type EditProps = {
   type: "edit"
@@ -21,6 +22,7 @@ type ChallengeProps = {
   field: FieldState
   botPosition: { row: number; col: number }
   botDirection: MissionValue
+  nextMissionPair: MissionValue[]
   onPanelClick: (row: number, col: number) => void
 }
 
@@ -39,7 +41,16 @@ export const Field = (props: Props) => {
       )}
       {/* challengeの時はbotを表示 */}
       {props.type === "challenge" && (
-        <Robot row={props.botPosition.row} col={props.botPosition.col} direction={props.botDirection} />
+        <>
+          <Robot row={props.botPosition.row} col={props.botPosition.col} direction={props.botDirection} />
+          <NextArrow
+            row={props.botPosition.row}
+            col={props.botPosition.col}
+            direction={props.botDirection}
+            nextMissionPair={props.nextMissionPair}
+            duration={1.5}
+          />
+        </>
       )}
     </div>
   )

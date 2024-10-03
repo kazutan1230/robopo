@@ -13,6 +13,7 @@ import {
 import { Field } from "@/app/components/course/field"
 import ChallengeModal from "@/app/challenge/challengeModal"
 import { calcPoint } from "@/app/components/challenge/utils"
+
 type ChallengeProps = {
   field: string | null | undefined
   mission: string | null | undefined
@@ -51,6 +52,8 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
     const [botPosition, setBotPosition] = useState({ row: start?.[0] || 0, col: start?.[1] || 0 })
     const [botDirection, setBotDirection] = useState(missionState[0])
 
+    const [strictMode, setStrictMode] = useState<boolean>(false)
+
     // クリックされたpanelの情報を入れる
     const handleNext = (row: number, col: number) => {
       if (nowMission < missionPair.length && pointState[nowMission + 2] !== null) {
@@ -60,7 +63,8 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
           missionState,
           nowMission + 1
         )
-        if (newRow === row && newCol === col) {
+        // 厳密タップモードonで正しい次のミッションの位置を押した場合又は厳密タップモードOffの場合
+        if ((strictMode && newRow === row && newCol === col) || !strictMode) {
           // ポイントを加算
           const point = calcPoint(pointState, nowMission + 1)
           setPointCount(point)
@@ -82,7 +86,7 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
             console.log("result2", result2)
           }
           // ロボットを動かす
-          setBotPosition({ row: row, col: col })
+          setBotPosition({ row: newRow, col: newCol })
           setBotDirection(direction)
           console.log("row, col, direction", row, col, direction)
         }
@@ -165,77 +169,93 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
 
     return (
       <>
-        <div className="grid justify-items-center h-full">
-          <>
-            <div className="grid justify-items-center mx-4">
-              {isGoal ? (
-                <>
-                  <p className="text-3xl font-bold text-orange-600">おめでとう!</p>
-                  {pointState[1] !== null && pointState[1] > 0 && (
-                    <p className="text-2xl font-bold text-orange-600">ゴールポイント: {pointState[1]}ポイント</p>
-                  )}
-                  <p className="text-2xl font-bold text-orange-600">結果: クリア {pointCount}ポイント</p>
-                  {isSuccess ? (
-                    // チャレンジ終了後、画面読み込み直して初期状態に戻る
-                    <button className="btn btn-accent mx-auto text-2xl" onClick={() => window.location.reload()}>
-                      コース一覧に戻る
-                    </button>
-                  ) : (
-                    <button
-                      className="btn btn-accent mx-auto text-2xl"
-                      onClick={() => setModalOpen(true)}
-                      disabled={loading}>
-                      {loading ? <span className="loading loading-spinner"></span> : "結果送信"}
-                    </button>
-                  )}
-                  {message && <p className="mx-auto mt-12">{message}</p>}
-                </>
-              ) : (
-                <>
-                  <p>{isRetry ? "やり直し中" : "チャレンジ中"}</p>
-                  <p>↓ミッション↓</p>
-                  <p className="text-3xl font-bold text-orange-600">
-                    {nowMission + 1} :{" "}
-                    {missionPair[nowMission][0] === null ? "-" : MissionString[missionPair[nowMission][0]]}
-                    {missionPair[nowMission][1] === null ? "-" : missionPair[nowMission][1]}
-                    {missionPair[nowMission][0] === null ? "-" : panelOrDegree(missionPair[nowMission][0])}
-                  </p>
-                  <p>{pointState[nowMission + 2]}ポイント</p>
-                </>
+        <div className="grid justify-items-center h-full w-screen sm:w-5/6">
+          {isGoal ? (
+            <>
+              <p className="text-3xl font-bold text-orange-600">おめでとう!</p>
+              {pointState[1] !== null && pointState[1] > 0 && (
+                <p className="text-2xl font-bold text-orange-600">ゴールポイント: {pointState[1]}ポイント</p>
               )}
-            </div>
-            <Field
-              type="challenge"
-              field={fieldState}
-              botPosition={botPosition}
-              botDirection={botDirection}
-              onPanelClick={(row, col) => handleNext(row, col)}
-            />
-
-            <p className="text-3xl font-bold text-orange-600">現在: {pointCount}ポイント</p>
-            <div className="grid grid-cols-2 gap-4 p-4">
-              <button
-                type="button"
-                id="add"
-                className="btn btn-primary mx-auto"
-                onClick={handleBack}
-                disabled={nowMission === 0}>
-                1つ戻る
-              </button>
-              <button
-                type="button"
-                className="btn btn-neutral mx-auto"
-                onClick={() => setModalOpen(true)}
-                disabled={isGoal}>
-                失敗
-              </button>
-              {!isRetry && (
-                <button type="button" className="btn btn-primary mx-auto " onClick={handleRetry}>
-                  やり直し
+              <p className="text-2xl font-bold text-orange-600">結果: クリア {pointCount}ポイント</p>
+              {isSuccess ? (
+                // チャレンジ終了後、画面読み込み直して初期状態に戻る
+                <button className="btn btn-accent mx-auto text-2xl" onClick={() => window.location.reload()}>
+                  コース一覧に戻る
+                </button>
+              ) : (
+                <button
+                  className="btn btn-accent mx-auto text-2xl"
+                  onClick={() => setModalOpen(true)}
+                  disabled={loading}>
+                  {loading ? <span className="loading loading-spinner"></span> : "結果送信"}
                 </button>
               )}
-            </div>
-          </>
+              {message && <p className="mx-auto mt-12">{message}</p>}
+            </>
+          ) : (
+            <>
+              <div className="flex flex-row w-full">
+                <div className="w-1/3"></div>
+                <div className="w-1/3 grid justify-items-center">
+                  <p>{isRetry ? "やり直し中" : "チャレンジ中"}</p>
+                  <p>↓ミッション↓</p>
+                </div>
+                <div className="w-1/3 grid items-center justify-end">
+                  <label className="cursor-pointer flex items-center w-full">
+                    <div className="grid grid-col">
+                      <span className="mr-2">厳密タップモード</span>
+                      <input
+                        type="checkbox"
+                        checked={strictMode}
+                        className="toggle toggle-primary ml-auto mr-2"
+                        onChange={() => (strictMode ? setStrictMode(false) : setStrictMode(true))}
+                      />
+                    </div>
+                  </label>
+                </div>
+              </div>
+              <p className="text-3xl font-bold text-orange-600">
+                {nowMission + 1} :{" "}
+                {missionPair[nowMission][0] === null ? "-" : MissionString[missionPair[nowMission][0]]}
+                {missionPair[nowMission][1] === null ? "-" : missionPair[nowMission][1]}
+                {missionPair[nowMission][0] === null ? "-" : panelOrDegree(missionPair[nowMission][0])}
+              </p>
+              <p>{pointState[nowMission + 2]}ポイント</p>
+            </>
+          )}
+          <Field
+            type="challenge"
+            field={fieldState}
+            botPosition={botPosition}
+            botDirection={botDirection}
+            // ゴール後の表示はゴール前のmissionPairで出すので、おかしくなるかも。
+            nextMissionPair={isGoal ? missionPair[nowMission - 1] : missionPair[nowMission]}
+            onPanelClick={(row, col) => handleNext(row, col)}
+          />
+
+          <p className="text-3xl font-bold text-orange-600">現在: {pointCount}ポイント</p>
+          <div className="grid grid-cols-2 gap-4 p-4">
+            <button
+              type="button"
+              id="add"
+              className="btn btn-primary mx-auto"
+              onClick={handleBack}
+              disabled={nowMission === 0}>
+              1つ戻る
+            </button>
+            <button
+              type="button"
+              className="btn btn-neutral mx-auto"
+              onClick={() => setModalOpen(true)}
+              disabled={isGoal}>
+              失敗
+            </button>
+            {!isRetry && (
+              <button type="button" className="btn btn-primary mx-auto " onClick={handleRetry}>
+                やり直し
+              </button>
+            )}
+          </div>
           {modalOpen && (
             <ChallengeModal
               setModalOpen={setModalOpen}

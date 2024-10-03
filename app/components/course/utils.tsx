@@ -283,8 +283,12 @@ export const getRobotPosition = (
 export const checkValidity = (field: FieldState, mission: MissionState): boolean => {
   // startとgoalの存在を確認
   if (!isStart(field) || !isGoal(field)) return false
+  // スタート向きが無ければはfalse
+  if (mission[0] === null) return false
   // 全てのmissionにおいてコース上か確認する
   const missionPair = missionStatePair(mission)
+  // missionPairに何も入っていなければはfalse
+  if (missionPair.length === 0) return false
   const start = findStart(field)
   for (let i = 0; i < missionPair.length; i++) {
     const [row, col, dir] = getRobotPosition(start?.[0] || 0, start?.[1] || 0, mission, i)

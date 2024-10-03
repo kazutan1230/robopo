@@ -8,7 +8,7 @@ type PanelProps = {
 // Panelを表すコンポーネント
 export const Panel = ({ value, onClick }: PanelProps) => {
   const panelStyle = `flex justify-center items-center w-10 h-10 border border-gray-800`
-  const routeStyle = `${value === "start" ? "bg-red-500" : value === "goal" ? "bg-green-400" : "bg-blue-400"} `
+  const routeStyle = `${value === "start" ? "bg-pink-300" : value === "goal" ? "bg-green-300" : "bg-blue-300"} `
   const hasRole = value === "start" || value === "goal" || value === "route"
 
   return (

@@ -99,59 +99,61 @@ const PlayerForm = ({ playerDataList, setPlayerDataList, setStep, playerId, setP
   return (
     <>
       <h2 className="text-center text-xl font-semibold">プレイヤー一覧</h2>
-      <div className=" overflow-x-auto w-full h-80 sm:h-96 m-3">
-        <table className="table table-pin-rows">
-          <thead>
-            <tr>
-              <th>
-                <label>
-                  <input type="radio" disabled={true} />
-                </label>
-              </th>
-              <th>ID</th>
-              <th>名前</th>
-              <th>ゼッケン番号</th>
-              <th>QRコード</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
+      <div className="w-full">
+        <div className="border overflow-x-auto overflow-y-auto max-h-80 sm:h-96 m-3">
+          <table className="table table-pin-rows">
+            <thead>
               <tr>
-                <td colSpan={5} className="text-center">
-                  <span className="loading loading-spinner text-info"></span>
-                </td>
+                <th>
+                  <label>
+                    <input type="radio" disabled={true} />
+                  </label>
+                </th>
+                <th>ID</th>
+                <th>名前</th>
+                <th>ゼッケン番号</th>
+                <th>QRコード</th>
               </tr>
-            ) : null}
-            {playerDataList.length > 0 ? (
-              playerDataList.map((player) => (
-                <tr key={player.id} className="hover cursor-pointer" onClick={() => setPlayerId(player.id)}>
-                  <th>
-                    <label>
-                      <input
-                        type="radio"
-                        name="selectedPlayer"
-                        value={player.id}
-                        checked={playerId === player.id}
-                        onChange={handlePlayerSelect}
-                        className="h-4 w-4"
-                      />
-                    </label>
-                  </th>
-                  <td>{player.id}</td>
-                  <td>{player.name}</td>
-                  <td>{player.zekken}</td>
-                  <td>{player.qr}</td>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan={5} className="text-center">
+                    <span className="loading loading-spinner text-info"></span>
+                  </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={5} className="text-center">
-                  プレイヤーが登録されていません。
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              ) : null}
+              {playerDataList.length > 0 ? (
+                playerDataList.map((player) => (
+                  <tr key={player.id} className="hover cursor-pointer" onClick={() => setPlayerId(player.id)}>
+                    <th>
+                      <label>
+                        <input
+                          type="radio"
+                          name="selectedPlayer"
+                          value={player.id}
+                          checked={playerId === player.id}
+                          onChange={handlePlayerSelect}
+                          className="h-4 w-4"
+                        />
+                      </label>
+                    </th>
+                    <td>{player.id}</td>
+                    <td>{player.name}</td>
+                    <td>{player.zekken}</td>
+                    <td>{player.qr}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={5} className="text-center">
+                    プレイヤーが登録されていません。
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
