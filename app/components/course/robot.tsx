@@ -18,7 +18,7 @@ export const Robot = ({ row, col, direction }: RobotProps) => {
       case "d":
         return "rotate(180deg)"
       case "l":
-        return "rotate(270deg)"
+        return "rotate(-90deg)"
       default:
         return "rotate(0deg)"
     }

@@ -13,7 +13,7 @@ import {
 import { Field } from "@/app/components/course/field"
 import ChallengeModal from "@/app/challenge/challengeModal"
 import { calcPoint } from "@/app/components/challenge/utils"
-import { strict } from "assert"
+
 type ChallengeProps = {
   field: string | null | undefined
   mission: string | null | undefined
@@ -169,7 +169,7 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
 
     return (
       <>
-        <div className="grid justify-items-center h-full w-screen">
+        <div className="grid justify-items-center h-full w-screen sm:w-5/6">
           {isGoal ? (
             <>
               <p className="text-3xl font-bold text-orange-600">おめでとう!</p>
@@ -228,6 +228,8 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
             field={fieldState}
             botPosition={botPosition}
             botDirection={botDirection}
+            // ゴール後の表示はゴール前のmissionPairで出すので、おかしくなるかも。
+            nextMissionPair={isGoal ? missionPair[nowMission - 1] : missionPair[nowMission]}
             onPanelClick={(row, col) => handleNext(row, col)}
           />
 

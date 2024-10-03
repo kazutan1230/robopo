@@ -21,7 +21,7 @@ export const View = ({ courseDataList, initialPlayerDataList }: ViewProps) => {
   const umpireId: number = 1 //一旦1
 
   return (
-    <div className="flex flex-col flex justify-center items-center overflow-y-auto w-full">
+    <div className="flex flex-col justify-center items-center overflow-y-auto w-full">
       {step === 0 && (
         <ChallengeList
           courseDataList={courseDataList}
@@ -71,17 +71,15 @@ export const View = ({ courseDataList, initialPlayerDataList }: ViewProps) => {
       )}
 
       {step === 4 && courseId !== null && playerId !== null && (
-        <div>
-          <Challenge
-            field={courseDataList.selectCourses.find((course) => course.id === courseId)?.field}
-            mission={courseDataList.selectCourses.find((course) => course.id === courseId)?.mission}
-            point={courseDataList.selectCourses.find((course) => course.id === courseId)?.point}
-            compeId={compeId}
-            courseId={courseId}
-            playerId={playerId}
-            umpireId={umpireId}
-          />
-        </div>
+        <Challenge
+          field={courseDataList.selectCourses.find((course) => course.id === courseId)?.field}
+          mission={courseDataList.selectCourses.find((course) => course.id === courseId)?.mission}
+          point={courseDataList.selectCourses.find((course) => course.id === courseId)?.point}
+          compeId={compeId}
+          courseId={courseId}
+          playerId={playerId}
+          umpireId={umpireId}
+        />
       )}
 
       {step !== 4 && (
