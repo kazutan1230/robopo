@@ -1,4 +1,4 @@
-import { PANEL_WIDTH, PANEL_HEIGHT, getNextPosition, type MissionValue } from "@/app/components/course/utils"
+import { getPanelWidth, getPanelHeight, getNextPosition, type MissionValue } from "@/app/components/course/utils"
 
 type ArrowProps = {
   row: number
@@ -6,6 +6,7 @@ type ArrowProps = {
   direction: MissionValue
   nextMissionPair: MissionValue[]
   duration?: number // 点滅速度（秒）
+  type?: string
 }
 
 type MoveArrowProps = {
@@ -14,6 +15,7 @@ type MoveArrowProps = {
   nextRow: number
   nextCol: number
   duration?: number // 点滅速度（秒）
+  type?: string
 }
 
 type TurnArrowProps = {
@@ -24,7 +26,7 @@ type TurnArrowProps = {
   duration?: number // 回転速度（秒）
 }
 
-export const NextArrow = ({ row, col, direction, nextMissionPair, duration = 1 }: ArrowProps) => {
+export const NextArrow = ({ row, col, direction, nextMissionPair, duration = 1, type }: ArrowProps) => {
   if (nextMissionPair[0] === "mf" || nextMissionPair[0] === "mb") {
     const [nextRow, nextCol, nextDirection] = getNextPosition(
       row,
@@ -33,7 +35,7 @@ export const NextArrow = ({ row, col, direction, nextMissionPair, duration = 1 }
       nextMissionPair[0],
       nextMissionPair[1]
     )
-    return <NextMoveArrow row={row} col={col} nextRow={nextRow} nextCol={nextCol} duration={duration} />
+    return <NextMoveArrow row={row} col={col} nextRow={nextRow} nextCol={nextCol} duration={duration} type={type} />
   } else {
     return (
       <NextTurnArrow row={row} col={col} direction={direction} nextMissionPair={nextMissionPair} duration={duration} />
@@ -47,9 +49,10 @@ const NextMoveArrow = ({
   nextRow,
   nextCol,
   duration = 1, // 点滅の速度
+  type,
 }: MoveArrowProps) => {
   // 矢印を置く場所・向きの判断
-  // (col, row)パネル左上端から矢印起点へのベクトル(colAdd, rowAdd) 単位は [2 / PANEL_WIDTH] or [2 / PANEL_HEIGHT]
+  // (col, row)パネル左上端から矢印起点へのベクトル(colAdd, rowAdd) 単位は [2 / panelWidth] or [2 / panelHeight]
   let colAdd = 0
   let rowAdd = 0
   // 矢印の向き
@@ -76,8 +79,8 @@ const NextMoveArrow = ({
     rotate = 180
   }
 
-  const midX = ((2 * col + colAdd) * PANEL_WIDTH) / 2
-  const midY = ((2 * row + rowAdd) * PANEL_HEIGHT) / 2
+  const midX = ((2 * col + colAdd) * getPanelWidth(type)) / 2
+  const midY = ((2 * row + rowAdd) * getPanelHeight(type)) / 2
 
   const arrowStyle: React.CSSProperties = {
     position: "absolute",
@@ -160,9 +163,12 @@ const NextTurnArrow = ({
   nextMissionPair,
   duration = 1, // 回転の速度
 }: TurnArrowProps) => {
+  // panelの幅と高さを取得
+  const panelWidth = getPanelWidth()
+  const panelHeight = getPanelHeight()
   // 円の中心を計算
-  const midX = (2 * col * PANEL_WIDTH) / 2
-  const midY = (2 * row * PANEL_HEIGHT) / 2
+  const midX = (2 * col * panelWidth) / 2
+  const midY = (2 * row * panelHeight) / 2
 
   // 矢印の起点
   let startDeg: number
@@ -210,10 +216,10 @@ const NextTurnArrow = ({
         position: relative;
         display: inline-block;
         width: ` +
-          `${PANEL_WIDTH}` +
+          `${panelWidth}` +
           `px;
         height: ` +
-          `${PANEL_HEIGHT}` +
+          `${panelHeight}` +
           `px;
         border: 0px solid #FF0033;
 
@@ -255,10 +261,10 @@ const NextTurnArrow = ({
         position: absolute;
         display: inline-block;
         width: ` +
-          `${PANEL_WIDTH}` +
+          `${panelWidth}` +
           `px;
         height: ` +
-          `${PANEL_HEIGHT}` +
+          `${panelHeight}` +
           `px;
         border: 2px solid #FF0033;
         border-radius: 50%; /* 円形にする */

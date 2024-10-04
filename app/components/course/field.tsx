@@ -2,8 +2,8 @@ import React from "react"
 import {
   MAX_FIELD_WIDTH,
   MAX_FIELD_HEIGHT,
-  PANEL_WIDTH,
-  PANEL_HEIGHT,
+  getPanelWidth,
+  getPanelHeight,
   FieldState,
   MissionValue,
 } from "@/app/components/course/utils"
@@ -33,7 +33,7 @@ export const Field = (props: Props) => {
   return (
     <div
       className={"relative grid grid-cols-" + MAX_FIELD_WIDTH + " grid-rows-" + MAX_FIELD_HEIGHT + " mx-auto"}
-      style={{ width: MAX_FIELD_WIDTH * PANEL_WIDTH + "px", height: MAX_FIELD_HEIGHT * PANEL_HEIGHT + "px" }}>
+      style={{ width: MAX_FIELD_WIDTH * getPanelWidth() + "px", height: MAX_FIELD_HEIGHT * getPanelHeight() + "px" }}>
       {props.field.map((row, rowIndex) =>
         row.map((panel, colIndex) => (
           <Panel key={`${rowIndex}-${colIndex}`} value={panel} onClick={() => props.onPanelClick(rowIndex, colIndex)} />
