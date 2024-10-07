@@ -37,3 +37,49 @@ export const calcPoint = (pointState: PointState, index: number | null) => {
   }
   return point
 }
+
+// 結果送信
+export const resultSubmit = async (
+  result1: number,
+  result2: number | null,
+  compeId: number,
+  courseId: number,
+  playerId: number,
+  umpireId: number,
+  setMessage: React.Dispatch<React.SetStateAction<string>>,
+  setIsSuccess: React.Dispatch<React.SetStateAction<boolean>>,
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>
+) => {
+  setLoading(true)
+
+  const requestBody = {
+    result1: result1,
+    result2: result2,
+    competitionId: compeId,
+    courseId: courseId,
+    playerId: playerId,
+    umpireId: umpireId,
+  }
+
+  try {
+    const response = await fetch("/api/challenge", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(requestBody),
+    })
+    const data = await response.json()
+
+    console.log(data)
+    if (response.ok) {
+      setMessage("チャレンジの送信に成功しました")
+      setIsSuccess(true)
+    } else {
+      setMessage("チャレンジの送信に失敗しました")
+    }
+  } catch (error) {
+    console.log("error: ", error)
+    setMessage("送信中にエラーが発生しました")
+  } finally {
+    setLoading(false)
+  }
+}

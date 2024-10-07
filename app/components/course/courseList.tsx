@@ -46,7 +46,11 @@ export const CourseList = ({ courseData, inputType, handleInputChange, checkedId
           ) : null}
           {courseData ? (
             courseData.selectCourses.map((courses: SelectCourse) => (
-              <tr key={courses.id} className="hover cursor-pointer" onClick={() => handleRowClick(courses.id)}>
+              <tr
+                key={courses.id}
+                className="hover cursor-pointer"
+                onClick={() => handleRowClick(courses.id)}
+                hidden={courses.id < 0}>
                 <th>
                   <label>
                     <input
@@ -55,6 +59,7 @@ export const CourseList = ({ courseData, inputType, handleInputChange, checkedId
                       name="selectedIds"
                       value={courses.id}
                       checked={checkedIds.includes(courses.id)}
+                      disabled={courses.id < 0}
                       readOnly
                     />
                   </label>

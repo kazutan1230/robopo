@@ -6,6 +6,7 @@ import ChallengeList from "@/app/challenge/challengeList"
 import PlayerForm from "@/app/challenge/playerForm"
 import Challenge from "@/app/challenge/challenge"
 import CircleButton from "@/app/components/parts/circleButton"
+import IpponBashi from "@/app/components/challenge/ipponBashi"
 
 type ViewProps = {
   courseDataList: { selectCourses: SelectCourse[] }
@@ -23,12 +24,18 @@ export const View = ({ courseDataList, initialPlayerDataList }: ViewProps) => {
   return (
     <div className="flex flex-col justify-center items-center overflow-y-auto w-full">
       {step === 0 && (
-        <ChallengeList
-          courseDataList={courseDataList}
-          setStep={setStep}
-          courseId={courseId}
-          setCourseId={setCourseId}
-        />
+        <>
+          <ChallengeList
+            courseDataList={courseDataList}
+            setStep={setStep}
+            courseId={courseId}
+            setCourseId={setCourseId}
+          />
+          {/* THE 一本橋開発用 */}
+          <button className="btn btn-primary mt-5" onClick={() => (setCourseId(-1), setStep(1))}>
+            THE 一本橋(β版)
+          </button>
+        </>
       )}
       {step === 1 && (
         <PlayerForm
@@ -70,7 +77,7 @@ export const View = ({ courseDataList, initialPlayerDataList }: ViewProps) => {
         </div>
       )}
 
-      {step === 4 && courseId !== null && playerId !== null && (
+      {step === 4 && courseId !== null && courseId !== -1 && playerId !== null && (
         <Challenge
           field={courseDataList.selectCourses.find((course) => course.id === courseId)?.field}
           mission={courseDataList.selectCourses.find((course) => course.id === courseId)?.mission}
@@ -80,6 +87,18 @@ export const View = ({ courseDataList, initialPlayerDataList }: ViewProps) => {
           playerId={playerId}
           umpireId={umpireId}
         />
+      )}
+
+      {step === 4 && courseId === -1 && playerId !== null && (
+        <>
+          <IpponBashi
+            compeId={compeId}
+            courseId={-1}
+            playerId={playerId}
+            umpireId={umpireId}
+            point={courseDataList.selectCourses.find((course) => course.id === courseId)?.point}
+          />
+        </>
       )}
 
       {step !== 4 && (

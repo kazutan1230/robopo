@@ -2,13 +2,16 @@
 export const MAX_FIELD_WIDTH: number = 3
 export const MAX_FIELD_HEIGHT: number = 3
 
+// 一本橋のサイズ
+export const IPPON_BASHI_SIZE: number = 10
+
 // デフォルトのパネルサイズ (Tコース)
 const PANEL_WIDTH: number = 85
 const PANEL_HEIGHT: number = 85
 
 // THE 一本橋のパネルサイズ
-const BASHI_PANEL_WIDTH: number = 40
-const BASHI_PANEL_HEIGHT: number = 40
+const BASHI_PANEL_WIDTH: number = 55
+const BASHI_PANEL_HEIGHT: number = 55
 
 // パネルの幅を返す関数
 export const getPanelWidth = (type?: string): number => {
