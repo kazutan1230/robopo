@@ -15,12 +15,12 @@ type PlayerFormProps = {
 const PlayerForm = ({ playerDataList, setPlayerDataList, setStep, playerId, setPlayerId }: PlayerFormProps) => {
   // 入力フィールドの状態を管理
   const [name, setName] = useState<string>("")
+  const [furigana, setFurigana] = useState<string>("")
   const [zekken, setZekken] = useState<string>("")
   const [qr, setQr] = useState<string>("")
   const [loading, setLoading] = useState<boolean>(false)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  // const [playerDataList, setPlayerDataList] = useState<SelectPlayer[]>(initialPlayerDataList.players)
 
   // 初期データをセット
   useEffect(() => {
@@ -34,7 +34,7 @@ const PlayerForm = ({ playerDataList, setPlayerDataList, setStep, playerId, setP
     setErrorMessage(null)
     setSuccessMessage(null)
 
-    const playerData = { name, zekken, qr }
+    const playerData = { name, furigana, zekken, qr }
 
     try {
       // APIにPOSTリクエストを送信
@@ -52,6 +52,7 @@ const PlayerForm = ({ playerDataList, setPlayerDataList, setStep, playerId, setP
         // 登録成功時の処理
         setSuccessMessage("プレイヤーが正常に登録されました")
         setName("")
+        setFurigana("")
         setZekken("")
         setQr("")
         const newPlayerDataList: { players: SelectPlayer[] } = await getPlayerList()
@@ -109,10 +110,11 @@ const PlayerForm = ({ playerDataList, setPlayerDataList, setStep, playerId, setP
                     <input type="radio" disabled={true} />
                   </label>
                 </th>
-                <th>ID</th>
+                {/* <th>ID</th> */}
                 <th>名前</th>
+                <th>ふりがな</th>
                 <th>ゼッケン番号</th>
-                <th>QRコード</th>
+                {/* <th>QRコード</th> */}
               </tr>
             </thead>
             <tbody>
@@ -138,10 +140,11 @@ const PlayerForm = ({ playerDataList, setPlayerDataList, setStep, playerId, setP
                         />
                       </label>
                     </th>
-                    <td>{player.id}</td>
+                    {/* <td>{player.id}</td> */}
                     <td>{player.name}</td>
+                    <td>{player.furigana}</td>
                     <td>{player.zekken}</td>
-                    <td>{player.qr}</td>
+                    {/* <td>{player.qr}</td> */}
                   </tr>
                 ))
               ) : (
@@ -174,14 +177,12 @@ const PlayerForm = ({ playerDataList, setPlayerDataList, setStep, playerId, setP
       {errorMessage && <div className="text-red-500 font-semibold">{errorMessage}</div>}
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* <div> */}
         <button
           type="submit"
           disabled={loading}
           className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 disabled:opacity-50 mt-4">
           {loading ? "登録中..." : "↓新規登録"}
         </button>
-        {/* </div> */}
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-gray-700">
             名前
@@ -191,6 +192,20 @@ const PlayerForm = ({ playerDataList, setPlayerDataList, setStep, playerId, setP
             id="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            required
+            className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="furigana" className="block text-sm font-medium text-gray-700">
+            ふりがな
+          </label>
+          <input
+            type="text"
+            id="furigana"
+            value={furigana}
+            onChange={(e) => setFurigana(e.target.value)}
             required
             className="mt-1 p-2 border border-gray-300 rounded-md w-full"
           />
