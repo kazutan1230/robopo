@@ -85,7 +85,12 @@ export const SummaryTable = () => {
                 <tr key={player.playerId}>
                   <td className="border border-gray-400 p-2">{player.playerName}</td>
                   <td className="border border-gray-400 p-2">{player.playerZekken}</td>
-                  <td className="border border-gray-400 p-2">{calcPoint(pointData, player.maxResult)}</td>
+                  {/* センサーコース以外 */}
+                  {courseId !== -2 && (
+                    <td className="border border-gray-400 p-2">{calcPoint(pointData, player.maxResult)}</td>
+                  )}
+                  {/* センサーコースはmaxResultに最高得点が入る */}
+                  {courseId === -2 && <td className="border border-gray-400 p-2">{player.maxResult}</td>}
                   <td className="border border-gray-400 p-2">{player.challengeCount}</td>
                 </tr>
               ))

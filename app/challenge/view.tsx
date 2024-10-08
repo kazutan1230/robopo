@@ -7,6 +7,7 @@ import PlayerForm from "@/app/challenge/playerForm"
 import Challenge from "@/app/challenge/challenge"
 import CircleButton from "@/app/components/parts/circleButton"
 import IpponBashi from "@/app/components/challenge/ipponBashi"
+import { SensorCourse } from "@/app/components/challenge/sensorCourse"
 
 type ViewProps = {
   courseDataList: { selectCourses: SelectCourse[] }
@@ -25,15 +26,20 @@ export const View = ({ courseDataList, initialPlayerDataList }: ViewProps) => {
     <div className="flex flex-col justify-center items-center overflow-y-auto w-full">
       {step === 0 && (
         <>
+          {/* 通常コース */}
           <ChallengeList
             courseDataList={courseDataList}
             setStep={setStep}
             courseId={courseId}
             setCourseId={setCourseId}
           />
-          {/* THE 一本橋開発用 */}
+          {/* THE 一本橋 */}
           <button className="btn btn-primary mt-5" onClick={() => (setCourseId(-1), setStep(1))}>
-            THE 一本橋(β版)
+            THE 一本橋
+          </button>
+          {/* センサーコース */}
+          <button className="btn btn-primary mt-5" onClick={() => (setCourseId(-2), setStep(1))}>
+            センサーコース
           </button>
         </>
       )}
@@ -77,7 +83,7 @@ export const View = ({ courseDataList, initialPlayerDataList }: ViewProps) => {
         </div>
       )}
 
-      {step === 4 && courseId !== null && courseId !== -1 && playerId !== null && (
+      {step === 4 && courseId !== null && courseId !== -1 && courseId !== -2 && playerId !== null && (
         <Challenge
           field={courseDataList.selectCourses.find((course) => course.id === courseId)?.field}
           mission={courseDataList.selectCourses.find((course) => course.id === courseId)?.mission}
@@ -90,15 +96,17 @@ export const View = ({ courseDataList, initialPlayerDataList }: ViewProps) => {
       )}
 
       {step === 4 && courseId === -1 && playerId !== null && (
-        <>
-          <IpponBashi
-            compeId={compeId}
-            courseId={-1}
-            playerId={playerId}
-            umpireId={umpireId}
-            point={courseDataList.selectCourses.find((course) => course.id === courseId)?.point}
-          />
-        </>
+        <IpponBashi
+          compeId={compeId}
+          courseId={-1}
+          playerId={playerId}
+          umpireId={umpireId}
+          point={courseDataList.selectCourses.find((course) => course.id === courseId)?.point}
+        />
+      )}
+
+      {step === 4 && courseId === -2 && playerId !== null && (
+        <SensorCourse compeId={compeId} courseId={-2} playerId={playerId} umpireId={umpireId} />
       )}
 
       {step !== 4 && (
