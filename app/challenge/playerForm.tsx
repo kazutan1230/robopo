@@ -99,7 +99,7 @@ const PlayerForm = ({ playerDataList, setPlayerDataList, setStep, playerId, setP
   return (
     <>
       <h2 className="text-center text-xl font-semibold">プレイヤー一覧</h2>
-      <div className="w-full">
+      <div className="w-full h-full">
         <div className="border overflow-x-auto overflow-y-auto max-h-80 sm:h-96 m-3">
           <table className="table table-pin-rows">
             <thead>

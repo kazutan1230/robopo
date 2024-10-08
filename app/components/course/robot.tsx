@@ -1,14 +1,17 @@
 import Image from "next/image"
 import botImage from "@/public/robot.png"
-import { PANEL_WIDTH, PANEL_HEIGHT, type MissionValue } from "@/app/components/course/utils"
+import { getPanelWidth, getPanelHeight, type MissionValue } from "@/app/components/course/utils"
 
 type RobotProps = {
   row: number
   col: number
   direction: MissionValue
+  type?: string
 }
 
-export const Robot = ({ row, col, direction }: RobotProps) => {
+export const Robot = ({ row, col, direction, type }: RobotProps) => {
+  const panelWidth = getPanelWidth(type)
+  const panelHeight = getPanelHeight(type)
   const rotationAngle = (dir: MissionValue) => {
     switch (dir) {
       case "u":
@@ -26,10 +29,10 @@ export const Robot = ({ row, col, direction }: RobotProps) => {
 
   const botStyle: React.CSSProperties = {
     position: "absolute",
-    top: `${row * PANEL_HEIGHT}px`,
-    left: `${col * PANEL_WIDTH}px`,
-    height: `${PANEL_HEIGHT}px`,
-    width: `${PANEL_WIDTH}px`,
+    top: `${row * panelHeight}px`,
+    left: `${col * panelWidth}px`,
+    height: `${panelHeight}px`,
+    width: `${panelWidth}px`,
     transition: "top 0.5s ease, left 0.5s ease, transform 0.5s ease",
     transform: rotationAngle(direction),
     pointerEvents: "none",

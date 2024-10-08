@@ -12,7 +12,7 @@ import {
 } from "@/app/components/course/utils"
 import { Field } from "@/app/components/course/field"
 import ChallengeModal from "@/app/challenge/challengeModal"
-import { calcPoint } from "@/app/components/challenge/utils"
+import { calcPoint, resultSubmit } from "@/app/components/challenge/utils"
 
 type ChallengeProps = {
   field: string | null | undefined
@@ -111,7 +111,6 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
         const [row, col, direction] = getRobotPosition(start?.[0] || 0, start?.[1] || 0, missionState, nowMission - 1)
         setBotPosition({ row: row, col: col })
         setBotDirection(direction)
-        console.log("row, col, direction", row, col, direction)
         // nowMissionを戻す
         setNowMission(nowMission - 1)
         // goalしたのを戻す
@@ -129,42 +128,6 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
       setNowMission(0)
       setBotPosition({ row: start?.[0] || 0, col: start?.[1] || 0 })
       setBotDirection(missionState[0])
-    }
-
-    // 結果送信
-    const handleSubmit = async () => {
-      setLoading(true)
-
-      const requestBody = {
-        result1: result1,
-        result2: result2,
-        competitionId: compeId,
-        courseId: courseId,
-        playerId: playerId,
-        umpireId: umpireId,
-      }
-
-      try {
-        const response = await fetch("/api/challenge", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(requestBody),
-        })
-        const data = await response.json()
-
-        console.log(data)
-        if (response.ok) {
-          setMessage("チャレンジの送信に成功しました")
-          setIsSuccess(true)
-        } else {
-          setMessage("チャレンジの送信に失敗しました")
-        }
-      } catch (error) {
-        console.log("error: ", error)
-        setMessage("送信中にエラーが発生しました")
-      } finally {
-        setLoading(false)
-      }
     }
 
     return (
@@ -259,7 +222,19 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
           {modalOpen && (
             <ChallengeModal
               setModalOpen={setModalOpen}
-              handleSubmit={handleSubmit}
+              handleSubmit={() =>
+                resultSubmit(
+                  result1,
+                  result2,
+                  compeId,
+                  courseId,
+                  playerId,
+                  umpireId,
+                  setMessage,
+                  setIsSuccess,
+                  setLoading
+                )
+              }
               loading={loading}
               isSuccess={isSuccess}
               message={message}

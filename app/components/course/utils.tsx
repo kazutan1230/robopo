@@ -2,12 +2,36 @@
 export const MAX_FIELD_WIDTH: number = 3
 export const MAX_FIELD_HEIGHT: number = 3
 
-// パネルのサイズ
-export const PANEL_WIDTH: number = 80
-export const PANEL_HEIGHT: number = 80
+// 一本橋のサイズ
+export const IPPON_BASHI_SIZE: number = 10
+
+// デフォルトのパネルサイズ (Tコース)
+const PANEL_WIDTH: number = 85
+const PANEL_HEIGHT: number = 85
+
+// THE 一本橋のパネルサイズ
+const BASHI_PANEL_WIDTH: number = 55
+const BASHI_PANEL_HEIGHT: number = 55
+
+// パネルの幅を返す関数
+export const getPanelWidth = (type?: string): number => {
+  if (type === "ipponBashi") return BASHI_PANEL_WIDTH
+  else return PANEL_WIDTH
+}
+
+// パネルの高さを返す関数
+export const getPanelHeight = (type?: string): number => {
+  if (type === "ipponBashi") return BASHI_PANEL_HEIGHT
+  else return PANEL_HEIGHT
+}
 
 // Panelの種類
 export type PanelValue = "start" | "goal" | "route" | null
+export const PanelString: { [key in Exclude<PanelValue, null>]: string } = {
+  start: "スタート",
+  goal: "ゴール",
+  route: "",
+}
 export type FieldState = PanelValue[][]
 
 // Missionの種類 u:up上向き r:right右向き d:down下向き l:left左向き
