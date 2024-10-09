@@ -1,5 +1,5 @@
 "use client"
-import { type CourseSummary } from "@/app/components/summary/utils"
+import { type CourseSummary, isCompletedCourse } from "@/app/components/summary/utils"
 import { getCourseList } from "@/app/components/course/listUtils"
 import { deserializePoint, PointValue } from "@/app/components/course/utils"
 import { calcPoint } from "@/app/components/challenge/utils"
@@ -13,6 +13,15 @@ export const SummaryTable = () => {
   const [courseId, setCourseId] = useState<number | null>(0)
   const [courseSummary, setCourseSummary] = useState<CourseSummary[]>([])
   const [loading, setLoading] = useState<boolean>(true)
+
+  // 総得点の計算
+  const calculateTotalPoint = (player: CourseSummary, pointData: PointValue[]) => {
+    return (
+      calcPoint(pointData, player.tCourseMaxResult) +
+      (player.sensorMaxResult ? player.sensorMaxResult : 0) +
+      (player.ipponMaxResult ? player.ipponMaxResult : 0)
+    )
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,11 +62,15 @@ export const SummaryTable = () => {
             コースを選んでください
           </option>
           {courseData ? (
-            courseData.selectCourses.map((course) => (
-              <option key={course.id} value={course.id}>
-                {course.name}
-              </option>
-            ))
+            courseData.selectCourses.map(
+              (course) =>
+                course.id !== -1 &&
+                course.id !== -2 && (
+                  <option key={course.id} value={course.id}>
+                    {course.name}
+                  </option>
+                )
+            )
           ) : (
             <option>コースがありません</option>
           )}
@@ -68,9 +81,17 @@ export const SummaryTable = () => {
           <thead>
             <tr>
               <th className="border border-gray-400 p-2">名前</th>
+              <th className="border border-gray-400 p-2">ふりがな</th>
               <th className="border border-gray-400 p-2">ゼッケン</th>
-              <th className="border border-gray-400 p-2">最高得点</th>
+              <th className="border border-gray-400 p-2">Tコース完走なら〇記入</th>
+              <th className="border border-gray-400 p-2">完走は何回で達成?</th>
+              <th className="border border-gray-400 p-2">Tコースの最高得点</th>
+              <th className="border border-gray-400 p-2">センサーコースの最高得点</th>
+              <th className="border border-gray-400 p-2">一本橋の最高得点</th>
+              <th className="border border-gray-400 p-2">全てのチャレンジの総得点</th>
+              <th className="border border-gray-400 p-2">総得点の順位</th>
               <th className="border border-gray-400 p-2">チャレンジ回数</th>
+              <th className="border border-gray-400 p-2">回数の順位</th>
             </tr>
           </thead>
           <tbody>
@@ -83,20 +104,42 @@ export const SummaryTable = () => {
             ) : courseSummary.length > 0 ? (
               courseSummary.map((player) => (
                 <tr key={player.playerId}>
-                  <td className="border border-gray-400 p-2">{player.playerName}</td>
-                  <td className="border border-gray-400 p-2">{player.playerZekken}</td>
+                  <td className="border border-gray-400 p-2">{player.playerName ? player.playerName : "-"}</td>
+                  <td className="border border-gray-400 p-2">{player.playerFurigana ? player.playerFurigana : "-"}</td>
+                  <td className="border border-gray-400 p-2">{player.playerZekken ? player.playerZekken : "-"}</td>
+                  <td className="border border-gray-400 p-2">
+                    {isCompletedCourse(pointData, player.tCourseMaxResult) ? "〇" : "-"}
+                  </td>
+                  <td className="border border-gray-400 p-2">
+                    {isCompletedCourse(pointData, player.tCourseMaxResult) && player.firstTCourseCount
+                      ? player.firstTCourseCount
+                      : "-"}
+                  </td>
                   {/* センサーコース以外 */}
                   {courseId !== -2 && (
-                    <td className="border border-gray-400 p-2">{calcPoint(pointData, player.maxResult)}</td>
+                    <td className="border border-gray-400 p-2">
+                      {player.tCourseMaxResult ? calcPoint(pointData, player.tCourseMaxResult) : "-"}
+                    </td>
                   )}
                   {/* センサーコースはmaxResultに最高得点が入る */}
-                  {courseId === -2 && <td className="border border-gray-400 p-2">{player.maxResult}</td>}
+                  {courseId === -2 && (
+                    <td className="border border-gray-400 p-2">
+                      {player.sensorMaxResult ? player.sensorMaxResult : "-"}
+                    </td>
+                  )}
+                  <td className="border border-gray-400 p-2">
+                    {player.sensorMaxResult ? player.sensorMaxResult : "-"}
+                  </td>
+                  <td className="border border-gray-400 p-2">{player.ipponMaxResult ? player.ipponMaxResult : "-"}</td>
+                  <td className="border border-gray-400 p-2">{player.totalPoint ? player.totalPoint : "-"}</td>
+                  <td className="border border-gray-400 p-2">{player.pointRank}</td>
                   <td className="border border-gray-400 p-2">{player.challengeCount}</td>
+                  <td className="border border-gray-400 p-2">{player.challengeRank}</td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={4} className="border border-gray-400 p-2 text-center">
+                <td colSpan={5} className="border border-gray-400 p-2 text-center">
                   データがありません
                 </td>
               </tr>
