@@ -14,15 +14,6 @@ export const SummaryTable = () => {
   const [courseSummary, setCourseSummary] = useState<CourseSummary[]>([])
   const [loading, setLoading] = useState<boolean>(true)
 
-  // 総得点の計算
-  const calculateTotalPoint = (player: CourseSummary, pointData: PointValue[]) => {
-    return (
-      calcPoint(pointData, player.tCourseMaxResult) +
-      (player.sensorMaxResult ? player.sensorMaxResult : 0) +
-      (player.ipponMaxResult ? player.ipponMaxResult : 0)
-    )
-  }
-
   useEffect(() => {
     const fetchData = async () => {
       try {

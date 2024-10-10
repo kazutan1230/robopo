@@ -1,7 +1,7 @@
 import { CourseSummary } from "@/app/components/summary/utils"
 import { db } from "@/app/lib/db/db"
 import { course, SelectCourse, player, challenge, competition } from "@/app/lib/db/schema"
-import { eq, and, sql } from "drizzle-orm"
+import { eq, sql, and } from "drizzle-orm"
 
 // IDを指定してDBからコースを削除する関数
 // @/app/lib/db/queries/delete.tsを作成して移動させる方がいいかもしれない。
@@ -69,12 +69,14 @@ export const getCourseSummary = async (competitionId: number, courseId: number):
               FROM challenge
               WHERE player_id = ${player.id}
               AND course_id = ${courseId}
+              AND competition_id = ${competitionId}
             ) AS Attempts
             WHERE result = (
               SELECT MAX(GREATEST(result1, COALESCE(result2, 0)))
               FROM challenge
               WHERE player_id = ${player.id}
               AND course_id = ${courseId}
+              AND competition_id = ${competitionId}
             )
           )
         )`.as("firstTCourseCount"),
@@ -107,4 +109,27 @@ export const getCourseSummary = async (competitionId: number, courseId: number):
     .groupBy(player.id)
     .orderBy(player.id)
   return result as CourseSummary[]
+}
+
+// competition_id, course_id, player_idから個人成績result配列を取得
+export const getCourseSummaryByPlayerId = async (competitionId: number, courseId: number, playerId: number) => {
+  // 結果を配列で取得
+  const result = await db
+    .select({
+      // results: challenge.result1,
+      results1: challenge.result1,
+      results2: challenge.result2,
+    })
+    .from(challenge)
+    .where(
+      and(
+        eq(challenge.competitionId, competitionId),
+        eq(challenge.playerId, playerId),
+        eq(challenge.courseId, courseId)
+      )
+    )
+    .orderBy(challenge.id)
+    .groupBy(challenge.id)
+
+  return result as { results1: number; results2: number | null }[]
 }
