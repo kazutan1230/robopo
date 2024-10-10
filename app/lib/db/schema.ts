@@ -21,6 +21,7 @@ export const course = pgTable("course", {
 export const player = pgTable("player", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
+  furigana: text("furigana"),
   zekken: text("zekken"),
   qr: text("qr"),
   createdAt: timestamp("created_at").defaultNow(),

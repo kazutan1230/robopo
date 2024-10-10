@@ -1,7 +1,7 @@
 import { CourseSummary } from "@/app/components/summary/utils"
 import { db } from "@/app/lib/db/db"
-import { course, SelectCourse, player, challenge } from "@/app/lib/db/schema"
-import { eq, and, sql } from "drizzle-orm"
+import { course, SelectCourse, player, challenge, competition } from "@/app/lib/db/schema"
+import { eq, sql, and } from "drizzle-orm"
 
 // IDを指定してDBからコースを削除する関数
 // @/app/lib/db/queries/delete.tsを作成して移動させる方がいいかもしれない。
@@ -41,20 +41,95 @@ export const deleteChallengeById = async (id: number) => {
 }
 
 // 特定の competition_id と course_id に基づくデータを取得
-export const getCourseSummary = async (competitionId: number, courseId: number) => {
-  // SQLで結合し、result1 の最大値と result2 の集計結果を取得
+// firstTCourseCountはresult1とresult2から最大のものを取得し、
+// それまで(created_atとidを昇順に並べた際の古いもの)のresult1とresult2の個数を最大のものが出るまで足している。
+// 完走してない時もその時点で最大のresultまでの回数が出るので、完走したかどうかで表示非表示を変える必要がある。
+export const getCourseSummary = async (competitionId: number, courseId: number): Promise<CourseSummary[]> => {
   const result = await db
     .select({
       playerId: player.id,
       playerName: player.name,
+      playerFurigana: player.furigana,
       playerZekken: player.zekken,
-      maxResult: sql`GREATEST(MAX(${challenge.result1}), MAX(${challenge.result2}))`.as("maxResult"),
-      challengeCount: sql`SUM(CASE WHEN ${challenge.result2} IS NULL THEN 1 ELSE 2 END)`.as("challengeCount"),
+      firstTCourseCount: sql`
+        (SELECT SUM(attempts_up_to_max) FROM (
+          SELECT ROW_NUMBER() OVER (ORDER BY created_at ASC, id ASC) AS attempt_number,
+          GREATEST(result1, COALESCE(result2, 0)) AS result,
+          CASE WHEN result1 IS NOT NULL THEN 1 ELSE 0 END + CASE WHEN result2 IS NOT NULL THEN 1 ELSE 0 END AS attempts_up_to_max
+          FROM challenge
+          WHERE player_id = ${player.id}
+          AND course_id = ${courseId}
+          AND (result1 IS NOT NULL OR result2 IS NOT NULL)
+        ) AS RankedAttempts
+          WHERE attempt_number <= (
+            SELECT MIN(attempt_number) 
+            FROM (
+              SELECT ROW_NUMBER() OVER (ORDER BY created_at ASC, id ASC) AS attempt_number,
+              GREATEST(result1, COALESCE(result2, 0)) AS result
+              FROM challenge
+              WHERE player_id = ${player.id}
+              AND course_id = ${courseId}
+              AND competition_id = ${competitionId}
+            ) AS Attempts
+            WHERE result = (
+              SELECT MAX(GREATEST(result1, COALESCE(result2, 0)))
+              FROM challenge
+              WHERE player_id = ${player.id}
+              AND course_id = ${courseId}
+              AND competition_id = ${competitionId}
+            )
+          )
+        )`.as("firstTCourseCount"),
+      tCourseCount:
+        sql`SUM(CASE WHEN ${challenge.courseId} = ${courseId} THEN (CASE WHEN ${challenge.result2} IS NULL THEN 1 ELSE 2 END) ELSE 0 END)`.as(
+          "tCourseCount"
+        ),
+      tCourseMaxResult:
+        sql`MAX(CASE WHEN ${challenge.courseId} = ${courseId} THEN GREATEST(${challenge.result1}, COALESCE(${challenge.result2}, 0)) ELSE NULL END)`.as(
+          "tCourseMaxResult"
+        ),
+      sensorMaxResult:
+        sql`MAX(CASE WHEN ${challenge.courseId} = -2 THEN GREATEST(${challenge.result1}, COALESCE(${challenge.result2}, 0)) ELSE NULL END)`.as(
+          "sensorMaxResult"
+        ),
+      ipponMaxResult:
+        sql`MAX(CASE WHEN ${challenge.courseId} = -1 THEN GREATEST(${challenge.result1}, COALESCE(${challenge.result2}, 0))ELSE NULL END)`.as(
+          "ipponMaxResult"
+        ),
+      challengeCount: sql`SUM(CASE
+            WHEN ${challenge.courseId} = ${courseId} THEN (CASE WHEN ${challenge.result2} IS NULL THEN 1 ELSE 2 END)
+            WHEN ${challenge.courseId} = -1 THEN (CASE WHEN ${challenge.result2} IS NULL THEN 1 ELSE 2 END)
+            WHEN ${challenge.courseId} = -2 THEN (CASE WHEN ${challenge.result2} IS NULL THEN 1 ELSE 2 END)
+            ELSE 0
+          END)`.as("challengeCount"),
     })
     .from(player)
-    .where(and(eq(challenge.competitionId, competitionId), eq(challenge.courseId, courseId)))
     .leftJoin(challenge, eq(player.id, challenge.playerId))
+    .where(eq(challenge.competitionId, competitionId))
     .groupBy(player.id)
     .orderBy(player.id)
-  return result
+  return result as CourseSummary[]
+}
+
+// competition_id, course_id, player_idから個人成績result配列を取得
+export const getCourseSummaryByPlayerId = async (competitionId: number, courseId: number, playerId: number) => {
+  // 結果を配列で取得
+  const result = await db
+    .select({
+      // results: challenge.result1,
+      results1: challenge.result1,
+      results2: challenge.result2,
+    })
+    .from(challenge)
+    .where(
+      and(
+        eq(challenge.competitionId, competitionId),
+        eq(challenge.playerId, playerId),
+        eq(challenge.courseId, courseId)
+      )
+    )
+    .orderBy(challenge.id)
+    .groupBy(challenge.id)
+
+  return result as { results1: number; results2: number | null }[]
 }

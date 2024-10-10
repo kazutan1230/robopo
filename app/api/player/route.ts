@@ -13,9 +13,10 @@ export async function GET(request: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const reqbody = await req.json()
-  const { name, zekken, qr } = reqbody
+  const { name, furigana, zekken, qr } = reqbody
   const courseData = {
     name: name,
+    furigana: furigana,
     zekken: zekken,
     qr: qr,
   }
