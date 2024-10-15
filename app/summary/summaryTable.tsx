@@ -5,6 +5,7 @@ import { deserializePoint, PointValue } from "@/app/components/course/utils"
 import { calcPoint } from "@/app/components/challenge/utils"
 import { type SelectCourse } from "@/app/lib/db/schema"
 import { useEffect, useState } from "react"
+import Link from "next/link"
 
 export const SummaryTable = () => {
   const competitionId: number = 1 //一旦1
@@ -95,7 +96,13 @@ export const SummaryTable = () => {
             ) : courseSummary.length > 0 ? (
               courseSummary.map((player) => (
                 <tr key={player.playerId}>
-                  <td className="border border-gray-400 p-2">{player.playerName ? player.playerName : "-"}</td>
+                  <td className="border border-gray-400 p-2">
+                    <Link
+                      href={`/summary/${competitionId}/${courseId}/${player.playerId}`}
+                      className="underline text-blue-600 hover:text-blue-800 visited:text-purple-600">
+                      {player.playerName ? player.playerName : "-"}
+                    </Link>
+                  </td>
                   <td className="border border-gray-400 p-2">{player.playerFurigana ? player.playerFurigana : "-"}</td>
                   <td className="border border-gray-400 p-2">{player.playerZekken ? player.playerZekken : "-"}</td>
                   <td className="border border-gray-400 p-2">
