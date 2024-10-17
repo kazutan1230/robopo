@@ -18,6 +18,8 @@ import { isCompletedCourse } from "@/app/components/summary/utils"
 import { calcPoint } from "@/app/components/challenge/utils"
 import React from "react"
 
+export const revalidate = 0
+
 export default async function SummaryPlayer({ params }: { params: { ids: number[] } }) {
   const ids = params.ids
   // ids[0]:competitionId, ids[1]:courseId, ids[2]:playerId
@@ -41,6 +43,10 @@ export default async function SummaryPlayer({ params }: { params: { ids: number[
   const course = await getCourseById(ids[1])
   const missionPair = missionStatePair(deserializeMission(course?.mission || ""))
   const point = deserializePoint(course?.point || "")
+
+  // 一本橋のデータを取得する
+  const ipponBashi = await getCourseById(-1)
+  const ipponPoint = deserializePoint(ipponBashi?.point || "")
 
   return (
     <>
@@ -126,8 +132,10 @@ export default async function SummaryPlayer({ params }: { params: { ids: number[
             <tr className="flex flex-row">
               {resultIpponArray.map((result, index: number) => (
                 <React.Fragment key={index}>
-                  <td className="border border-gray-400 p-2">{result.results1}</td>
-                  {result.results2 !== null && <td className="border border-gray-400 p-2">{result.results2}</td>}
+                  <td className="border border-gray-400 p-2">{calcPoint(ipponPoint, result.results1)}</td>
+                  {result.results2 !== null && (
+                    <td className="border border-gray-400 p-2">{calcPoint(ipponPoint, result.results2)}</td>
+                  )}
                 </React.Fragment>
               ))}
             </tr>
@@ -140,13 +148,10 @@ export default async function SummaryPlayer({ params }: { params: { ids: number[
             <tr>
               <td className="border bg-cyan-50 border-gray-400 p-2 text-center">成功までの回数</td>
               <td className="border border-gray-400 p-2">
-                -
-                {/* 成功判定出すにはTHE一本橋コースの情報が必要。スタート含む5パネルなのか10パネルなのか詳細が欲しい。 */}
-                {/* {isCompletedCourse(point, maxIpponResult[0].maxResult) ? firstIpponCount[0].firstCount : "-"} */}
+                {isCompletedCourse(ipponPoint, maxIpponResult[0].maxResult) ? firstIpponCount[0].firstCount : "-"}
               </td>
               <td className="border bg-cyan-50 border-gray-400 p-2 text-center">MAXポイント</td>
-              <td className="border border-gray-400 p-2">{maxIpponResult[0].maxResult}</td>
-              {/* <td className="border border-gray-400 p-2">{calcPoint(point, maxIpponResult[0].maxResult)}</td> */}
+              <td className="border border-gray-400 p-2">{calcPoint(ipponPoint, maxIpponResult[0].maxResult)}</td>
             </tr>
           </tbody>
         </table>

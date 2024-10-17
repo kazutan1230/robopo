@@ -9,10 +9,12 @@ import {
   panelOrDegree,
   findStart,
   getRobotPosition,
+  IPPON_BASHI_SIZE,
 } from "@/app/components/course/utils"
 import { Field } from "@/app/components/course/field"
 import ChallengeModal from "@/app/challenge/challengeModal"
 import { calcPoint, resultSubmit } from "@/app/components/challenge/utils"
+import { IpponBashiUI } from "@/app/components/challenge/ipponBashi"
 
 type ChallengeProps = {
   field: string | null | undefined
@@ -70,12 +72,12 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
           setPointCount(point)
           // これでゴールか
           if (nowMission === missionPair.length - 1) {
-            // 全クリアでゴールポイントを加算
             setIsGoal(true)
             setModalOpen(true)
+          } else {
+            // goal以外の時は次のミッションに進む
+            setNowMission(nowMission + 1)
           }
-          // goalの時もnowMissionを進めるから不具合あるかも。
-          setNowMission(nowMission + 1)
           // 一回目か
           if (!isRetry) {
             setResult1(result1 + 1)
@@ -104,16 +106,18 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
           // リトライか
           setResult2(result2 - 1)
         }
+        const turnBackMission = isGoal ? nowMission : nowMission - 1
         // ポイントを戻す
-        const point = calcPoint(pointState, nowMission - 1)
+        const point = calcPoint(pointState, turnBackMission)
         setPointCount(point)
         // ロボットを戻す
-        const [row, col, direction] = getRobotPosition(start?.[0] || 0, start?.[1] || 0, missionState, nowMission - 1)
+        const [row, col, direction] = getRobotPosition(start?.[0] || 0, start?.[1] || 0, missionState, turnBackMission)
         setBotPosition({ row: row, col: col })
         setBotDirection(direction)
         // nowMissionを戻す
-        setNowMission(nowMission - 1)
+        setNowMission(turnBackMission)
         // goalしたのを戻す
+        // うまいことisGoalでnowmissionを-1するかそのままにするかで直して。
         if (isGoal) {
           setIsGoal(false)
         }
@@ -126,123 +130,177 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
       setResult2(0)
       setPointCount(0)
       setNowMission(0)
+      setIsGoal(false)
       setBotPosition({ row: start?.[0] || 0, col: start?.[1] || 0 })
       setBotDirection(missionState[0])
     }
 
     return (
       <>
-        <div className="grid justify-items-center h-full w-screen sm:w-5/6">
-          {isGoal ? (
-            <>
-              <p className="text-3xl font-bold text-orange-600">おめでとう!</p>
-              {pointState[1] !== null && pointState[1] > 0 && (
-                <p className="text-2xl font-bold text-orange-600">ゴールポイント: {pointState[1]}ポイント</p>
-              )}
-              <p className="text-2xl font-bold text-orange-600">結果: クリア {pointCount}ポイント</p>
-              {isSuccess ? (
-                // チャレンジ終了後、画面読み込み直して初期状態に戻る
-                <button className="btn btn-accent mx-auto text-2xl" onClick={() => window.location.reload()}>
-                  コース一覧に戻る
-                </button>
-              ) : (
-                <button
-                  className="btn btn-accent mx-auto text-2xl"
-                  onClick={() => setModalOpen(true)}
-                  disabled={loading}>
-                  {loading ? <span className="loading loading-spinner"></span> : "結果送信"}
-                </button>
-              )}
-              {message && <p className="mx-auto mt-12">{message}</p>}
-            </>
-          ) : (
-            <>
-              <div className="flex flex-row w-full">
-                <div className="w-1/3"></div>
-                <div className="w-1/3 grid justify-items-center">
-                  <p>{isRetry ? "やり直し中" : "チャレンジ中"}</p>
-                  <p>↓ミッション↓</p>
-                </div>
-                <div className="w-1/3 grid items-center justify-end">
-                  <label className="cursor-pointer flex items-center w-full">
-                    <div className="grid grid-col">
-                      <span className="mr-2">厳密タップモード</span>
-                      <input
-                        type="checkbox"
-                        checked={strictMode}
-                        className="toggle toggle-primary ml-auto mr-2"
-                        onChange={() => (strictMode ? setStrictMode(false) : setStrictMode(true))}
-                      />
-                    </div>
-                  </label>
-                </div>
-              </div>
-              <p className="text-3xl font-bold text-orange-600">
-                {nowMission + 1} :{" "}
-                {missionPair[nowMission][0] === null ? "-" : MissionString[missionPair[nowMission][0]]}
-                {missionPair[nowMission][1] === null ? "-" : missionPair[nowMission][1]}
-                {missionPair[nowMission][0] === null ? "-" : panelOrDegree(missionPair[nowMission][0])}
-              </p>
-              <p>{pointState[nowMission + 2]}ポイント</p>
-            </>
-          )}
-          <Field
-            type="challenge"
-            field={fieldState}
-            botPosition={botPosition}
-            botDirection={botDirection}
-            // ゴール後の表示はゴール前のmissionPairで出すので、おかしくなるかも。
-            nextMissionPair={isGoal ? missionPair[nowMission - 1] : missionPair[nowMission]}
-            onPanelClick={(row, col) => handleNext(row, col)}
-          />
+        {courseId === -1 ? (
+          <div className="relative flex flex-col justify-items-center w-full h-[calc(100vh-100px)]">
+            <div className="grid justify-items-center w-full">
+              <p className="text-xl font-bold">THE 一本橋</p>
+            </div>
+            <div className="grid grid-cols-2 justify-items-center w-full h-1/2">
+              <div className="flex flex-col">
+                <div className="stats shadow">
+                  <div className="stat">
+                    <div className="stat-title text-3xl font-bold text-orange-600">現在:</div>
+                    <div className="stat-value text-3xl font-bold text-orange-600">{pointCount}ポイント</div>
 
-          <p className="text-3xl font-bold text-orange-600">現在: {pointCount}ポイント</p>
-          <div className="grid grid-cols-2 gap-4 p-4">
-            <button
-              type="button"
-              id="add"
-              className="btn btn-primary mx-auto"
-              onClick={handleBack}
-              disabled={nowMission === 0}>
-              1つ戻る
-            </button>
-            <button
-              type="button"
-              className="btn btn-neutral mx-auto"
-              onClick={() => setModalOpen(true)}
-              disabled={isGoal}>
-              失敗
-            </button>
-            {!isRetry && (
-              <button type="button" className="btn btn-primary mx-auto " onClick={handleRetry}>
-                やり直し
-              </button>
-            )}
+                    <p className="text-3xl font-bold text-orange-600">
+                      {nowMission < IPPON_BASHI_SIZE - 1 ? "行き" : "帰り"}
+                    </p>
+                  </div>
+                </div>
+                <p className="text-lg mt-5 ml-3">パネルをタップ</p>
+                <p className="text-lg ml-3">で進みます</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 justify-items-center w-full h-1/2">
+              <div className="flex flex-col justify-items-center w-full"></div>
+              <div className="flex flex-col items-end w-full">
+                <button
+                  type="button"
+                  id="add"
+                  className="btn btn-primary mx-auto m-3"
+                  onClick={handleBack}
+                  disabled={nowMission === 0}>
+                  1つ戻る
+                </button>
+                <button type="button" className="btn btn-accent mx-auto m-3" onClick={() => setModalOpen(true)}>
+                  結果送信
+                </button>
+                <button type="button" className="btn btn-primary mx-auto m-3" onClick={handleRetry} disabled={isRetry}>
+                  やり直し
+                </button>
+              </div>
+            </div>
+            <div className="absolute flex top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+              <IpponBashiUI
+                botPosition={botPosition}
+                botDirection={botDirection}
+                // ゴール後の表示はゴール前のmissionPairで出すので、おかしくなるかも。
+                nextMissionPair={isGoal ? missionPair[nowMission - 1] : missionPair[nowMission]}
+                onPanelClick={(row: number, col: number) => handleNext(row, col)}
+              />
+            </div>
           </div>
-          {modalOpen && (
-            <ChallengeModal
-              setModalOpen={setModalOpen}
-              handleSubmit={() =>
-                resultSubmit(
-                  result1,
-                  result2,
-                  compeId,
-                  courseId,
-                  playerId,
-                  umpireId,
-                  setMessage,
-                  setIsSuccess,
-                  setLoading
-                )
-              }
-              loading={loading}
-              isSuccess={isSuccess}
-              message={message}
-              result1Point={isRetry ? calcPoint(pointState, result1) : pointCount}
-              result2Point={isRetry ? pointCount : null}
+        ) : (
+          <div className="grid justify-items-center h-full w-screen sm:w-5/6">
+            {isGoal ? (
+              <div className="grid justify-items-center w-full max-h-32">
+                <p className="text-2xl font-bold text-orange-600">おめでとう!</p>
+                {pointState[1] !== null && pointState[1] > 0 && (
+                  <p className="text-2xl font-bold text-orange-600">ゴールポイント: {pointState[1]}ポイント</p>
+                )}
+                {isSuccess ? (
+                  // チャレンジ終了後、画面読み込み直して初期状態に戻る
+                  <button className="btn btn-accent mx-auto text-2xl" onClick={() => window.location.reload()}>
+                    コース一覧に戻る
+                  </button>
+                ) : (
+                  <button
+                    className="btn btn-accent mx-auto text-2xl m-3"
+                    onClick={() => setModalOpen(true)}
+                    disabled={loading}>
+                    {loading ? <span className="loading loading-spinner"></span> : "結果送信"}
+                  </button>
+                )}
+                {message && <p className="mx-auto mt-12">{message}</p>}
+              </div>
+            ) : (
+              <div className="grid justify-items-center w-full h-full min-h-32">
+                <div className="flex flex-row w-full">
+                  <div className="w-1/3"></div>
+                  <div className="w-1/3 grid justify-items-center">
+                    <p>{isRetry ? "やり直し中" : "チャレンジ中"}</p>
+                    <p>↓ミッション↓</p>
+                  </div>
+                  <div className="w-1/3 grid items-center justify-end">
+                    <label className="cursor-pointer flex items-center w-full">
+                      <div className="grid grid-col">
+                        <span className="mr-2">厳密タップモード</span>
+                        <input
+                          type="checkbox"
+                          checked={strictMode}
+                          className="toggle toggle-primary ml-auto mr-2"
+                          onChange={() => (strictMode ? setStrictMode(false) : setStrictMode(true))}
+                        />
+                      </div>
+                    </label>
+                  </div>
+                </div>
+                <p className="text-3xl font-bold text-orange-600">
+                  {nowMission + 1} :{" "}
+                  {missionPair[nowMission][0] === null ? "-" : MissionString[missionPair[nowMission][0]]}
+                  {missionPair[nowMission][1] === null ? "-" : missionPair[nowMission][1]}
+                  {missionPair[nowMission][0] === null ? "-" : panelOrDegree(missionPair[nowMission][0])}
+                </p>
+                <p>{pointState[nowMission + 2]}ポイント</p>
+              </div>
+            )}
+            <Field
+              type="challenge"
+              field={fieldState}
+              botPosition={botPosition}
+              botDirection={botDirection}
+              // ゴール後の表示はゴール前のmissionPairで出すので、おかしくなるかも。
+              nextMissionPair={isGoal ? missionPair[nowMission - 1] : missionPair[nowMission]}
+              onPanelClick={(row, col) => handleNext(row, col)}
             />
-          )}
-        </div>
+
+            <p className="text-3xl font-bold text-orange-600">
+              {isGoal ? "クリア" : "現在"}: {pointCount}ポイント
+            </p>
+            <div className="grid grid-cols-2 gap-4 p-4">
+              <button
+                type="button"
+                id="add"
+                className="btn btn-primary mx-auto"
+                onClick={handleBack}
+                disabled={nowMission === 0}>
+                1つ戻る
+              </button>
+              <button
+                type="button"
+                className="btn btn-neutral mx-auto"
+                onClick={() => setModalOpen(true)}
+                disabled={isGoal}>
+                失敗
+              </button>
+              {!isRetry && (
+                <button type="button" className="btn btn-primary mx-auto " onClick={handleRetry} disabled={isGoal}>
+                  やり直し
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+        {modalOpen && (
+          <ChallengeModal
+            setModalOpen={setModalOpen}
+            handleSubmit={() =>
+              resultSubmit(
+                result1,
+                result2,
+                compeId,
+                courseId,
+                playerId,
+                umpireId,
+                setMessage,
+                setIsSuccess,
+                setLoading
+              )
+            }
+            loading={loading}
+            isSuccess={isSuccess}
+            message={message}
+            result1Point={isRetry ? calcPoint(pointState, result1) : pointCount}
+            result2Point={isRetry ? pointCount : null}
+          />
+        )}
       </>
     )
   } else {

@@ -95,8 +95,10 @@ export const isGoal = (field: FieldState): boolean => {
 
 // field上のstartの位置を返す関数
 export const findStart = (field: FieldState): [number, number] | null => {
-  for (let i = 0; i < MAX_FIELD_WIDTH; i++) {
-    for (let j = 0; j < MAX_FIELD_HEIGHT; j++) {
+  // 一本橋のサイズ以上になるように調整
+  const height = MAX_FIELD_HEIGHT >= IPPON_BASHI_SIZE ? MAX_FIELD_HEIGHT : IPPON_BASHI_SIZE
+  for (let i = 0; i < height; i++) {
+    for (let j = 0; j < MAX_FIELD_WIDTH; j++) {
       if (field[i][j] === "start") return [i, j]
     }
   }

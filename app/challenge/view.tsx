@@ -6,7 +6,6 @@ import ChallengeList from "@/app/challenge/challengeList"
 import PlayerForm from "@/app/challenge/playerForm"
 import Challenge from "@/app/challenge/challenge"
 import CircleButton from "@/app/components/parts/circleButton"
-import IpponBashi from "@/app/components/challenge/ipponBashi"
 import { SensorCourse } from "@/app/components/challenge/sensorCourse"
 
 type ViewProps = {
@@ -83,7 +82,7 @@ export const View = ({ courseDataList, initialPlayerDataList }: ViewProps) => {
         </div>
       )}
 
-      {step === 4 && courseId !== null && courseId !== -1 && courseId !== -2 && playerId !== null && (
+      {step === 4 && courseId !== null && courseId !== -2 && playerId !== null && (
         <Challenge
           field={courseDataList.selectCourses.find((course) => course.id === courseId)?.field}
           mission={courseDataList.selectCourses.find((course) => course.id === courseId)?.mission}
@@ -92,16 +91,6 @@ export const View = ({ courseDataList, initialPlayerDataList }: ViewProps) => {
           courseId={courseId}
           playerId={playerId}
           umpireId={umpireId}
-        />
-      )}
-
-      {step === 4 && courseId === -1 && playerId !== null && (
-        <IpponBashi
-          compeId={compeId}
-          courseId={-1}
-          playerId={playerId}
-          umpireId={umpireId}
-          point={courseDataList.selectCourses.find((course) => course.id === courseId)?.point}
         />
       )}
 

@@ -11,6 +11,7 @@ export const SummaryTable = () => {
   const competitionId: number = 1 //一旦1
   const [courseData, setCourseData] = useState<{ selectCourses: SelectCourse[] }>({ selectCourses: [] })
   const [pointData, setPointData] = useState<PointValue[]>([])
+  const [ipponBashiPoint, setIpponBashiPoint] = useState<PointValue[]>([])
   const [courseId, setCourseId] = useState<number | null>(0)
   const [courseSummary, setCourseSummary] = useState<CourseSummary[]>([])
   const [loading, setLoading] = useState<boolean>(true)
@@ -21,6 +22,9 @@ export const SummaryTable = () => {
         // コースリストを取得
         const newCourseData: { selectCourses: SelectCourse[] } = await getCourseList()
         setCourseData(newCourseData)
+
+        const newIpponBashiPoint = newCourseData.selectCourses.find((course) => course.id === -1)?.point
+        newIpponBashiPoint && setIpponBashiPoint(await deserializePoint(newIpponBashiPoint))
 
         // コースIDが選択されている場合、そのコースのデータを取得
         if (courseId !== null) {
@@ -128,7 +132,9 @@ export const SummaryTable = () => {
                   <td className="border border-gray-400 p-2">
                     {player.sensorMaxResult ? player.sensorMaxResult : "-"}
                   </td>
-                  <td className="border border-gray-400 p-2">{player.ipponMaxResult ? player.ipponMaxResult : "-"}</td>
+                  <td className="border border-gray-400 p-2">
+                    {player.ipponMaxResult ? calcPoint(ipponBashiPoint, player.ipponMaxResult) : "-"}
+                  </td>
                   <td className="border border-gray-400 p-2">{player.totalPoint ? player.totalPoint : "-"}</td>
                   <td className="border border-gray-400 p-2">{player.pointRank}</td>
                   <td className="border border-gray-400 p-2">{player.challengeCount}</td>
