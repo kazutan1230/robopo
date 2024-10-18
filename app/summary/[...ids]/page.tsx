@@ -55,7 +55,7 @@ export default async function SummaryPlayer({ params }: { params: { ids: number[
         <h1 className="text-3xl text-violet-800 font-bold mr-5 mt-2">{player?.name}</h1>
         <h1 className="text-3xl font-bold mr-5 mt-2">{player ? "選手" : ""}</h1>
       </div>
-      <h1>{course?.name}コース</h1>
+      <div className="divider">{course?.name}コース</div>
       <div className="flex justify-center">
         <table className="table table-pin-rows">
           <tbody>
@@ -129,7 +129,7 @@ export default async function SummaryPlayer({ params }: { params: { ids: number[
         </table>
       </div>
 
-      <h1>THE一本橋</h1>
+      <div className="divider">THE一本橋</div>
       <div className="flex justify-center">
         <table className="table table-pin-rows">
           <tbody>
@@ -165,7 +165,7 @@ export default async function SummaryPlayer({ params }: { params: { ids: number[
         </table>
       </div>
 
-      <h1>センサーコース</h1>
+      <div className="divider">センサーコース</div>
       <div className="flex justify-center">
         <table className="table table-pin-rows">
           <tbody>
@@ -193,7 +193,7 @@ export default async function SummaryPlayer({ params }: { params: { ids: number[
         </table>
       </div>
 
-      <h1 className="grid justify-center m-3 underline">試行回数</h1>
+      <div className="divider">試行回数</div>
       <div className="grid justify-end m-3">
         <table className="table table-pin-rows">
           <tbody>

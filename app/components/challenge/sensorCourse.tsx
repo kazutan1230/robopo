@@ -11,7 +11,6 @@ type SensorCourseProps = {
 
 export const SensorCourse = ({ compeId, courseId, playerId, umpireId }: SensorCourseProps) => {
   const [result1, setResult1] = useState<number>(0) // 進んだmission
-  const [wallStop, setWallStop] = useState<boolean>(false)
   const [tunnelPoint, setTunnelPoint] = useState<number>(0)
   const [wallPoint, setWallPoint] = useState<number>(0)
   const [loading, setLoading] = useState<boolean>(false)
@@ -21,13 +20,17 @@ export const SensorCourse = ({ compeId, courseId, playerId, umpireId }: SensorCo
   const [pointCount, setPointCount] = useState<number>(0)
   const [isRetry, setIsRetry] = useState<boolean>(false)
 
-  // 壁停止のポイント配列を-5から20まで1ポイント毎で作成
-  const wallPointArray = Array.from({ length: 26 }, (_, i) => i - 5)
+  // 壁停止のポイント配列を20, 10, 5, 3, 0, -5で作成
+  const wallPointArray = [20, 10, 5, 3, 0, -5]
 
-  // チェックボックス選択で得点計算する
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // 選択で得点計算する
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // トンネル停止
-    if (e.target.id === "tunnel") {
+    if (e.target.id === "tunnelradio") {
+      const value = parseInt(e.target.value)
+      setTunnelPoint(value)
+      setPointCount(wallPoint + value)
+    } else if (e.target.id === "tunnelcheckbox") {
       if (e.target.checked) {
         setTunnelPoint(10)
         setPointCount(wallPoint + 10)
@@ -36,30 +39,22 @@ export const SensorCourse = ({ compeId, courseId, playerId, umpireId }: SensorCo
         setPointCount(wallPoint)
       }
     }
+
     // 壁停止
-    if (e.target.id === "wall") {
-      if (e.target.checked) {
-        setWallStop(true)
-      } else {
-        setWallStop(false)
-      }
+    if (e.target.id === "wallradio") {
+      const value = parseInt(e.target.value)
+      setWallPoint(value)
+      setPointCount(tunnelPoint + value)
     }
   }
 
-  // 壁停止のポイント選択
-  const handleWallPointChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = parseInt(e.target.value)
-    setPointCount(tunnelPoint + value)
-    setWallPoint(value)
-  }
   // やり直しする時
   const handleRetry = () => {
     setResult1(pointCount)
-    setIsRetry(true)
     setTunnelPoint(0)
     setWallPoint(0)
-    setWallStop(false)
     setPointCount(0)
+    setIsRetry(true)
   }
 
   return (
@@ -77,44 +72,68 @@ export const SensorCourse = ({ compeId, courseId, playerId, umpireId }: SensorCo
         <div className="flex flex-row w-full">
           <div className="w-1/5"></div>
           <div>
-            <label className="label justify-start text-xl mx-auto m-3">
+            <label className="label justify-start text-xl mx-auto">
               <input
                 type="checkbox"
-                id="tunnel"
-                className="checkbox checkbox-lg checkbox-primary"
-                onChange={(e) => handleCheckboxChange(e)}
+                id="tunnelcheckbox"
                 checked={tunnelPoint === 10}
+                className="checkbox checkbox-lg checkbox-primary"
+                onChange={(e) => handleChange(e)}
               />
-              <p className="text-xl ml-3">トンネルで停止 10P</p>
+              <p className="text-xl ml-3">トンネルで停止</p>
             </label>
-            <label className="label justify-start text-xl mx-auto m-3">
+            <div className="flex flex-row">
+              <label className="label justify-start text-xl mx-auto">
+                <input
+                  type="radio"
+                  id="tunnelradio"
+                  className="radio radio-lg radio-primary"
+                  onChange={(e) => handleChange(e)}
+                  checked={tunnelPoint === 0}
+                  value={0}
+                />
+                <p className="text-xl ml-3">0P</p>
+              </label>
+              <label className="label justify-start text-xl mx-auto">
+                <input
+                  type="radio"
+                  id="tunnelradio"
+                  className="radio radio-lg radio-primary"
+                  onChange={(e) => handleChange(e)}
+                  checked={tunnelPoint === 10}
+                  value={10}
+                />
+                <p className="text-xl ml-3">10P</p>
+              </label>
+            </div>
+            <div className="divider m-1"></div>
+            <label className="label justify-start text-xl mx-auto">
               <input
                 type="checkbox"
-                id="wall"
+                id="wallcheckbox"
                 className="checkbox checkbox-lg checkbox-primary"
-                onChange={(e) => handleCheckboxChange(e)}
-                checked={wallStop}
+                onChange={(e) => handleChange(e)}
+                checked={wallPoint !== 0 && wallPoint !== -5}
               />
               <p className="text-xl ml-3">壁で停止</p>
             </label>
-            {wallStop && (
-              <label className="label justify-start text-xl mx-auto m-3">
-                <select
-                  className="select select-bordered max-w-xs"
-                  disabled={!wallStop}
-                  onChange={(e) => handleWallPointChange(e)}>
-                  <option disabled selected>
-                    選択して下さい
-                  </option>
-                  {wallPointArray.map((num) => (
-                    <option key={num} value={num}>
-                      {num}
-                    </option>
-                  ))}
-                </select>
-                <p className="text-xl ml-3">ポイント</p>
-              </label>
-            )}
+            <div className="grid grid-cols-2">
+              {wallPointArray.map((point, index) => (
+                <div key={index}>
+                  <label className="label justify-start text-xl mx-auto">
+                    <input
+                      type="radio"
+                      id="wallradio"
+                      className="radio radio-lg radio-primary"
+                      onChange={(e) => handleChange(e)}
+                      checked={wallPoint === point}
+                      value={point}
+                    />
+                    <p className="text-xl ml-3">{point}P</p>
+                  </label>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
         <div className="flex justify-center w-full">
