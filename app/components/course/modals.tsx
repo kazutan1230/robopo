@@ -57,7 +57,7 @@ export const finModal = ({ setModalOpen }: FinModalProps) => {
         </div>
       </div>
       <form method="dialog" className="modal-backdrop" onClick={handleCancel}>
-        <button>close</button>
+        <button className="cursor-default">close</button>
       </form>
     </dialog>
   )
@@ -140,7 +140,7 @@ export const saveModal = ({ setModalOpen, name, setName, field, mission, point }
         </form>
       </div>
       <form method="dialog" className="modal-backdrop">
-        <button>close</button>
+        <button className="cursor-default">close</button>
       </form>
     </dialog>
   )
@@ -182,7 +182,7 @@ export const validationModal = ({ setModalOpen, field, mission }: ValidationModa
         )}
       </div>
       <form method="dialog" className="modal-backdrop" onClick={handleCancel}>
-        <button>close</button>
+        <button className="cursor-default">close</button>
       </form>
     </dialog>
   )

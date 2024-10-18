@@ -116,10 +116,14 @@ export default async function SummaryPlayer({ params }: { params: { ids: number[
             <tr>
               <td className="border bg-cyan-50 border-gray-400 p-2 text-center">成功までの回数</td>
               <td className="border border-gray-400 p-2">
-                {isCompletedCourse(point, maxResult[0].maxResult) ? firstTCourseCount[0].firstCount : "-"}
+                {maxResult.length > 0 && isCompletedCourse(point, maxResult[0].maxResult)
+                  ? firstTCourseCount[0].firstCount
+                  : "-"}
               </td>
               <td className="border bg-cyan-50 border-gray-400 p-2 text-center">MAXポイント</td>
-              <td className="border border-gray-400 p-2">{calcPoint(point, maxResult[0].maxResult)}</td>
+              <td className="border border-gray-400 p-2">
+                {maxResult.length > 0 ? calcPoint(point, maxResult[0].maxResult) : "-"}
+              </td>
             </tr>
           </tbody>
         </table>
@@ -148,10 +152,14 @@ export default async function SummaryPlayer({ params }: { params: { ids: number[
             <tr>
               <td className="border bg-cyan-50 border-gray-400 p-2 text-center">成功までの回数</td>
               <td className="border border-gray-400 p-2">
-                {isCompletedCourse(ipponPoint, maxIpponResult[0].maxResult) ? firstIpponCount[0].firstCount : "-"}
+                {maxIpponResult.length > 0 && isCompletedCourse(ipponPoint, maxIpponResult[0].maxResult)
+                  ? firstIpponCount[0].firstCount
+                  : "-"}
               </td>
               <td className="border bg-cyan-50 border-gray-400 p-2 text-center">MAXポイント</td>
-              <td className="border border-gray-400 p-2">{calcPoint(ipponPoint, maxIpponResult[0].maxResult)}</td>
+              <td className="border border-gray-400 p-2">
+                {maxIpponResult.length > 0 ? calcPoint(ipponPoint, maxIpponResult[0].maxResult) : "-"}
+              </td>
             </tr>
           </tbody>
         </table>
@@ -177,7 +185,9 @@ export default async function SummaryPlayer({ params }: { params: { ids: number[
           <tbody>
             <tr>
               <td className="border bg-cyan-50 border-gray-400 p-2 text-center">MAXポイント</td>
-              <td className="border border-gray-400 p-2">{maxSensorResult[0].maxResult}</td>
+              <td className="border border-gray-400 p-2">
+                {maxSensorResult.length > 0 ? maxSensorResult[0].maxResult : "-"}
+              </td>
             </tr>
           </tbody>
         </table>
@@ -201,7 +211,9 @@ export default async function SummaryPlayer({ params }: { params: { ids: number[
             <tr>
               <td className="border bg-cyan-50 border-gray-400 p-2 text-center text-2xl">トータルポイント</td>
               <td className="border border-gray-400 p-2 text-2xl">
-                {calcPoint(point, maxResult[0].maxResult) + maxIpponResult[0].maxResult + maxSensorResult[0].maxResult}
+                {(maxResult.length > 0 ? calcPoint(point, maxResult[0].maxResult) : 0) +
+                  (maxIpponResult.length > 0 ? calcPoint(ipponPoint, maxIpponResult[0].maxResult) : 0) +
+                  (maxSensorResult.length > 0 ? maxSensorResult[0].maxResult : 0)}
               </td>
             </tr>
           </tbody>

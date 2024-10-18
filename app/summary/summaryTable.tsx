@@ -27,16 +27,26 @@ export const SummaryTable = () => {
         newIpponBashiPoint && setIpponBashiPoint(await deserializePoint(newIpponBashiPoint))
 
         // コースIDが選択されている場合、そのコースのデータを取得
-        if (courseId !== null) {
-          const selectedCourse = courseData.selectCourses.find((course) => course.id === courseId)
-          if (selectedCourse) {
-            const point = await deserializePoint(selectedCourse.point)
-            setPointData(point)
-          }
-          const res = await fetch(`/api/summary/${competitionId}/${courseId}`, { cache: "no-store" })
-          const data = await res.json()
-          setCourseSummary(data)
+        // コースIDが選択されてない場合(最初)、一番若いidのコースデータを取得
+        if (courseId === null || courseId === undefined || courseId === 0) {
+          setCourseId(
+            newCourseData.selectCourses
+              .filter((course) => course.id > 0)
+              .reduce((mincourse, currentCourse) => {
+                return currentCourse.id < mincourse.id ? currentCourse : mincourse
+              }).id
+          )
         }
+        console.log("courseId: ", courseId)
+        const selectedCourse = courseData.selectCourses.find((course) => course.id === courseId)
+        if (selectedCourse) {
+          const point = await deserializePoint(selectedCourse.point)
+          setPointData(point)
+        }
+
+        const res = await fetch(`/api/summary/${competitionId}/${courseId}`, { cache: "no-store" })
+        const data = await res.json()
+        setCourseSummary(data)
       } catch (error) {
         console.error(error)
       } finally {
@@ -47,13 +57,13 @@ export const SummaryTable = () => {
   }, [competitionId, courseId])
 
   return (
-    <>
+    <div className="h-full w-full">
       <div className="flex mb-5">
         <h1 className="text-3xl font-bold mr-5 mt-2">成績判定シート</h1>
         <select
           className="select select-bordered"
           onChange={(event) => setCourseId(Number(event.target.value))}
-          defaultValue={0}>
+          value={courseId ? courseId : 0}>
           <option value={0} disabled>
             コースを選んでください
           </option>
@@ -72,22 +82,22 @@ export const SummaryTable = () => {
           )}
         </select>
       </div>
-      <div className="flex justify-center">
-        <table className="table table-pin-rows">
+      <div className="flex m-5 overflow-x-auto xl:justify-center xl:overflow-x-visible">
+        <table className="table table-pin-rows table-pin-cols">
           <thead>
             <tr>
               <th className="border border-gray-400 p-2">名前</th>
-              <th className="border border-gray-400 p-2">ふりがな</th>
-              <th className="border border-gray-400 p-2">ゼッケン</th>
-              <th className="border border-gray-400 p-2">Tコース完走なら〇記入</th>
-              <th className="border border-gray-400 p-2">完走は何回で達成?</th>
-              <th className="border border-gray-400 p-2">Tコースの最高得点</th>
-              <th className="border border-gray-400 p-2">センサーコースの最高得点</th>
-              <th className="border border-gray-400 p-2">一本橋の最高得点</th>
-              <th className="border border-gray-400 p-2">全てのチャレンジの総得点</th>
-              <th className="border border-gray-400 p-2">総得点の順位</th>
-              <th className="border border-gray-400 p-2">チャレンジ回数</th>
-              <th className="border border-gray-400 p-2">回数の順位</th>
+              <td className="border border-gray-400 p-2">ふりがな</td>
+              <td className="border border-gray-400 p-2">ゼッケン</td>
+              <td className="border border-gray-400 p-2">Tコース完走なら〇記入</td>
+              <td className="border border-gray-400 p-2">完走は何回で達成?</td>
+              <td className="border border-gray-400 p-2">Tコースの最高得点</td>
+              <td className="border border-gray-400 p-2">センサーコースの最高得点</td>
+              <td className="border border-gray-400 p-2">一本橋の最高得点</td>
+              <td className="border border-gray-400 p-2">全てのチャレンジの総得点</td>
+              <td className="border border-gray-400 p-2">総得点の順位</td>
+              <td className="border border-gray-400 p-2">チャレンジ回数</td>
+              <td className="border border-gray-400 p-2">回数の順位</td>
             </tr>
           </thead>
           <tbody>
@@ -100,13 +110,13 @@ export const SummaryTable = () => {
             ) : courseSummary.length > 0 ? (
               courseSummary.map((player) => (
                 <tr key={player.playerId}>
-                  <td className="border border-gray-400 p-2">
+                  <th className="border border-gray-400 p-2">
                     <Link
                       href={`/summary/${competitionId}/${courseId}/${player.playerId}`}
                       className="underline text-blue-600 hover:text-blue-800 visited:text-purple-600">
                       {player.playerName ? player.playerName : "-"}
                     </Link>
-                  </td>
+                  </th>
                   <td className="border border-gray-400 p-2">{player.playerFurigana ? player.playerFurigana : "-"}</td>
                   <td className="border border-gray-400 p-2">{player.playerZekken ? player.playerZekken : "-"}</td>
                   <td className="border border-gray-400 p-2">
@@ -151,6 +161,6 @@ export const SummaryTable = () => {
           </tbody>
         </table>
       </div>
-    </>
+    </div>
   )
 }

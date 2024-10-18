@@ -21,6 +21,7 @@ const PlayerForm = ({ playerDataList, setPlayerDataList, setStep, playerId, setP
   const [loading, setLoading] = useState<boolean>(false)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [modalOpen, setModalOpen] = useState<boolean>(false)
 
   // 初期データをセット
   useEffect(() => {
@@ -89,12 +90,41 @@ const PlayerForm = ({ playerDataList, setPlayerDataList, setStep, playerId, setP
         const newPlayerDataList: { players: SelectPlayer[] } = await getPlayerList()
         setPlayerDataList(newPlayerDataList.players)
         setPlayerId(null)
+        setSuccessMessage("プレイヤーが正常に削除されました")
+        // alert("プレイヤーが正常に削除されました")
+        setModalOpen(false)
+      } else {
+        setErrorMessage("プレイヤーを削除できませんでした")
       }
     } catch (error) {
       console.log("error: ", error)
     } finally {
       setLoading(false)
     }
+  }
+  const DeleteModal = () => {
+    setSuccessMessage(null)
+    const handleClick = () => {
+      setModalOpen(false)
+    }
+    return (
+      <dialog id="challenge-modal" className="modal modal-open" onClose={() => setModalOpen(false)}>
+        <div className="modal-box">
+          {successMessage ? successMessage : <p>選択したプレイヤーを削除しますか?</p>}
+          {!successMessage && (
+            <button className="btn btn-accent m-3" onClick={handleDelete} disabled={loading}>
+              はい
+            </button>
+          )}
+          <button className="btn btn-accent m-3" onClick={handleClick} disabled={loading}>
+            チャレンジに戻る
+          </button>
+        </div>
+        <form method="dialog" className="modal-backdrop" onClick={handleClick}>
+          <button className="cursor-default">close</button>
+        </form>
+      </dialog>
+    )
   }
 
   return (
@@ -167,7 +197,11 @@ const PlayerForm = ({ playerDataList, setPlayerDataList, setStep, playerId, setP
           onClick={() => setStep(2)}>
           確認へ
         </button>
-        <button type="button" className="btn btn-primary mx-auto" disabled={playerId === null} onClick={handleDelete}>
+        <button
+          type="button"
+          className="btn btn-primary mx-auto"
+          disabled={playerId === null}
+          onClick={() => setModalOpen(true)}>
           削除
         </button>
       </div>
@@ -243,6 +277,8 @@ const PlayerForm = ({ playerDataList, setPlayerDataList, setStep, playerId, setP
       <button type="button" className="btn btn-primary mx-auto m-5" onClick={() => setStep(0)}>
         戻る
       </button>
+
+      {modalOpen && <DeleteModal />}
     </>
   )
 }
