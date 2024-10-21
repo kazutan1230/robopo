@@ -1,4 +1,5 @@
 import { useState } from "react"
+import useSound from "use-sound"
 import {
   MissionString,
   PointState,
@@ -15,6 +16,7 @@ import { Field } from "@/app/components/course/field"
 import ChallengeModal from "@/app/challenge/challengeModal"
 import { calcPoint, resultSubmit } from "@/app/components/challenge/utils"
 import { IpponBashiUI } from "@/app/components/challenge/ipponBashi"
+import Sound1 from "@/app/lib/sound/01_ketteibutton5.mp3"
 
 type ChallengeProps = {
   field: string | null | undefined
@@ -56,6 +58,8 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
 
     const [strictMode, setStrictMode] = useState<boolean>(false)
 
+    const [play] = useSound(Sound1)
+
     // クリックされたpanelの情報を入れる
     const handleNext = (row: number, col: number) => {
       if (nowMission < missionPair.length && pointState[nowMission + 2] !== null) {
@@ -67,6 +71,7 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
         )
         // 厳密タップモードonで正しい次のミッションの位置を押した場合又は厳密タップモードOffの場合
         if ((strictMode && newRow === row && newCol === col) || !strictMode) {
+          play()
           // ポイントを加算
           const point = calcPoint(pointState, nowMission + 1)
           setPointCount(point)
