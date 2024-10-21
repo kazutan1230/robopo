@@ -24,6 +24,7 @@ type TurnArrowProps = {
   direction: MissionValue
   nextMissionPair: MissionValue[]
   duration?: number // 回転速度（秒）
+  type?: string
 }
 
 export const NextArrow = ({ row, col, direction, nextMissionPair, duration = 1, type }: ArrowProps) => {
@@ -38,7 +39,14 @@ export const NextArrow = ({ row, col, direction, nextMissionPair, duration = 1, 
     return <NextMoveArrow row={row} col={col} nextRow={nextRow} nextCol={nextCol} duration={duration} type={type} />
   } else {
     return (
-      <NextTurnArrow row={row} col={col} direction={direction} nextMissionPair={nextMissionPair} duration={duration} />
+      <NextTurnArrow
+        row={row}
+        col={col}
+        direction={direction}
+        nextMissionPair={nextMissionPair}
+        duration={duration}
+        type={type}
+      />
     )
   }
 }
@@ -162,10 +170,11 @@ const NextTurnArrow = ({
   direction,
   nextMissionPair,
   duration = 1, // 回転の速度
+  type,
 }: TurnArrowProps) => {
   // panelの幅と高さを取得
-  const panelWidth = getPanelWidth()
-  const panelHeight = getPanelHeight()
+  const panelWidth = getPanelWidth(type)
+  const panelHeight = getPanelHeight(type)
   // 円の中心を計算
   const midX = (2 * col * panelWidth) / 2
   const midY = (2 * row * panelHeight) / 2
