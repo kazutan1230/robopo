@@ -1,12 +1,14 @@
 "use client"
 import Link from "next/link"
 import { useState } from "react"
+import useSound from "use-sound"
 import type { SelectCourse, SelectPlayer } from "@/app/lib/db/schema"
 import ChallengeList from "@/app/challenge/challengeList"
 import PlayerForm from "@/app/challenge/playerForm"
 import Challenge from "@/app/challenge/challenge"
 import CircleButton from "@/app/components/parts/circleButton"
 import { SensorCourse } from "@/app/components/challenge/sensorCourse"
+import StartSound from "@/app/lib/sound/01_start.mp3"
 
 type ViewProps = {
   courseDataList: { selectCourses: SelectCourse[] }
@@ -20,6 +22,8 @@ export const View = ({ courseDataList, initialPlayerDataList }: ViewProps) => {
   const [playerDataList, setPlayerDataList] = useState<SelectPlayer[]>(initialPlayerDataList.players)
   const compeId: number = 1 //一旦1
   const umpireId: number = 1 //一旦1
+
+  const [startSound] = useSound(StartSound, { volume: 0.4 })
 
   return (
     <div className="flex flex-col justify-center items-center overflow-y-auto w-full">
@@ -75,7 +79,7 @@ export const View = ({ courseDataList, initialPlayerDataList }: ViewProps) => {
         <div>
           <h2>スタートを押すと始まります。</h2>
           <CircleButton
-            onClick={() => setStep(4)}
+            onClick={() => (setStep(4), startSound())}
             classNameText="mt-20 mb-20 w-48 h-48 text-3xl bg-gradient-to-r from-green-400 to-green-600 text-white"
             buttonText="スタート"
           />

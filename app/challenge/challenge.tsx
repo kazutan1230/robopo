@@ -16,7 +16,10 @@ import { Field } from "@/app/components/course/field"
 import ChallengeModal from "@/app/challenge/challengeModal"
 import { calcPoint, resultSubmit } from "@/app/components/challenge/utils"
 import { IpponBashiUI } from "@/app/components/challenge/ipponBashi"
-import Sound1 from "@/app/lib/sound/01_ketteibutton5.mp3"
+import NextSound from "@/app/lib/sound/02_next.mp3"
+import BackSound from "@/app/lib/sound/03_back.mp3"
+import GoalSound from "@/app/lib/sound/04_goal.mp3"
+import next from "next"
 
 type ChallengeProps = {
   field: string | null | undefined
@@ -58,7 +61,9 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
 
     const [strictMode, setStrictMode] = useState<boolean>(false)
 
-    const [play] = useSound(Sound1)
+    const [nextSound] = useSound(NextSound, { volume: 0.4 })
+    const [backSound] = useSound(BackSound, { volume: 0.2 })
+    const [goalSound] = useSound(GoalSound)
 
     // クリックされたpanelの情報を入れる
     const handleNext = (row: number, col: number) => {
@@ -71,7 +76,6 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
         )
         // 厳密タップモードonで正しい次のミッションの位置を押した場合又は厳密タップモードOffの場合
         if ((strictMode && newRow === row && newCol === col) || !strictMode) {
-          play()
           // ポイントを加算
           const point = calcPoint(pointState, nowMission + 1)
           setPointCount(point)
@@ -79,9 +83,11 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
           if (nowMission === missionPair.length - 1) {
             setIsGoal(true)
             setModalOpen(true)
+            goalSound()
           } else {
             // goal以外の時は次のミッションに進む
             setNowMission(nowMission + 1)
+            nextSound()
           }
           // 一回目か
           if (!isRetry) {
@@ -95,7 +101,6 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
           // ロボットを動かす
           setBotPosition({ row: newRow, col: newCol })
           setBotDirection(direction)
-          console.log("row, col, direction", row, col, direction)
         }
       } else {
         setNowMission(0)
@@ -126,6 +131,7 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
         if (isGoal) {
           setIsGoal(false)
         }
+        backSound()
       }
     }
 

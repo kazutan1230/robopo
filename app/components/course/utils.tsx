@@ -10,8 +10,8 @@ const PANEL_WIDTH: number = 85
 const PANEL_HEIGHT: number = 85
 
 // THE 一本橋のパネルサイズ
-const BASHI_PANEL_WIDTH: number = 60
-const BASHI_PANEL_HEIGHT: number = 60
+const BASHI_PANEL_WIDTH: number = 85
+const BASHI_PANEL_HEIGHT: number = 85
 
 // パネルの幅を返す関数
 export const getPanelWidth = (type?: string): number => {
