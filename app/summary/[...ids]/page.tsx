@@ -15,13 +15,14 @@ import {
   panelOrDegree,
 } from "@/app/components/course/utils"
 import { isCompletedCourse } from "@/app/components/summary/utils"
+import { sumIpponPoint } from "@/app/components/summary/utilServer"
 import { calcPoint } from "@/app/components/challenge/utils"
 import React from "react"
 
 export const revalidate = 0
 
 export default async function SummaryPlayer({ params }: { params: { ids: number[] } }) {
-  const ids = params.ids
+  const { ids } = await params
   // ids[0]:competitionId, ids[1]:courseId, ids[2]:playerId
   // 個人成績を取得する
   const player = await getPlayerById(ids[2])
@@ -47,6 +48,14 @@ export default async function SummaryPlayer({ params }: { params: { ids: number[
   // 一本橋のデータを取得する
   const ipponBashi = await getCourseById(-1)
   const ipponPoint = deserializePoint(ipponBashi?.point || "")
+
+  // 一本橋コースで得た総得点
+  const sumIpponPoints = await sumIpponPoint(ids[0], ids[2])
+  // const sumIpponPoint = resultIpponArray.reduce((sum, result) => {
+  //   let temp: number = calcPoint(ipponPoint, result.results1)
+  //   if (result.results2 !== null) temp += calcPoint(ipponPoint, result.results2)
+  //   return sum + temp
+  // }, 0)
 
   return (
     <>
@@ -150,6 +159,9 @@ export default async function SummaryPlayer({ params }: { params: { ids: number[
         <table className="table table-pin-rows">
           <tbody>
             <tr>
+              <td className="border bg-cyan-50 border-gray-400 p-2 text-center">一本橋の合計得点</td>
+              <td className="border border-gray-400 p-2">{maxIpponResult.length > 0 ? sumIpponPoints : "-"}</td>
+              {/* <td className="border border-gray-400 p-2">{maxIpponResult.length > 0 ? sumIppon : "-"}</td> */}
               <td className="border bg-cyan-50 border-gray-400 p-2 text-center">成功までの回数</td>
               <td className="border border-gray-400 p-2">
                 {maxIpponResult.length > 0 && isCompletedCourse(ipponPoint, maxIpponResult[0].maxResult)

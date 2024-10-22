@@ -37,7 +37,6 @@ export const SummaryTable = () => {
               }).id
           )
         }
-        console.log("courseId: ", courseId)
         const selectedCourse = courseData.selectCourses.find((course) => course.id === courseId)
         if (selectedCourse) {
           const point = await deserializePoint(selectedCourse.point)
@@ -93,6 +92,7 @@ export const SummaryTable = () => {
               <td className="border border-gray-400 p-2">完走は何回で達成?</td>
               <td className="border border-gray-400 p-2">Tコースの最高得点</td>
               <td className="border border-gray-400 p-2">センサーコースの最高得点</td>
+              <td className="border border-gray-400 p-2">一本橋の全得点合計</td>
               <td className="border border-gray-400 p-2">一本橋の最高得点</td>
               <td className="border border-gray-400 p-2">全てのチャレンジの総得点</td>
               <td className="border border-gray-400 p-2">総得点の順位</td>
@@ -133,7 +133,7 @@ export const SummaryTable = () => {
                       {player.tCourseMaxResult ? calcPoint(pointData, player.tCourseMaxResult) : "-"}
                     </td>
                   )}
-                  {/* センサーコースはmaxResultに最高得点が入る */}
+                  {/* センサーコースはmaxResultにそのまま最高得点が入ってる */}
                   {courseId === -2 && (
                     <td className="border border-gray-400 p-2">
                       {player.sensorMaxResult ? player.sensorMaxResult : "-"}
@@ -142,6 +142,7 @@ export const SummaryTable = () => {
                   <td className="border border-gray-400 p-2">
                     {player.sensorMaxResult ? player.sensorMaxResult : "-"}
                   </td>
+                  <td className="border border-gray-400 p-2">{player.sumIpponPoint ? player.sumIpponPoint : "-"}</td>
                   <td className="border border-gray-400 p-2">
                     {player.ipponMaxResult ? calcPoint(ipponBashiPoint, player.ipponMaxResult) : "-"}
                   </td>
