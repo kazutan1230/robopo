@@ -1,11 +1,11 @@
 "use client"
+import { useState, useEffect } from "react"
+import Link from "next/link"
 import { type CourseSummary, isCompletedCourse } from "@/app/components/summary/utils"
 import { getCourseList } from "@/app/components/course/listUtils"
 import { deserializePoint, PointValue } from "@/app/components/course/utils"
 import { calcPoint } from "@/app/components/challenge/utils"
 import { type SelectCourse } from "@/app/lib/db/schema"
-import { useEffect, useState } from "react"
-import Link from "next/link"
 
 export const SummaryTable = () => {
   const competitionId: number = 1 //一旦1
@@ -15,6 +15,8 @@ export const SummaryTable = () => {
   const [courseId, setCourseId] = useState<number | null>(0)
   const [courseSummary, setCourseSummary] = useState<CourseSummary[]>([])
   const [loading, setLoading] = useState<boolean>(true)
+  const [sortKey, setSortKey] = useState<string>("") // ソートする列名
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc") // 昇順・降順
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,9 +34,7 @@ export const SummaryTable = () => {
           setCourseId(
             newCourseData.selectCourses
               .filter((course) => course.id > 0)
-              .reduce((mincourse, currentCourse) => {
-                return currentCourse.id < mincourse.id ? currentCourse : mincourse
-              }).id
+              .reduce((mincourse, currentCourse) => (currentCourse.id < mincourse.id ? currentCourse : mincourse)).id
           )
         }
         const selectedCourse = courseData.selectCourses.find((course) => course.id === courseId)
@@ -54,6 +54,45 @@ export const SummaryTable = () => {
     }
     fetchData()
   }, [competitionId, courseId])
+
+  // 並べ替え機能
+  const handleSort = (key: keyof CourseSummary) => {
+    const order = sortKey === key && sortOrder === "asc" ? "desc" : "asc"
+    setSortKey(key)
+    setSortOrder(order)
+    const sortedData = [...courseSummary].sort((a, b) => {
+      const aValue: number | string =
+        key === "playerFurigana" || key === "playerZekken"
+          ? a[key] === null
+            ? "" // 何も入ってない時に何入れるかは考える余地あり。
+            : a[key]
+          : a[key] === null
+          ? 0
+          : +a[key]
+      const bValue: number | string =
+        key === "playerFurigana" || key === "playerZekken"
+          ? b[key] === null
+            ? "" // 何も入ってない時に何入れるかは考える余地あり。
+            : b[key]
+          : b[key] === null
+          ? 0
+          : +b[key]
+
+      if (order === "asc") {
+        return aValue > bValue ? 1 : -1
+      } else {
+        return aValue < bValue ? 1 : -1
+      }
+    })
+    setCourseSummary(sortedData)
+  }
+
+  const renderSortIcon = (key: string) => {
+    if (sortKey === key) {
+      return sortOrder === "asc" ? "▲" : "▼"
+    }
+    return ""
+  }
 
   return (
     <div className="h-full w-full">
@@ -86,18 +125,40 @@ export const SummaryTable = () => {
           <thead>
             <tr>
               <th className="border border-gray-400 p-2">名前</th>
-              <td className="border border-gray-400 p-2">ふりがな</td>
-              <td className="border border-gray-400 p-2">ゼッケン</td>
+              <td className="border border-gray-400 p-2 cursor-pointer" onClick={() => handleSort("playerFurigana")}>
+                ふりがな {renderSortIcon("playerFurigana")}
+              </td>
+              <td className="border border-gray-400 p-2 cursor-pointer" onClick={() => handleSort("playerZekken")}>
+                ゼッケン {renderSortIcon("playerZekken")}
+              </td>
               <td className="border border-gray-400 p-2">Tコース完走なら〇記入</td>
-              <td className="border border-gray-400 p-2">完走は何回で達成?</td>
-              <td className="border border-gray-400 p-2">Tコースの最高得点</td>
-              <td className="border border-gray-400 p-2">センサーコースの最高得点</td>
-              <td className="border border-gray-400 p-2">一本橋の全得点合計</td>
-              <td className="border border-gray-400 p-2">一本橋の最高得点</td>
-              <td className="border border-gray-400 p-2">全てのチャレンジの総得点</td>
-              <td className="border border-gray-400 p-2">総得点の順位</td>
-              <td className="border border-gray-400 p-2">チャレンジ回数</td>
-              <td className="border border-gray-400 p-2">回数の順位</td>
+              <td className="border border-gray-400 p-2 cursor-pointer" onClick={() => handleSort("firstTCourseCount")}>
+                完走は何回で達成? {renderSortIcon("firstTCourseCount")}
+              </td>
+              <td className="border border-gray-400 p-2 cursor-pointer" onClick={() => handleSort("tCourseMaxResult")}>
+                Tコースの最高得点 {renderSortIcon("tCourseMaxResult")}
+              </td>
+              <td className="border border-gray-400 p-2 cursor-pointer" onClick={() => handleSort("sensorMaxResult")}>
+                センサーコースの最高得点 {renderSortIcon("sensorMaxResult")}
+              </td>
+              <td className="border border-gray-400 p-2 cursor-pointer" onClick={() => handleSort("sumIpponPoint")}>
+                一本橋の全得点合計 {renderSortIcon("sumIpponPoint")}
+              </td>
+              <td className="border border-gray-400 p-2 cursor-pointer" onClick={() => handleSort("ipponMaxResult")}>
+                一本橋の最高得点 {renderSortIcon("ipponMaxResult")}
+              </td>
+              <td className="border border-gray-400 p-2 cursor-pointer" onClick={() => handleSort("totalPoint")}>
+                全てのチャレンジの総得点 {renderSortIcon("totalPoint")}
+              </td>
+              <td className="border border-gray-400 p-2 cursor-pointer" onClick={() => handleSort("pointRank")}>
+                総得点の順位 {renderSortIcon("pointRank")}
+              </td>
+              <td className="border border-gray-400 p-2 cursor-pointer" onClick={() => handleSort("challengeCount")}>
+                チャレンジ回数 {renderSortIcon("challengeCount")}
+              </td>
+              <td className="border border-gray-400 p-2 cursor-pointer" onClick={() => handleSort("challengeRank")}>
+                回数の順位 {renderSortIcon("challengeRank")}
+              </td>
             </tr>
           </thead>
           <tbody>
