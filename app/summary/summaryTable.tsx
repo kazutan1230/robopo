@@ -94,6 +94,21 @@ export const SummaryTable = () => {
     return ""
   }
 
+  const itemTitle = (title1: string, title2?: string, key?: keyof CourseSummary) => {
+    return (
+      <td className={"border border-gray-400 p-2" + (key && " cursor-pointer")} onClick={() => key && handleSort(key)}>
+        <div className="flex-none 2xl:flex flex-row">
+          <p>
+            {title1} {(!title2 || title2 === "") && key && renderSortIcon(key)}
+          </p>
+          <p>
+            {title2 && title2} {title2 && title2 !== "" && key && renderSortIcon(key)}
+          </p>
+        </div>
+      </td>
+    )
+  }
+
   return (
     <div className="h-full w-full">
       <div className="flex mb-5">
@@ -120,45 +135,23 @@ export const SummaryTable = () => {
           )}
         </select>
       </div>
-      <div className="flex m-5 overflow-x-auto xl:justify-center xl:overflow-x-visible">
+      <div className="flex m-5 overflow-x-auto 2xl:justify-center 2xl:overflow-x-visible">
         <table className="table table-pin-rows table-pin-cols">
           <thead>
             <tr>
               <th className="border border-gray-400 p-2">名前</th>
-              <td className="border border-gray-400 p-2 cursor-pointer" onClick={() => handleSort("playerFurigana")}>
-                ふりがな {renderSortIcon("playerFurigana")}
-              </td>
-              <td className="border border-gray-400 p-2 cursor-pointer" onClick={() => handleSort("playerZekken")}>
-                ゼッケン {renderSortIcon("playerZekken")}
-              </td>
-              <td className="border border-gray-400 p-2">Tコース完走なら〇記入</td>
-              <td className="border border-gray-400 p-2 cursor-pointer" onClick={() => handleSort("firstTCourseCount")}>
-                完走は何回で達成? {renderSortIcon("firstTCourseCount")}
-              </td>
-              <td className="border border-gray-400 p-2 cursor-pointer" onClick={() => handleSort("tCourseMaxResult")}>
-                Tコースの最高得点 {renderSortIcon("tCourseMaxResult")}
-              </td>
-              <td className="border border-gray-400 p-2 cursor-pointer" onClick={() => handleSort("sensorMaxResult")}>
-                センサーコースの最高得点 {renderSortIcon("sensorMaxResult")}
-              </td>
-              <td className="border border-gray-400 p-2 cursor-pointer" onClick={() => handleSort("sumIpponPoint")}>
-                一本橋の全得点合計 {renderSortIcon("sumIpponPoint")}
-              </td>
-              <td className="border border-gray-400 p-2 cursor-pointer" onClick={() => handleSort("ipponMaxResult")}>
-                一本橋の最高得点 {renderSortIcon("ipponMaxResult")}
-              </td>
-              <td className="border border-gray-400 p-2 cursor-pointer" onClick={() => handleSort("totalPoint")}>
-                全てのチャレンジの総得点 {renderSortIcon("totalPoint")}
-              </td>
-              <td className="border border-gray-400 p-2 cursor-pointer" onClick={() => handleSort("pointRank")}>
-                総得点の順位 {renderSortIcon("pointRank")}
-              </td>
-              <td className="border border-gray-400 p-2 cursor-pointer" onClick={() => handleSort("challengeCount")}>
-                チャレンジ回数 {renderSortIcon("challengeCount")}
-              </td>
-              <td className="border border-gray-400 p-2 cursor-pointer" onClick={() => handleSort("challengeRank")}>
-                回数の順位 {renderSortIcon("challengeRank")}
-              </td>
+              {itemTitle("ふりがな", "", "playerFurigana")}
+              {itemTitle("ゼッケン", "", "playerZekken")}
+              {itemTitle("Tコース完走", "なら〇記入")}
+              {itemTitle("完走は何回", "で達成?", "firstTCourseCount")}
+              {itemTitle("Tコースの", "最高得点", "tCourseMaxResult")}
+              {itemTitle("センサーコースの", "最高得点", "sensorMaxResult")}
+              {itemTitle("一本橋の", "合計得点", "sumIpponPoint")}
+              {itemTitle("一本橋の", "最高得点", "ipponMaxResult")}
+              {itemTitle("全てのチャレンジ", "の総得点", "totalPoint")}
+              {itemTitle("総得点", "の順位", "pointRank")}
+              {itemTitle("チャレンジ", "回数", "challengeCount")}
+              {itemTitle("回数の", "順位", "challengeRank")}
             </tr>
           </thead>
           <tbody>
@@ -174,11 +167,13 @@ export const SummaryTable = () => {
                   <th className="border border-gray-400 p-2">
                     <Link
                       href={`/summary/${competitionId}/${courseId}/${player.playerId}`}
-                      className="underline text-blue-600 hover:text-blue-800 visited:text-purple-600">
+                      className="underline text-blue-600 hover:text-blue-800 visited:text-purple-600 sm:whitespace-nowrap">
                       {player.playerName ? player.playerName : "-"}
                     </Link>
                   </th>
-                  <td className="border border-gray-400 p-2">{player.playerFurigana ? player.playerFurigana : "-"}</td>
+                  <td className="border border-gray-400 p-2 sm:whitespace-nowrap">
+                    {player.playerFurigana ? player.playerFurigana : "-"}
+                  </td>
                   <td className="border border-gray-400 p-2">{player.playerZekken ? player.playerZekken : "-"}</td>
                   <td className="border border-gray-400 p-2">
                     {isCompletedCourse(pointData, player.tCourseMaxResult) ? "〇" : "-"}
