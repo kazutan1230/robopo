@@ -1,3 +1,4 @@
+import React from "react"
 import Link from "next/link"
 import {
   getCourseById,
@@ -7,21 +8,16 @@ import {
   getPlayerById,
   getChallengeCount,
 } from "@/app/lib/db/queries/queries"
-import {
-  deserializeMission,
-  deserializePoint,
-  missionStatePair,
-  MissionString,
-  panelOrDegree,
-} from "@/app/components/course/utils"
+import { deserializeMission, deserializePoint, missionStatePair } from "@/app/components/course/utils"
 import { isCompletedCourse } from "@/app/components/summary/utils"
+import { sumIpponPoint } from "@/app/components/summary/utilServer"
 import { calcPoint } from "@/app/components/challenge/utils"
-import React from "react"
+import { TCourseTable } from "@/app/summary/[...ids]/tCourseTable"
 
 export const revalidate = 0
 
 export default async function SummaryPlayer({ params }: { params: { ids: number[] } }) {
-  const ids = params.ids
+  const { ids } = await params
   // ids[0]:competitionId, ids[1]:courseId, ids[2]:playerId
   // 個人成績を取得する
   const player = await getPlayerById(ids[2])
@@ -48,6 +44,9 @@ export default async function SummaryPlayer({ params }: { params: { ids: number[
   const ipponBashi = await getCourseById(-1)
   const ipponPoint = deserializePoint(ipponBashi?.point || "")
 
+  // 一本橋コースで得た総得点
+  const sumIpponPoints = await sumIpponPoint(ids[0], ids[2])
+
   return (
     <>
       <div className="flex mb-5">
@@ -56,78 +55,14 @@ export default async function SummaryPlayer({ params }: { params: { ids: number[
         <h1 className="text-3xl font-bold mr-5 mt-2">{player ? "選手" : ""}</h1>
       </div>
       <div className="divider">{course?.name}コース</div>
-      <div className="flex justify-center">
-        <table className="table table-pin-rows">
-          <tbody>
-            {missionPair.map((pair, index: number) => (
-              <tr key={index}>
-                <td className="border border-gray-400 p-2">{index + 1}</td>
-                <th className="border border-gray-400 p-2">
-                  {pair[0] !== null && MissionString[pair[0]]}
-                  {pair[1] !== null && [pair[1]]}
-                  {pair[0] !== null && panelOrDegree(pair[0])}
-                </th>
-                <td className="border border-gray-400 p-2">{point[index + 2]}</td>
-                {resultArray.map((result, index2: number) => (
-                  <React.Fragment key={index2}>
-                    <td className="border border-gray-400 p-2">{result.results1 > index ? "○" : ""}</td>
-                    {result.results2 !== null && (
-                      <td className="border border-gray-400 p-2">{result.results2 > index ? "○" : ""}</td>
-                    )}
-                  </React.Fragment>
-                ))}
-              </tr>
-            ))}
-            <tr>
-              <td colSpan={2} className="border border-gray-400 p-2 text-center">
-                Goal(六足)
-              </td>
-              <td className="border border-gray-400 p-2">{point[1]}</td>
-              {resultArray.map((result, index2: number) => (
-                <React.Fragment key={index2}>
-                  <td className="border border-gray-400 p-2">{isCompletedCourse(point, result.results1) ? "○" : ""}</td>
-                  {result.results2 !== null && (
-                    <td className="border border-gray-400 p-2">
-                      {isCompletedCourse(point, result.results2) ? "○" : ""}
-                    </td>
-                  )}
-                </React.Fragment>
-              ))}
-            </tr>
-            <tr>
-              <td colSpan={3} className="border bg-cyan-50 border-gray-400 p-2 text-center">
-                コースポイント
-              </td>
-              {resultArray.map((result, index2: number) => (
-                <React.Fragment key={index2}>
-                  <td className="border border-gray-400 p-2">{calcPoint(point, result.results1)}</td>
-                  {result.results2 !== null && (
-                    <td className="border border-gray-400 p-2">{calcPoint(point, result.results2)}</td>
-                  )}
-                </React.Fragment>
-              ))}
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div className="grid justify-end m-3">
-        <table className="table table-pin-rows">
-          <tbody>
-            <tr>
-              <td className="border bg-cyan-50 border-gray-400 p-2 text-center">成功までの回数</td>
-              <td className="border border-gray-400 p-2">
-                {maxResult.length > 0 && isCompletedCourse(point, maxResult[0].maxResult)
-                  ? firstTCourseCount[0].firstCount
-                  : "-"}
-              </td>
-              <td className="border bg-cyan-50 border-gray-400 p-2 text-center">MAXポイント</td>
-              <td className="border border-gray-400 p-2">
-                {maxResult.length > 0 ? calcPoint(point, maxResult[0].maxResult) : "-"}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+
+      <TCourseTable
+        missionPair={missionPair}
+        point={point}
+        resultArray={resultArray}
+        firstTCourseCount={firstTCourseCount}
+        maxResult={maxResult}
+      />
 
       <div className="divider">THE一本橋</div>
       <div className="flex justify-center">
@@ -150,6 +85,9 @@ export default async function SummaryPlayer({ params }: { params: { ids: number[
         <table className="table table-pin-rows">
           <tbody>
             <tr>
+              <td className="border bg-cyan-50 border-gray-400 p-2 text-center">一本橋の合計得点</td>
+              <td className="border border-gray-400 p-2">{maxIpponResult.length > 0 ? sumIpponPoints : "-"}</td>
+              {/* <td className="border border-gray-400 p-2">{maxIpponResult.length > 0 ? sumIppon : "-"}</td> */}
               <td className="border bg-cyan-50 border-gray-400 p-2 text-center">成功までの回数</td>
               <td className="border border-gray-400 p-2">
                 {maxIpponResult.length > 0 && isCompletedCourse(ipponPoint, maxIpponResult[0].maxResult)

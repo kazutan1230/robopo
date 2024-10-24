@@ -9,21 +9,21 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "drizzle-orm": "^0.33.0",
-    "next": "^14.2.13",
+    "drizzle-orm": "^0.35.3",
+    "next": "^14.2.15",
     "react": "^18",
     "react-dom": "^18"
   },
   "devDependencies": {
-    "@neondatabase/serverless": "^0.9.4",
+    "@neondatabase/serverless": "^0.10.1",
     "@types/node": "^22",
-    "@types/react": "^18.3.4",
+    "@types/react": "^18.3.11",
     "@types/react-dom": "^18",
-    "daisyui": "^4.12.10",
-    "drizzle-kit": "^0.24.1",
-    "eslint": "^9.9.1",
+    "daisyui": "^4.12.13",
+    "drizzle-kit": "^0.26.2",
+    "eslint": "^9.13.0",
     "postcss": "^8",
-    "tailwindcss": "^3.4.10",
+    "tailwindcss": "^3.4.14",
     "typescript": "^5",
     "use-sound": "^4.0.3"
   }

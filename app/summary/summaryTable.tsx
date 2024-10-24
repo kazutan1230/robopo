@@ -1,11 +1,11 @@
 "use client"
+import { useState, useEffect } from "react"
+import Link from "next/link"
 import { type CourseSummary, isCompletedCourse } from "@/app/components/summary/utils"
 import { getCourseList } from "@/app/components/course/listUtils"
 import { deserializePoint, PointValue } from "@/app/components/course/utils"
 import { calcPoint } from "@/app/components/challenge/utils"
 import { type SelectCourse } from "@/app/lib/db/schema"
-import { useEffect, useState } from "react"
-import Link from "next/link"
 
 export const SummaryTable = () => {
   const competitionId: number = 1 //一旦1
@@ -15,6 +15,8 @@ export const SummaryTable = () => {
   const [courseId, setCourseId] = useState<number | null>(0)
   const [courseSummary, setCourseSummary] = useState<CourseSummary[]>([])
   const [loading, setLoading] = useState<boolean>(true)
+  const [sortKey, setSortKey] = useState<string>("") // ソートする列名
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc") // 昇順・降順
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,12 +34,9 @@ export const SummaryTable = () => {
           setCourseId(
             newCourseData.selectCourses
               .filter((course) => course.id > 0)
-              .reduce((mincourse, currentCourse) => {
-                return currentCourse.id < mincourse.id ? currentCourse : mincourse
-              }).id
+              .reduce((mincourse, currentCourse) => (currentCourse.id < mincourse.id ? currentCourse : mincourse)).id
           )
         }
-        console.log("courseId: ", courseId)
         const selectedCourse = courseData.selectCourses.find((course) => course.id === courseId)
         if (selectedCourse) {
           const point = await deserializePoint(selectedCourse.point)
@@ -55,6 +54,60 @@ export const SummaryTable = () => {
     }
     fetchData()
   }, [competitionId, courseId])
+
+  // 並べ替え機能
+  const handleSort = (key: keyof CourseSummary) => {
+    const order = sortKey === key && sortOrder === "asc" ? "desc" : "asc"
+    setSortKey(key)
+    setSortOrder(order)
+    const sortedData = [...courseSummary].sort((a, b) => {
+      const aValue: number | string =
+        key === "playerFurigana" || key === "playerZekken"
+          ? a[key] === null
+            ? "" // 何も入ってない時に何入れるかは考える余地あり。
+            : a[key]
+          : a[key] === null
+          ? 0
+          : +a[key]
+      const bValue: number | string =
+        key === "playerFurigana" || key === "playerZekken"
+          ? b[key] === null
+            ? "" // 何も入ってない時に何入れるかは考える余地あり。
+            : b[key]
+          : b[key] === null
+          ? 0
+          : +b[key]
+
+      if (order === "asc") {
+        return aValue > bValue ? 1 : -1
+      } else {
+        return aValue < bValue ? 1 : -1
+      }
+    })
+    setCourseSummary(sortedData)
+  }
+
+  const renderSortIcon = (key: string) => {
+    if (sortKey === key) {
+      return sortOrder === "asc" ? "▲" : "▼"
+    }
+    return ""
+  }
+
+  const itemTitle = (title1: string, title2?: string, key?: keyof CourseSummary) => {
+    return (
+      <td className={"border border-gray-400 p-2" + (key && " cursor-pointer")} onClick={() => key && handleSort(key)}>
+        <div className="flex-none 2xl:flex flex-row">
+          <p>
+            {title1} {(!title2 || title2 === "") && key && renderSortIcon(key)}
+          </p>
+          <p>
+            {title2 && title2} {title2 && title2 !== "" && key && renderSortIcon(key)}
+          </p>
+        </div>
+      </td>
+    )
+  }
 
   return (
     <div className="h-full w-full">
@@ -82,22 +135,23 @@ export const SummaryTable = () => {
           )}
         </select>
       </div>
-      <div className="flex m-5 overflow-x-auto xl:justify-center xl:overflow-x-visible">
+      <div className="flex m-5 overflow-x-auto 2xl:justify-center 2xl:overflow-x-visible">
         <table className="table table-pin-rows table-pin-cols">
           <thead>
             <tr>
               <th className="border border-gray-400 p-2">名前</th>
-              <td className="border border-gray-400 p-2">ふりがな</td>
-              <td className="border border-gray-400 p-2">ゼッケン</td>
-              <td className="border border-gray-400 p-2">Tコース完走なら〇記入</td>
-              <td className="border border-gray-400 p-2">完走は何回で達成?</td>
-              <td className="border border-gray-400 p-2">Tコースの最高得点</td>
-              <td className="border border-gray-400 p-2">センサーコースの最高得点</td>
-              <td className="border border-gray-400 p-2">一本橋の最高得点</td>
-              <td className="border border-gray-400 p-2">全てのチャレンジの総得点</td>
-              <td className="border border-gray-400 p-2">総得点の順位</td>
-              <td className="border border-gray-400 p-2">チャレンジ回数</td>
-              <td className="border border-gray-400 p-2">回数の順位</td>
+              {itemTitle("ふりがな", "", "playerFurigana")}
+              {itemTitle("ゼッケン", "", "playerZekken")}
+              {itemTitle("Tコース完走", "なら〇記入")}
+              {itemTitle("完走は何回", "で達成?", "firstTCourseCount")}
+              {itemTitle("Tコースの", "最高得点", "tCourseMaxResult")}
+              {itemTitle("センサーコースの", "最高得点", "sensorMaxResult")}
+              {itemTitle("一本橋の", "合計得点", "sumIpponPoint")}
+              {itemTitle("一本橋の", "最高得点", "ipponMaxResult")}
+              {itemTitle("全てのチャレンジ", "の総得点", "totalPoint")}
+              {itemTitle("総得点", "の順位", "pointRank")}
+              {itemTitle("チャレンジ", "回数", "challengeCount")}
+              {itemTitle("回数の", "順位", "challengeRank")}
             </tr>
           </thead>
           <tbody>
@@ -113,11 +167,13 @@ export const SummaryTable = () => {
                   <th className="border border-gray-400 p-2">
                     <Link
                       href={`/summary/${competitionId}/${courseId}/${player.playerId}`}
-                      className="underline text-blue-600 hover:text-blue-800 visited:text-purple-600">
+                      className="underline text-blue-600 hover:text-blue-800 visited:text-purple-600 sm:whitespace-nowrap">
                       {player.playerName ? player.playerName : "-"}
                     </Link>
                   </th>
-                  <td className="border border-gray-400 p-2">{player.playerFurigana ? player.playerFurigana : "-"}</td>
+                  <td className="border border-gray-400 p-2 sm:whitespace-nowrap">
+                    {player.playerFurigana ? player.playerFurigana : "-"}
+                  </td>
                   <td className="border border-gray-400 p-2">{player.playerZekken ? player.playerZekken : "-"}</td>
                   <td className="border border-gray-400 p-2">
                     {isCompletedCourse(pointData, player.tCourseMaxResult) ? "〇" : "-"}
@@ -133,7 +189,7 @@ export const SummaryTable = () => {
                       {player.tCourseMaxResult ? calcPoint(pointData, player.tCourseMaxResult) : "-"}
                     </td>
                   )}
-                  {/* センサーコースはmaxResultに最高得点が入る */}
+                  {/* センサーコースはmaxResultにそのまま最高得点が入ってる */}
                   {courseId === -2 && (
                     <td className="border border-gray-400 p-2">
                       {player.sensorMaxResult ? player.sensorMaxResult : "-"}
@@ -142,6 +198,7 @@ export const SummaryTable = () => {
                   <td className="border border-gray-400 p-2">
                     {player.sensorMaxResult ? player.sensorMaxResult : "-"}
                   </td>
+                  <td className="border border-gray-400 p-2">{player.sumIpponPoint ? player.sumIpponPoint : "-"}</td>
                   <td className="border border-gray-400 p-2">
                     {player.ipponMaxResult ? calcPoint(ipponBashiPoint, player.ipponMaxResult) : "-"}
                   </td>

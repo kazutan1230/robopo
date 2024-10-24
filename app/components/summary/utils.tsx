@@ -10,6 +10,7 @@ export type CourseSummary = {
   tCourseCount: number | null
   tCourseMaxResult: number | null
   sensorMaxResult: number | null
+  sumIpponPoint: number | null
   ipponMaxResult: number | null
   totalPoint: number | null
   pointRank: number | null

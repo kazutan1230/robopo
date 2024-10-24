@@ -116,7 +116,6 @@ export const getCourseSummaryByPlayerId = async (competitionId: number, courseId
   // 結果を配列で取得
   const result = await db
     .select({
-      // results: challenge.result1,
       results1: challenge.result1,
       results2: challenge.result2,
     })
