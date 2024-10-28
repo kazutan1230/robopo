@@ -110,7 +110,7 @@ export const TCourseTable = ({ missionPair, point, resultArray, firstTCourseCoun
 
   return (
     <>
-      <div className="grid justify-center lg:justify-start w-full">
+      <div className="grid justify-center w-full">
         <table className="table table-pin-rows">
           <tbody>
             <tr>
