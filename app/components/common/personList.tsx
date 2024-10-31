@@ -1,11 +1,18 @@
 import type { SelectPlayer, SelectUmpire } from "@/app/lib/db/schema"
 
-type personListProps = {
-  type: "player" | "umpire"
+type CommonProps = {
   personId: number | null
   setPersonId: React.Dispatch<React.SetStateAction<number | null>>
-  personDataList: SelectPlayer[] | SelectUmpire[]
 }
+type personListProps =
+  | (CommonProps & {
+      type: "player"
+      personDataList: SelectPlayer[]
+    })
+  | (CommonProps & {
+      type: "umpire"
+      personDataList: SelectUmpire[]
+    })
 
 const PersonList = ({ type, personId, setPersonId, personDataList }: personListProps) => {
   const itemNames: string[] = []
@@ -21,7 +28,7 @@ const PersonList = ({ type, personId, setPersonId, personDataList }: personListP
   return (
     <>
       <h2 className="text-center text-xl font-semibold">{type === "player" ? "選手" : "採点者"}一覧</h2>
-      <div className="w-full h-full">
+      <div className="w-full">
         <div className="border overflow-x-auto overflow-y-auto max-h-80 sm:h-96 m-3">
           <table className="table table-pin-rows">
             <thead>
