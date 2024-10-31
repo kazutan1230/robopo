@@ -19,7 +19,7 @@ export const View = ({ courseDataList, initialPlayerDataList }: ViewProps) => {
   const [step, setStep] = useState(0)
   const [courseId, setCourseId] = useState<number | null>(null)
   const [playerId, setPlayerId] = useState<number | null>(null)
-  const [playerDataList, setPlayerDataList] = useState<SelectPlayer[]>(initialPlayerDataList.players)
+  const playerDataList = initialPlayerDataList.players
   const compeId: number = 1 //一旦1
   const umpireId: number = 1 //一旦1
 
@@ -47,13 +47,21 @@ export const View = ({ courseDataList, initialPlayerDataList }: ViewProps) => {
         </>
       )}
       {step === 1 && (
-        <PlayerForm
-          playerDataList={playerDataList}
-          setPlayerDataList={setPlayerDataList}
-          setStep={setStep}
-          playerId={playerId}
-          setPlayerId={setPlayerId}
-        />
+        <>
+          <PlayerForm playerDataList={playerDataList} playerId={playerId} setPlayerId={setPlayerId} />
+          <div className="grid grid-cols-2 gap-4">
+            <button
+              type="button"
+              className="btn btn-primary mx-auto m-3"
+              disabled={playerId === null}
+              onClick={() => setStep(2)}>
+              確認へ
+            </button>
+            <button type="button" className="btn btn-primary mx-auto m-3" onClick={() => setStep(0)}>
+              戻る
+            </button>
+          </div>
+        </>
       )}
       {step === 2 && courseId !== null && playerId !== null && (
         <>

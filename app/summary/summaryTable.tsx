@@ -112,9 +112,16 @@ export const SummaryTable = () => {
   return (
     <div className="h-full w-full">
       <div className="flex mb-5">
-        <h1 className="text-3xl font-bold mr-5 mt-2">成績判定シート</h1>
+        <h1 className="text-3xl font-bold m-2">
+          <span className="hidden sm:inline">成績判定シート</span>
+          <span className="inline sm:hidden">
+            成績判定
+            <br />
+            シート
+          </span>
+        </h1>
         <select
-          className="select select-bordered"
+          className="select select-bordered m-2"
           onChange={(event) => setCourseId(Number(event.target.value))}
           value={courseId ? courseId : 0}>
           <option value={0} disabled>
