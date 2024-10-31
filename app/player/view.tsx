@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react"
 import type { SelectPlayer } from "@/app/lib/db/schema"
 import { getPlayerList } from "@/app/components/challenge/utils"
-import PlayerForm from "@/app/challenge/playerForm"
+import PersonList from "@/app/components/common/personList"
 
 type ViewProps = {
   initialPlayerDataList: { players: SelectPlayer[] }
@@ -119,7 +119,7 @@ export const View = ({ initialPlayerDataList }: ViewProps) => {
 
   return (
     <div>
-      <PlayerForm playerDataList={playerDataList} playerId={playerId} setPlayerId={setPlayerId} />
+      <PersonList type="player" personDataList={playerDataList} personId={playerId} setPersonId={setPlayerId} />
       {successMessage && <div className="text-green-500 font-semibold">{successMessage}</div>}
 
       {errorMessage && <div className="text-red-500 font-semibold">{errorMessage}</div>}
@@ -130,7 +130,10 @@ export const View = ({ initialPlayerDataList }: ViewProps) => {
           type="button"
           className="flex btn btn-primary mx-auto m-3"
           disabled={playerId === null}
-          onClick={() => setModalOpen(true)}>
+          onClick={() => {
+            setSuccessMessage(null)
+            setModalOpen(true)
+          }}>
           削除
         </button>
       </div>

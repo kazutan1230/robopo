@@ -3,12 +3,12 @@ import {
   // InsertCompetition,
   InsertCourse,
   InsertPlayer,
-  // InsertUmpire,
+  InsertUmpire,
   InsertChallenge,
   // competition,
   course,
   player,
-  // umpire,
+  umpire,
   challenge,
 } from "@/app/lib/db/schema"
 
@@ -24,5 +24,9 @@ export async function createPlayer(data: Omit<InsertPlayer, "id">) {
 
 export async function createChallenge(data: Omit<InsertChallenge, "id">) {
   const result = await db.insert(challenge).values(data)
+  return result
+}
+export async function createUmpire(data: Omit<InsertUmpire, "id">) {
+  const result = await db.insert(umpire).values(data)
   return result
 }

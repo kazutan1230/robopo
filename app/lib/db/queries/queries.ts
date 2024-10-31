@@ -1,6 +1,6 @@
 import { CourseSummary } from "@/app/components/summary/utils"
 import { db } from "@/app/lib/db/db"
-import { course, SelectCourse, player, challenge, competition } from "@/app/lib/db/schema"
+import { course, SelectCourse, player, challenge, competition, umpire } from "@/app/lib/db/schema"
 import { eq, sql, and, or } from "drizzle-orm"
 
 // IDを指定してDBからコースを削除する関数
@@ -38,6 +38,18 @@ export const getPlayerById = async (id: number) => {
 export const deleteChallengeById = async (id: number) => {
   const result = await db.delete(challenge).where(eq(challenge.id, id)).returning({ deleatedId: challenge.id })
   return result
+}
+
+// IDを指定してDBからUmpireを削除する関数
+export const deleteUmpireById = async (id: number) => {
+  const result = await db.delete(umpire).where(eq(umpire.id, id)).returning({ deleatedId: umpire.id })
+  return result
+}
+
+// IDからUmpireを取得する関数
+export const getUmpireById = async (id: number) => {
+  const result = await db.select().from(umpire).where(eq(umpire.id, id)).limit(1)
+  return result.length > 0 ? result[0] : null
 }
 
 // 特定の competition_id と course_id に基づくデータを取得
