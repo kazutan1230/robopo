@@ -1,25 +1,18 @@
 import type { SelectPlayer, SelectUmpire } from "@/app/lib/db/schema"
 
-type CommonProps = {
+type personListProps = {
+  type: "player" | "umpire"
   personId: number | null
   setPersonId: React.Dispatch<React.SetStateAction<number | null>>
+  personDataList: SelectPlayer[] | SelectUmpire[]
 }
-type personListProps =
-  | (CommonProps & {
-      type: "player"
-      personDataList: SelectPlayer[]
-    })
-  | (CommonProps & {
-      type: "umpire"
-      personDataList: SelectUmpire[]
-    })
 
 const PersonList = ({ type, personId, setPersonId, personDataList }: personListProps) => {
   const itemNames: string[] = []
   if (type === "player") {
     itemNames.push("名前", "ふりがな", "ゼッケン番号")
   } else if (type === "umpire") {
-    itemNames.push("名前")
+    itemNames.push("ID", "名前")
   }
   const handlePersonSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPersonId(Number(event.target.value))
@@ -61,9 +54,9 @@ const PersonList = ({ type, personId, setPersonId, personDataList }: personListP
                     </th>
                     {type === "umpire" && <td>{person.id}</td>}
                     <td>{person.name}</td>
-                    {type === "player" ? <td>{(person as SelectPlayer).furigana}</td> : <td>-</td>}
-                    {type === "player" ? <td>{(person as SelectPlayer).zekken}</td> : <td>-</td>}
-                    {/* {type === "player" ? <td>{(person as SelectPlayer).qr}</td> : <td>-</td>} */}
+                    {type === "player" ? <td>{(person as SelectPlayer).furigana}</td> : null}
+                    {type === "player" ? <td>{(person as SelectPlayer).zekken}</td> : null}
+                    {/* {type === "player" ? <td>{(person as SelectPlayer).qr}</td> : null} */}
                   </tr>
                 ))
               ) : (

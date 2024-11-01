@@ -1,45 +1,65 @@
 "use client"
 import { useState, useEffect } from "react"
-import type { SelectPlayer } from "@/app/lib/db/schema"
+import type { SelectPlayer, SelectUmpire } from "@/app/lib/db/schema"
 import { getPlayerList } from "@/app/components/challenge/utils"
+import { getUmpireList } from "@/app/components/common/utils"
 import PersonList from "@/app/components/common/personList"
 import PersonRegister from "@/app/components/common/personRegister"
 
-type ViewProps = {
-  initialPlayerDataList: { players: SelectPlayer[] }
+type PlayerProps = {
+  type: "player"
+  initialPersonDataList: { players: SelectPlayer[] }
 }
 
-export const View = ({ initialPlayerDataList }: ViewProps) => {
-  const [playerId, setPlayerId] = useState<number | null>(null)
+type UmpireProps = {
+  type: "umpire"
+  initialPersonDataList: { umpires: SelectUmpire[] }
+}
+
+type ViewProps = PlayerProps | UmpireProps
+
+export const View = ({ type, initialPersonDataList }: ViewProps) => {
+  const [personId, setPersonId] = useState<number | null>(null)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [playerDataList, setPlayerDataList] = useState<SelectPlayer[]>(initialPlayerDataList.players)
+  const [personDataList, setPersonDataList] = useState<SelectPlayer[] | SelectUmpire[]>(
+    type === "player" ? initialPersonDataList.players : initialPersonDataList.umpires
+  )
   const [loading, setLoading] = useState(false)
   const [modalOpen, setModalOpen] = useState<boolean>(false)
 
+  const personString = type === "player" ? "選手" : "採点者"
+
   useEffect(() => {
-    setPlayerDataList(playerDataList)
-  }, [playerDataList])
+    setPersonDataList(personDataList)
+  }, [personDataList])
 
   const handleDelete = async () => {
     try {
       setLoading(true)
-      const response = await fetch("/api/player", {
+      const url = type === "player" ? "/api/player" : "/api/umpire"
+      const response = await fetch(url, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ id: playerId }),
+        body: JSON.stringify({ id: personId }),
       })
 
       if (response.ok) {
-        const newPlayerDataList: { players: SelectPlayer[] } = await getPlayerList()
-        setPlayerDataList(newPlayerDataList.players)
-        setPlayerId(null)
-        setSuccessMessage("プレイヤーが正常に削除されました")
+        // 削除成功時の処理
+        if (type === "player") {
+          const newPlayerDataList: { players: SelectPlayer[] } = await getPlayerList()
+          setPersonDataList(newPlayerDataList.players)
+        } else if (type === "umpire") {
+          const newUmpireDataList: { umpires: SelectUmpire[] } = await getUmpireList()
+          setPersonDataList(newUmpireDataList.umpires)
+        }
+        setPersonId(null)
+        setSuccessMessage(personString + "が正常に削除されました")
         setModalOpen(false)
       } else {
-        setErrorMessage("プレイヤーを削除できませんでした")
+        setErrorMessage(personString + "を削除できませんでした")
       }
     } catch (error) {
       console.log("error: ", error)
@@ -55,7 +75,7 @@ export const View = ({ initialPlayerDataList }: ViewProps) => {
     return (
       <dialog id="challenge-modal" className="modal modal-open" onClose={() => setModalOpen(false)}>
         <div className="modal-box">
-          {successMessage ? successMessage : <p>選択したプレイヤーを削除しますか?</p>}
+          {successMessage ? successMessage : <p>選択した{personString}を削除しますか?</p>}
           {!successMessage && (
             <button className="btn btn-accent m-3" onClick={handleDelete} disabled={loading}>
               はい
@@ -75,17 +95,17 @@ export const View = ({ initialPlayerDataList }: ViewProps) => {
   return (
     <div className="lg:flex lg:flex-row">
       <div className="flex-col lg:w-2/3">
-        <PersonList type="player" personDataList={playerDataList} personId={playerId} setPersonId={setPlayerId} />
+        <PersonList type={type} personDataList={personDataList} personId={personId} setPersonId={setPersonId} />
         {successMessage && <div className="text-green-500 font-semibold">{successMessage}</div>}
 
         {errorMessage && <div className="text-red-500 font-semibold">{errorMessage}</div>}
 
         <div className="flex w-fit">
-          <p className="flex m-3">選択したプレイヤーを</p>
+          <p className="flex m-3">選択した{personString}を</p>
           <button
             type="button"
             className="flex btn btn-primary mx-auto m-3"
-            disabled={playerId === null}
+            disabled={personId === null}
             onClick={() => {
               setSuccessMessage(null)
               setModalOpen(true)
@@ -96,11 +116,11 @@ export const View = ({ initialPlayerDataList }: ViewProps) => {
       </div>
       <div className="lg:w-1/3">
         <PersonRegister
-          type="player"
-          setPersonId={setPlayerId}
+          type={type}
+          setPersonId={setPersonId}
           setSuccessMessage={setSuccessMessage}
           setErrorMessage={setErrorMessage}
-          setPersonDataList={setPlayerDataList}
+          setPersonDataList={setPersonDataList as React.Dispatch<React.SetStateAction<SelectPlayer[] | SelectUmpire[]>>}
         />
       </div>
 

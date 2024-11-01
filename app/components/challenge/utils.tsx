@@ -2,7 +2,7 @@ import { SelectPlayer } from "@/app/lib/db/schema"
 import { BASE_URL } from "@/app/lib/const"
 import { PointState } from "@/app/components/course/utils"
 
-// コース一覧情報を取得する関数
+// 選手一覧情報を取得する関数
 export async function getPlayerList(): Promise<{
   players: SelectPlayer[]
 }> {

@@ -1,23 +1,16 @@
 "use client"
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import type { SelectPlayer, SelectUmpire } from "@/app/lib/db/schema"
 import { getPlayerList } from "@/app/components/challenge/utils"
+import { getUmpireList } from "@/app/components/common/utils"
 
-type CommonProps = {
+type PersonRegisterProps = {
+  type: "player" | "umpire"
   setPersonId: React.Dispatch<React.SetStateAction<number | null>>
   setSuccessMessage: React.Dispatch<React.SetStateAction<string | null>>
   setErrorMessage: React.Dispatch<React.SetStateAction<string | null>>
+  setPersonDataList: React.Dispatch<React.SetStateAction<SelectPlayer[] | SelectUmpire[]>>
 }
-
-type PersonRegisterProps =
-  | (CommonProps & {
-      type: "player"
-      setPersonDataList: React.Dispatch<React.SetStateAction<SelectPlayer[]>>
-    })
-  | (CommonProps & {
-      type: "umpire"
-      setPersonDataList: React.Dispatch<React.SetStateAction<SelectUmpire[]>>
-    })
 
 const PersonRegister = ({
   type,
@@ -33,12 +26,12 @@ const PersonRegister = ({
   const [qr, setQr] = useState("")
 
   const formItems = [
-    { label: "名前", value: name, setValue: setName },
+    { label: "name", dispName: "名前", value: name, setValue: setName },
     ...(type === "player"
       ? [
-          { label: "ふりがな", value: furigana, setValue: setFurigana },
-          { label: "ゼッケン番号", value: zekken, setValue: setZekken },
-          { label: "QRコード", value: qr, setValue: setQr },
+          { label: "furigana", dispName: "ふりがな", value: furigana, setValue: setFurigana },
+          { label: "zekken", dispName: "ゼッケン番号", value: zekken, setValue: setZekken },
+          { label: "qr", dispName: "QRコード", value: qr, setValue: setQr },
         ]
       : []),
   ]
@@ -76,10 +69,15 @@ const PersonRegister = ({
           setSuccessMessage("採点者が正常に登録されました")
           setName("")
         }
-        const newPersonDataList: { players: SelectPlayer[] | SelectUmpire[] } = await getPlayerList()
-        type === "player" && setPersonDataList(newPersonDataList.players as SelectPlayer[])
-        type === "umpire" && setPersonDataList(newPersonDataList.players as SelectUmpire[])
-        setPersonId(newPersonDataList.players[newPersonDataList.players.length - 1].id)
+        if (type === "player") {
+          const newPersonDataList: { players: SelectPlayer[] } = await getPlayerList()
+          setPersonDataList(newPersonDataList.players)
+          setPersonId(newPersonDataList.players[newPersonDataList.players.length - 1].id)
+        } else if (type === "umpire") {
+          const newPersonDataList: { umpires: SelectUmpire[] } = await getUmpireList()
+          type === "umpire" && setPersonDataList(newPersonDataList.umpires as SelectUmpire[])
+          setPersonId(newPersonDataList.umpires[newPersonDataList.umpires.length - 1].id)
+        }
       } else {
         // エラーメッセージを表示
         setErrorMessage(result.message || "登録中にエラーが発生しました")
@@ -93,31 +91,34 @@ const PersonRegister = ({
   }
 
   //   個々の入力フォーム
-  const FormItem = ({
-    label,
-    value,
-    setValue,
-  }: {
-    label: string
-    value: string
-    setValue: React.Dispatch<React.SetStateAction<string>>
-  }) => {
-    return (
+  const FormItem = useCallback(
+    ({
+      label,
+      dispName,
+      value,
+      setValue,
+    }: {
+      label: string
+      dispName: string
+      value: string
+      setValue: React.Dispatch<React.SetStateAction<string>>
+    }) => (
       <div>
-        <label htmlFor={value} className="block text-sm font-medium text-gray-700">
-          {label}
+        <label htmlFor={label} className="block text-sm font-medium text-gray-700">
+          {dispName}
         </label>
         <input
           type="text"
-          id={value}
+          id={label}
           value={value}
           onChange={(e) => setValue(e.target.value)}
           required
           className="mt-1 p-2 border border-gray-300 rounded-md"
         />
       </div>
-    )
-  }
+    ),
+    []
+  )
 
   return (
     <div className=" flex justify-center">
@@ -126,7 +127,13 @@ const PersonRegister = ({
           {loading ? "登録中..." : "↓新規登録"}
         </button>
         {formItems.map((item, index) => (
-          <FormItem key={index} label={item.label} value={item.value} setValue={item.setValue} />
+          <FormItem
+            key={item.label}
+            label={item.label}
+            dispName={item.dispName}
+            value={item.value}
+            setValue={item.setValue}
+          />
         ))}
       </form>
     </div>
