@@ -1,4 +1,4 @@
-import { SelectUmpire } from "@/app/lib/db/schema"
+import { SelectCompetition, SelectUmpire } from "@/app/lib/db/schema"
 import { BASE_URL } from "@/app/lib/const"
 
 // 採点者一覧情報を取得する関数
@@ -20,5 +20,25 @@ export async function getUmpireList(): Promise<{
     .catch((err) => {
       console.error("error: ", err)
       return { umpires: [] } //エラーが発生した場合、空の配列を返す
+    })
+}
+
+// 大会一覧情報を取得する関数
+export async function getCompetitionList(): Promise<{
+  competitions: SelectCompetition[]
+}> {
+  return fetch(`${BASE_URL}/api/competition`, { cache: "no-store" })
+    .then((res) => {
+      if (!res.ok) {
+        return { competitions: [] }
+      }
+      return res.json()
+    })
+    .then((data) => {
+      return { competitions: data.competitions }
+    })
+    .catch((err) => {
+      console.error("error: ", err)
+      return { competitions: [] } //エラーが発生した場合、空の配列を返す
     })
 }

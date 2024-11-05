@@ -1,4 +1,4 @@
-import { boolean, integer, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core"
+import { boolean, integer, pgTable, serial, text, timestamp, primaryKey } from "drizzle-orm/pg-core"
 
 export const competition = pgTable("competition", {
   id: serial("id").primaryKey(),
@@ -51,6 +51,28 @@ export const challenge = pgTable("challenge", {
     .references(() => umpire.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at").defaultNow(),
 })
+
+export const umpireCourse = pgTable(
+  "umpire_course",
+  {
+    competitionId: integer("competition_id")
+      .notNull()
+      .references(() => competition.id, { onDelete: "cascade" }),
+    umpireId: integer("umpire_id")
+      .notNull()
+      .references(() => umpire.id, { onDelete: "cascade" }),
+    courseId: integer("course_id")
+      .notNull()
+      .references(() => course.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => {
+    return {
+      pk: primaryKey({ columns: [table.competitionId, table.umpireId] }),
+      pkWithCustomName: primaryKey({ name: "pk_umpire_course", columns: [table.competitionId, table.umpireId] }),
+    }
+  }
+)
 
 export type InsertCompetition = typeof competition.$inferInsert
 export type SelectCompetition = typeof competition.$inferSelect

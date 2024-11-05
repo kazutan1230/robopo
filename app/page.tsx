@@ -1,4 +1,4 @@
-import { ChallengeTab, SummaryTab, CompetitionTab } from "@/app/components/home/tabs"
+import { ChallengeTab, SummaryTab, ManageTab } from "@/app/components/home/tabs"
 import { ThreeTabs } from "@/app/components/parts/threeTabs"
 
 export default function Home() {
@@ -9,7 +9,7 @@ export default function Home() {
       tab2Title="集計結果"
       tab2={<SummaryTab />}
       tab3Title="大会管理"
-      tab3={<CompetitionTab />}
+      tab3={<ManageTab />}
     />
   )
 }

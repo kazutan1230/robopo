@@ -52,6 +52,18 @@ export const getUmpireById = async (id: number) => {
   return result.length > 0 ? result[0] : null
 }
 
+// IDを指定してDBからCompetitionを削除する関数
+export const deleteCompetitionById = async (id: number) => {
+  const result = await db.delete(competition).where(eq(competition.id, id)).returning({ deleatedId: competition.id })
+  return result
+}
+
+// IDからCompetitionを取得する関数
+export const getCompetitionById = async (id: number) => {
+  const result = await db.select().from(competition).where(eq(competition.id, id)).limit(1)
+  return result.length > 0 ? result[0] : null
+}
+
 // 特定の competition_id と course_id に基づくデータを取得
 // firstTCourseCountはresult1とresult2から最大のものを取得し、
 // それまで(created_atとidを昇順に並べた際の古いもの)のresult1とresult2の個数を最大のものが出るまで足している。
@@ -289,4 +301,14 @@ export const getChallengeCount = async (competitionId: number, courseId: number,
       )
     )
   return result as { challengeCount: number }[]
+}
+
+// competitionのIDを指定して開催にする関数
+export const openCompetitionById = async (id: number) => {
+  const result = await db.update(competition).set({ isOpen: true }).where(eq(competition.id, id))
+}
+
+// competitionのIDを指定して非開催にする関数
+export const closeCompetitionById = async (id: number) => {
+  const result = await db.update(competition).set({ isOpen: false }).where(eq(competition.id, id))
 }

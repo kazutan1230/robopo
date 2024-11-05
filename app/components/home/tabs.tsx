@@ -83,7 +83,7 @@ export const SummaryTab = (): JSX.Element => {
   )
 }
 
-export const CompetitionTab = (): JSX.Element => {
+export const ManageTab = (): JSX.Element => {
   return (
     <div className="grid sm:grid-cols-2 md:flex md:flex-col justify-center">
       <TabButton name="コース作成" link={`/course`} />
