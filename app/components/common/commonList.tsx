@@ -1,21 +1,21 @@
 import type { SelectPlayer, SelectUmpire } from "@/app/lib/db/schema"
 
-type personListProps = {
+type commonListProps = {
   type: "player" | "umpire"
-  personId: number | null
-  setPersonId: React.Dispatch<React.SetStateAction<number | null>>
-  personDataList: SelectPlayer[] | SelectUmpire[]
+  commonId: number | null
+  setCommonId: React.Dispatch<React.SetStateAction<number | null>>
+  commonDataList: SelectPlayer[] | SelectUmpire[]
 }
 
-const PersonList = ({ type, personId, setPersonId, personDataList }: personListProps) => {
+const CommonList = ({ type, commonId, setCommonId, commonDataList }: commonListProps) => {
   const itemNames: string[] = []
   if (type === "player") {
     itemNames.push("名前", "ふりがな", "ゼッケン番号")
   } else if (type === "umpire") {
     itemNames.push("ID", "名前")
   }
-  const handlePersonSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPersonId(Number(event.target.value))
+  const handleCommonSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCommonId(Number(event.target.value))
   }
 
   return (
@@ -37,32 +37,32 @@ const PersonList = ({ type, personId, setPersonId, personDataList }: personListP
               </tr>
             </thead>
             <tbody>
-              {personDataList.length > 0 ? (
-                personDataList.map((person) => (
-                  <tr key={person.id} className="hover cursor-pointer" onClick={() => setPersonId(person.id)}>
+              {commonDataList.length > 0 ? (
+                commonDataList.map((common) => (
+                  <tr key={common.id} className="hover cursor-pointer" onClick={() => setCommonId(common.id)}>
                     <th>
                       <label>
                         <input
                           type="radio"
-                          name="selectedPerson"
-                          value={person.id}
-                          checked={personId === person.id}
-                          onChange={handlePersonSelect}
+                          name="selectedCommon"
+                          value={common.id}
+                          checked={commonId === common.id}
+                          onChange={handleCommonSelect}
                           className="h-4 w-4"
                         />
                       </label>
                     </th>
-                    {type === "umpire" && <td>{person.id}</td>}
-                    <td>{person.name}</td>
-                    {type === "player" ? <td>{(person as SelectPlayer).furigana}</td> : null}
-                    {type === "player" ? <td>{(person as SelectPlayer).zekken}</td> : null}
-                    {/* {type === "player" ? <td>{(person as SelectPlayer).qr}</td> : null} */}
+                    {type === "umpire" && <td>{common.id}</td>}
+                    <td>{common.name}</td>
+                    {type === "player" ? <td>{(common as SelectPlayer).furigana}</td> : null}
+                    {type === "player" ? <td>{(common as SelectPlayer).zekken}</td> : null}
+                    {/* {type === "player" ? <td>{(common as SelectPlayer).qr}</td> : null} */}
                   </tr>
                 ))
               ) : (
                 <tr>
                   <td colSpan={5} className="text-center">
-                    プレイヤーが登録されていません。
+                    {type === "player" ? "選手" : "採点者"}が登録されていません。
                   </td>
                 </tr>
               )}
@@ -74,4 +74,4 @@ const PersonList = ({ type, personId, setPersonId, personDataList }: personListP
   )
 }
 
-export default PersonList
+export default CommonList

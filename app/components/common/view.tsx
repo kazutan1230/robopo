@@ -3,7 +3,7 @@ import { useState, useEffect } from "react"
 import type { SelectPlayer, SelectUmpire } from "@/app/lib/db/schema"
 import { getPlayerList } from "@/app/components/challenge/utils"
 import { getUmpireList } from "@/app/components/common/utils"
-import PersonList from "@/app/components/common/personList"
+import CommonList from "@/app/components/common/commonList"
 import PersonRegister from "@/app/components/common/personRegister"
 
 type PlayerProps = {
@@ -95,7 +95,7 @@ export const View = ({ type, initialPersonDataList }: ViewProps) => {
   return (
     <div className="lg:flex lg:flex-row">
       <div className="flex-col lg:w-2/3">
-        <PersonList type={type} personDataList={personDataList} personId={personId} setPersonId={setPersonId} />
+        <CommonList type={type} commonDataList={personDataList} commonId={personId} setCommonId={setPersonId} />
         {successMessage && <div className="text-green-500 font-semibold">{successMessage}</div>}
 
         {errorMessage && <div className="text-red-500 font-semibold">{errorMessage}</div>}

@@ -4,7 +4,7 @@ import { useState } from "react"
 import useSound from "use-sound"
 import type { SelectCourse, SelectPlayer } from "@/app/lib/db/schema"
 import ChallengeList from "@/app/challenge/challengeList"
-import PersonList from "@/app/components/common/personList"
+import CommonList from "@/app/components/common/commonList"
 import Challenge from "@/app/challenge/challenge"
 import CircleButton from "@/app/components/parts/circleButton"
 import { SensorCourse } from "@/app/components/challenge/sensorCourse"
@@ -48,7 +48,7 @@ export const View = ({ courseDataList, initialPlayerDataList }: ViewProps) => {
       )}
       {step === 1 && (
         <>
-          <PersonList type="player" personId={playerId} setPersonId={setPlayerId} personDataList={playerDataList} />
+          <CommonList type="player" commonId={playerId} setCommonId={setPlayerId} commonDataList={playerDataList} />
           <div className="grid grid-cols-2 gap-4">
             <button
               type="button"
