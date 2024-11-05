@@ -10,7 +10,7 @@ const TabButton = ({ name, link }: { name: string; link: string }) => {
   )
 }
 
-export const ChallengeTab = () => {
+export const ChallengeTab = (): JSX.Element => {
   const [competitionId, setCompetitionId] = useState(1)
   const [umpireId, setUmpireId] = useState(1)
 
@@ -52,7 +52,7 @@ export const ChallengeTab = () => {
   )
 }
 
-export const SummaryTab = () => {
+export const SummaryTab = (): JSX.Element => {
   const [competitionId, setCompetitionId] = useState(1)
   return (
     <div>
@@ -83,7 +83,7 @@ export const SummaryTab = () => {
   )
 }
 
-export const CompetitionTab = () => {
+export const CompetitionTab = (): JSX.Element => {
   return (
     <div className="grid sm:grid-cols-2 md:flex md:flex-col justify-center">
       <TabButton name="コース作成" link={`/course`} />
