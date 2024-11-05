@@ -1,37 +1,42 @@
 "use client"
 import { useState } from "react"
 import CommonList from "@/app/components/common/commonList"
-import type { SelectCompetition } from "@/app/lib/db/schema"
+import type { SelectCompetition, SelectPlayer, SelectUmpire } from "@/app/lib/db/schema"
+import CommonRegister from "@/app/components/common/commonRegister"
 
-type commonListProps = {
-  competitions: SelectCompetition[]
+type CompetitionListTabProps = {
+  competitionList: SelectCompetition[]
+  setCompetitionList: React.Dispatch<React.SetStateAction<SelectCompetition[]>>
 }
 
-const useCompetitionList = (
-  list: SelectCompetition[]
-): [SelectCompetition[], React.Dispatch<React.SetStateAction<SelectCompetition[]>>] => {
-  const [competitionList, setCompetitonList] = useState<SelectCompetition[]>(list)
-  return [competitionList, setCompetitonList]
+type NewCompetitionTabProps = {
+  setCompetitionList: React.Dispatch<React.SetStateAction<SelectCompetition[]>>
 }
 
-export const CompetitionListTab = (competitions: commonListProps): JSX.Element => {
+export const CompetitionListTab = ({ competitionList, setCompetitionList }: CompetitionListTabProps): JSX.Element => {
   const [competitionId, setCompetitionId] = useState<number | null>(null)
   const [loading, setLoading] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
   const [message, setMessage] = useState("")
-  const [competitionList, setCompetitionList] = useCompetitionList(competitions.competitions)
   const [modalOpen, setModalOpen] = useState<boolean>(false)
 
   const handleButtonClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
-    const requestBody = {
-      type: event.currentTarget.value,
-    }
+    const type = event.currentTarget.value
+    const requestBody =
+      type === "delete"
+        ? {
+            type: type,
+            id: competitionId,
+          }
+        : {
+            type: type,
+          }
 
-    const url = "/api/competition/" + competitionId
+    const url = type === "delete" ? "/api/competition/" : "/api/competition/" + competitionId
     try {
       setLoading(true)
       const response = await fetch(url, {
-        method: "POST",
+        method: type === "delete" ? "DELETE" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(requestBody),
       })
@@ -43,6 +48,8 @@ export const CompetitionListTab = (competitions: commonListProps): JSX.Element =
         setMessage("更新に成功しました")
         setIsSuccess(true)
         setCompetitionList(newList.competitions)
+        setCompetitionId(null)
+        setModalOpen(false)
       } else {
         setMessage("更新に失敗しました")
       }
@@ -61,12 +68,17 @@ export const CompetitionListTab = (competitions: commonListProps): JSX.Element =
     return (
       <dialog id="challenge-modal" className="modal modal-open" onClose={() => setModalOpen(false)}>
         <div className="modal-box">
-          <p>選択した大会を削除しますか?</p>
+          {isSuccess ? <p>{message}</p> : <p>選択した大会を削除しますか?</p>}
 
-          <button className="btn btn-accent m-3" onClick={(e) => handleButtonClick(e)} disabled={loading}>
-            はい
-          </button>
-
+          {!isSuccess && (
+            <button
+              className="btn btn-accent m-3"
+              value="delete"
+              onClick={(e) => handleButtonClick(e)}
+              disabled={loading}>
+              はい
+            </button>
+          )}
           <button className="btn btn-accent m-3" onClick={handleClick} disabled={loading}>
             戻る
           </button>
@@ -106,14 +118,40 @@ export const CompetitionListTab = (competitions: commonListProps): JSX.Element =
       </button>
       <button
         className="btn btn-warning text-default max-w-fit m-1"
-        value="delete"
         disabled={competitionId === null || loading}
-        onClick={() => setModalOpen(true)}>
+        onClick={() => {
+          setIsSuccess(false)
+          setModalOpen(true)
+        }}>
         削除
       </button>
       {isSuccess && <p>{message}</p>}
       <p>{loading && <span className="loading loading-spinner"></span>}</p>
       {modalOpen && <DeleteModal />}
+    </>
+  )
+}
+
+export const NewCompetitionTab = ({ setCompetitionList }: NewCompetitionTabProps) => {
+  const [commonId, setCommonId] = useState<number | null>(null)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  return (
+    <>
+      <p>新しい大会を追加します</p>
+      <CommonRegister
+        type="competition"
+        setCommonId={setCommonId}
+        setSuccessMessage={setSuccessMessage}
+        setErrorMessage={setErrorMessage}
+        setCommonDataList={
+          setCompetitionList as React.Dispatch<
+            React.SetStateAction<SelectPlayer[] | SelectUmpire[] | SelectCompetition[]>
+          >
+        }
+      />
+      {successMessage && <p>{successMessage}</p>}
+      {errorMessage && <p>{errorMessage}</p>}
     </>
   )
 }

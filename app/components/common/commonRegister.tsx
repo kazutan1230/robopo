@@ -1,24 +1,24 @@
 "use client"
 import { useCallback, useState } from "react"
-import type { SelectPlayer, SelectUmpire } from "@/app/lib/db/schema"
+import type { SelectPlayer, SelectUmpire, SelectCompetition } from "@/app/lib/db/schema"
 import { getPlayerList } from "@/app/components/challenge/utils"
-import { getUmpireList } from "@/app/components/common/utils"
+import { getUmpireList, getCompetitionList } from "@/app/components/common/utils"
 
-type PersonRegisterProps = {
-  type: "player" | "umpire"
-  setPersonId: React.Dispatch<React.SetStateAction<number | null>>
+type CommonRegisterProps = {
+  type: "player" | "umpire" | "competition"
+  setCommonId: React.Dispatch<React.SetStateAction<number | null>>
   setSuccessMessage: React.Dispatch<React.SetStateAction<string | null>>
   setErrorMessage: React.Dispatch<React.SetStateAction<string | null>>
-  setPersonDataList: React.Dispatch<React.SetStateAction<SelectPlayer[] | SelectUmpire[]>>
+  setCommonDataList: React.Dispatch<React.SetStateAction<SelectPlayer[] | SelectUmpire[] | SelectCompetition[]>>
 }
 
-const PersonRegister = ({
+const CommonRegister = ({
   type,
-  setPersonId,
+  setCommonId,
   setSuccessMessage,
   setErrorMessage,
-  setPersonDataList,
-}: PersonRegisterProps) => {
+  setCommonDataList,
+}: CommonRegisterProps) => {
   const [loading, setLoading] = useState(false)
   const [name, setName] = useState("")
   const [furigana, setFurigana] = useState("")
@@ -42,17 +42,17 @@ const PersonRegister = ({
     setErrorMessage(null)
     setSuccessMessage(null)
 
-    const personData = { name, ...(type === "player" ? { furigana, zekken, qr } : {}) }
+    const commonData = { name, ...(type === "player" ? { furigana, zekken, qr } : {}) }
 
     try {
       // APIにPOSTリクエストを送信
-      const url = type === "player" ? "/api/player" : "/api/umpire"
+      const url = type === "player" ? "/api/player" : type === "umpire" ? "/api/umpire" : "/api/competition"
       const response = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(personData),
+        body: JSON.stringify(commonData),
       })
 
       const result = await response.json()
@@ -65,18 +65,21 @@ const PersonRegister = ({
           setFurigana("")
           setZekken("")
           setQr("")
-        } else {
+          const newCommonDataList: { players: SelectPlayer[] } = await getPlayerList()
+          setCommonDataList(newCommonDataList.players)
+          setCommonId(newCommonDataList.players[newCommonDataList.players.length - 1].id)
+        } else if (type === "umpire") {
           setSuccessMessage("採点者が正常に登録されました")
           setName("")
-        }
-        if (type === "player") {
-          const newPersonDataList: { players: SelectPlayer[] } = await getPlayerList()
-          setPersonDataList(newPersonDataList.players)
-          setPersonId(newPersonDataList.players[newPersonDataList.players.length - 1].id)
-        } else if (type === "umpire") {
-          const newPersonDataList: { umpires: SelectUmpire[] } = await getUmpireList()
-          type === "umpire" && setPersonDataList(newPersonDataList.umpires as SelectUmpire[])
-          setPersonId(newPersonDataList.umpires[newPersonDataList.umpires.length - 1].id)
+          const newCommonDataList: { umpires: SelectUmpire[] } = await getUmpireList()
+          type === "umpire" && setCommonDataList(newCommonDataList.umpires as SelectUmpire[])
+          setCommonId(newCommonDataList.umpires[newCommonDataList.umpires.length - 1].id)
+        } else {
+          setSuccessMessage("大会が正常に登録されました")
+          setName("")
+          const newCommonDataList: { competitions: SelectCompetition[] } = await getCompetitionList()
+          type === "competition" && setCommonDataList(newCommonDataList.competitions as SelectCompetition[])
+          setCommonId(newCommonDataList.competitions[newCommonDataList.competitions.length - 1].id)
         }
       } else {
         // エラーメッセージを表示
@@ -140,4 +143,4 @@ const PersonRegister = ({
   )
 }
 
-export default PersonRegister
+export default CommonRegister

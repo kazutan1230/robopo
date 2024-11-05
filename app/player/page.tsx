@@ -5,5 +5,5 @@ import { View } from "@/app/components/common/view"
 export default async function Player() {
   const initialPlayerDataList: { players: SelectPlayer[] } = await getPlayerList()
 
-  return <View type="player" initialPersonDataList={initialPlayerDataList} />
+  return <View type="player" initialCommonDataList={initialPlayerDataList} />
 }
