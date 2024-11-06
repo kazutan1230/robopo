@@ -7,8 +7,8 @@ export const revalidate = 0
 
 // 割り当てられた大会・コース・採点者一覧を取得(予定)
 export async function GET(request: NextRequest) {
-  const assignList: SelectUmpireCourse[] = await db.select().from(umpireCourse)
-  return Response.json({ assignList })
+  const assigns: SelectUmpireCourse[] = await db.select().from(umpireCourse)
+  return Response.json({ assigns })
 }
 
 export async function POST(req: NextRequest) {
