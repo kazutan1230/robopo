@@ -88,3 +88,6 @@ export type SelectUmpire = typeof umpire.$inferSelect
 
 export type InsertChallenge = typeof challenge.$inferInsert
 export type SelectChallenge = typeof challenge.$inferSelect
+
+export type InsertUmpireCourse = typeof umpireCourse.$inferInsert
+export type SelectUmpireCourse = typeof umpireCourse.$inferSelect

@@ -1,10 +1,12 @@
 "use client"
 import { useState } from "react"
 import CommonList from "@/app/components/common/commonList"
-import type { SelectCompetition, SelectPlayer, SelectUmpire } from "@/app/lib/db/schema"
+import type { SelectCompetition, SelectPlayer, SelectUmpire, SelectCourse } from "@/app/lib/db/schema"
 import CommonRegister from "@/app/components/common/commonRegister"
 
 type CompetitionListTabProps = {
+  competitionId: number | null
+  setCompetitionId: React.Dispatch<React.SetStateAction<number | null>>
   competitionList: SelectCompetition[]
   setCompetitionList: React.Dispatch<React.SetStateAction<SelectCompetition[]>>
 }
@@ -13,8 +15,19 @@ type NewCompetitionTabProps = {
   setCompetitionList: React.Dispatch<React.SetStateAction<SelectCompetition[]>>
 }
 
-export const CompetitionListTab = ({ competitionList, setCompetitionList }: CompetitionListTabProps): JSX.Element => {
-  const [competitionId, setCompetitionId] = useState<number | null>(null)
+type AssignTabProps = {
+  competitionId: number | null
+  competitionList: SelectCompetition[]
+  courseList: { selectCourses: SelectCourse[] }
+  umpireList: { umpires: SelectUmpire[] }
+}
+
+export const CompetitionListTab = ({
+  competitionId,
+  setCompetitionId,
+  competitionList,
+  setCompetitionList,
+}: CompetitionListTabProps): JSX.Element => {
   const [loading, setLoading] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
   const [message, setMessage] = useState("")
@@ -152,6 +165,111 @@ export const NewCompetitionTab = ({ setCompetitionList }: NewCompetitionTabProps
       />
       {successMessage && <p>{successMessage}</p>}
       {errorMessage && <p>{errorMessage}</p>}
+    </>
+  )
+}
+
+export const AssignTab = ({ competitionId, competitionList, courseList, umpireList }: AssignTabProps) => {
+  const [courseId, setCourseId] = useState<number | null>(null)
+  const [umpireId, setUmpireId] = useState<number | null>(null)
+  const [message, setMessage] = useState<string | null>(null)
+  const [loading, setLoading] = useState<boolean>(false)
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault()
+    setLoading(true)
+    setMessage(null)
+
+    const data = { competitionId, courseId, umpireId }
+
+    try {
+      // APIにPOSTリクエストを送信
+      const url = "/api/assign"
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
+
+      const result = await response.json()
+
+      if (response.ok) {
+        // 登録成功時の処理
+        setMessage("コース・採点者が正常に割当されました")
+      } else {
+        // エラーメッセージを表示
+        setMessage(result.message || "登録中にエラーが発生しました")
+      }
+    } catch (error) {
+      // ネットワークエラーやその他のエラーの処理
+      setMessage("エラーが発生しました。もう一度お試しください。")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <>
+      <div className="grid grid-cols-2 mt-5 mb-5">
+        <p>選択中大会:</p>
+        <p>{competitionList.find((c) => c.id === competitionId)?.name}</p>
+        <p>選択中コース:</p>
+        <p>{courseList.selectCourses.find((c) => c.id === courseId)?.name}</p>
+        <p>選択中採点者:</p>
+        <p>{umpireList.umpires.find((u) => u.id === umpireId)?.name}</p>
+      </div>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <label htmlFor="course" className="block text-sm font-medium text-gray-700">
+          コース
+        </label>
+        <select
+          className="select select-bordered m-2"
+          onChange={(event) => setCourseId(Number(event.target.value))}
+          value={courseId ? courseId : 0}>
+          <option value={0} disabled>
+            コースを選んでください
+          </option>
+          {courseList ? (
+            courseList.selectCourses.map((course) => (
+              <option key={course.id} value={course.id}>
+                {course.name}
+              </option>
+            ))
+          ) : (
+            <option>コースがありません</option>
+          )}
+        </select>
+        <label htmlFor="course" className="block text-sm font-medium text-gray-700">
+          採点者
+        </label>
+        <select
+          className="select select-bordered m-2"
+          onChange={(event) => setUmpireId(Number(event.target.value))}
+          value={umpireId ? umpireId : 0}>
+          <option value={0} disabled>
+            採点者を選んでください
+          </option>
+          {umpireList ? (
+            umpireList.umpires.map((umpire) => (
+              <option key={umpire.id} value={umpire.id}>
+                {umpire.name}
+              </option>
+            ))
+          ) : (
+            <option>採点者が登録されていません</option>
+          )}
+        </select>
+        <button
+          type="submit"
+          disabled={loading || competitionId === null || courseId === null || umpireId === null}
+          className="btn btn-primary mx-auto m-3">
+          {loading ? "割当中..." : "割り当てる"}
+        </button>
+      </form>
+
+      {message && <p>{message}</p>}
     </>
   )
 }

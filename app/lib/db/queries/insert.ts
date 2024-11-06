@@ -5,11 +5,13 @@ import {
   InsertPlayer,
   InsertUmpire,
   InsertChallenge,
+  InsertUmpireCourse,
   competition,
   course,
   player,
   umpire,
   challenge,
+  umpireCourse,
 } from "@/app/lib/db/schema"
 
 export async function createCompetition(data: Omit<InsertCompetition, "id">) {
@@ -34,5 +36,10 @@ export async function createUmpire(data: Omit<InsertUmpire, "id">) {
 
 export async function createChallenge(data: Omit<InsertChallenge, "id">) {
   const result = await db.insert(challenge).values(data)
+  return result
+}
+
+export async function insertUmpireCourse(data: Omit<InsertUmpireCourse, "id">) {
+  const result = await db.insert(umpireCourse).values(data)
   return result
 }
