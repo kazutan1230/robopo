@@ -1,10 +1,10 @@
-import type { SelectPlayer, SelectUmpire, SelectCompetition } from "@/app/lib/db/schema"
+import type { SelectPlayer, SelectUmpire, SelectCompetition, SelectAssignList } from "@/app/lib/db/schema"
 
 type commonListProps = {
-  type: "player" | "umpire" | "competition"
+  type: "player" | "umpire" | "competition" | "assign"
   commonId: number | null
   setCommonId: React.Dispatch<React.SetStateAction<number | null>>
-  commonDataList: SelectPlayer[] | SelectUmpire[] | SelectCompetition[]
+  commonDataList: SelectPlayer[] | SelectUmpire[] | SelectCompetition[] | SelectAssignList[]
 }
 
 const CommonList = ({ type, commonId, setCommonId, commonDataList }: commonListProps) => {
@@ -15,6 +15,8 @@ const CommonList = ({ type, commonId, setCommonId, commonDataList }: commonListP
     itemNames.push("ID", "名前")
   } else if (type === "competition") {
     itemNames.push("ID", "名前", "開催中")
+  } else if (type === "assign") {
+    itemNames.push("大会名", "コース名", "採点者名")
   }
   const handleCommonSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCommonId(Number(event.target.value))
@@ -59,19 +61,29 @@ const CommonList = ({ type, commonId, setCommonId, commonDataList }: commonListP
                       </label>
                     </th>
                     {(type === "umpire" || type === "competition") && <td>{common.id}</td>}
-                    <td>{common.name}</td>
+                    {type !== "assign" && <td>{(common as SelectPlayer | SelectUmpire | SelectCompetition).name}</td>}
                     {type === "player" ? <td>{(common as SelectPlayer).furigana}</td> : null}
                     {type === "player" ? <td>{(common as SelectPlayer).zekken}</td> : null}
                     {/* {type === "player" ? <td>{(common as SelectPlayer).qr}</td> : null} */}
                     {type === "competition" ? (
                       <td>{(common as SelectCompetition).isOpen ? "開催中" : "未開催"}</td>
                     ) : null}
+                    {type === "assign" && <td>{(common as SelectAssignList).competition}</td>}
+                    {type === "assign" && <td>{(common as SelectAssignList).course}</td>}
+                    {type === "assign" && <td>{(common as SelectAssignList).umpire}</td>}
                   </tr>
                 ))
               ) : (
                 <tr>
                   <td colSpan={5} className="text-center">
-                    {type === "player" ? "選手" : type === "umpire" ? "採点者" : "大会"}が登録されていません。
+                    {type === "player"
+                      ? "選手"
+                      : type === "umpire"
+                      ? "採点者"
+                      : type === "competition"
+                      ? "大会"
+                      : "割当"}
+                    が登録されていません。
                   </td>
                 </tr>
               )}

@@ -91,3 +91,5 @@ export type SelectChallenge = typeof challenge.$inferSelect
 
 export type InsertUmpireCourse = typeof umpireCourse.$inferInsert
 export type SelectUmpireCourse = typeof umpireCourse.$inferSelect
+
+export type SelectAssignList = { id: number; competition: string | null; course: string | null; umpire: string | null }

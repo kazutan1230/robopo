@@ -1,19 +1,14 @@
 import { insertUmpireCourse } from "@/app/lib/db/queries/insert"
+import { umpireCourse, SelectUmpireCourse } from "@/app/lib/db/schema"
+import { db } from "@/app/lib/db/db"
 import { NextRequest, NextResponse } from "next/server"
 
 export const revalidate = 0
 
 // 割り当てられた大会・コース・採点者一覧を取得(予定)
 export async function GET(request: NextRequest) {
-  const searchParams = request.nextUrl.searchParams
-  const rawId = searchParams.get("id")
-  const id = rawId ? parseInt(rawId) : 0
-
-  if (id !== 0) {
-    return NextResponse.json({ getCourse: null })
-  } else {
-    return NextResponse.json({ getCourse: null })
-  }
+  const assignList: SelectUmpireCourse[] = await db.select().from(umpireCourse)
+  return Response.json({ assignList })
 }
 
 export async function POST(req: NextRequest) {

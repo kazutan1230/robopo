@@ -1,5 +1,6 @@
 "use client"
 import { useState } from "react"
+import Link from "next/link"
 import CommonList from "@/app/components/common/commonList"
 import type { SelectCompetition, SelectPlayer, SelectUmpire, SelectCourse } from "@/app/lib/db/schema"
 import CommonRegister from "@/app/components/common/commonRegister"
@@ -268,7 +269,9 @@ export const AssignTab = ({ competitionId, competitionList, courseList, umpireLi
           {loading ? "割当中..." : "割り当てる"}
         </button>
       </form>
-
+      <Link href="/config/assignList" className="btn btn-primary mx-auto m-3">
+        割当一覧
+      </Link>
       {message && <p>{message}</p>}
     </>
   )

@@ -1,6 +1,15 @@
 import { CourseSummary } from "@/app/components/summary/utils"
 import { db } from "@/app/lib/db/db"
-import { course, SelectCourse, player, challenge, competition, umpire } from "@/app/lib/db/schema"
+import {
+  course,
+  SelectCourse,
+  player,
+  challenge,
+  competition,
+  umpire,
+  umpireCourse,
+  SelectAssignList,
+} from "@/app/lib/db/schema"
 import { eq, sql, and, or } from "drizzle-orm"
 
 // IDを指定してDBからコースを削除する関数
@@ -311,4 +320,20 @@ export const openCompetitionById = async (id: number) => {
 // competitionのIDを指定して非開催にする関数
 export const closeCompetitionById = async (id: number) => {
   const result = await db.update(competition).set({ isOpen: false }).where(eq(competition.id, id))
+}
+
+// umpireCourseをそれぞれの大会・コース・採点者のnameを取得して返す関数
+export const getAssignList: () => Promise<SelectAssignList[]> = async () => {
+  const result = await db
+    .select({
+      id: sql<number>`${umpireCourse.competitionId} * 10000 + ${umpireCourse.umpireId}`,
+      competition: competition.name,
+      course: course.name,
+      umpire: umpire.name,
+    })
+    .from(umpireCourse)
+    .leftJoin(competition, eq(umpireCourse.competitionId, competition.id))
+    .leftJoin(course, eq(umpireCourse.courseId, course.id))
+    .leftJoin(umpire, eq(umpireCourse.umpireId, umpire.id))
+  return result
 }
