@@ -10,7 +10,7 @@ type commonListProps = {
 const CommonList = ({ type, commonId, setCommonId, commonDataList }: commonListProps) => {
   const itemNames: string[] = []
   if (type === "player") {
-    itemNames.push("名前", "ふりがな", "ゼッケン番号")
+    itemNames.push("ゼッケン番号", "ふりがな", "名前")
   } else if (type === "umpire") {
     itemNames.push("ID", "名前")
   } else if (type === "competition") {
@@ -60,17 +60,34 @@ const CommonList = ({ type, commonId, setCommonId, commonDataList }: commonListP
                         />
                       </label>
                     </th>
-                    {(type === "umpire" || type === "competition") && <td>{common.id}</td>}
-                    {type !== "assign" && <td>{(common as SelectPlayer | SelectUmpire | SelectCompetition).name}</td>}
-                    {type === "player" ? <td>{(common as SelectPlayer).furigana}</td> : null}
-                    {type === "player" ? <td>{(common as SelectPlayer).zekken}</td> : null}
-                    {/* {type === "player" ? <td>{(common as SelectPlayer).qr}</td> : null} */}
-                    {type === "competition" ? (
-                      <td>{(common as SelectCompetition).isOpen ? "開催中" : "未開催"}</td>
-                    ) : null}
-                    {type === "assign" && <td>{(common as SelectAssignList).competition}</td>}
-                    {type === "assign" && <td>{(common as SelectAssignList).course}</td>}
-                    {type === "assign" && <td>{(common as SelectAssignList).umpire}</td>}
+                    {type === "player" && (
+                      <>
+                        <td>{(common as SelectPlayer).zekken}</td>
+                        <td>{(common as SelectPlayer).furigana}</td>
+                        <td>{(common as SelectPlayer).name}</td>
+                        {/* <td>{(common as SelectPlayer).qr}</td> */}
+                      </>
+                    )}
+                    {type === "umpire" && (
+                      <>
+                        <td>{(common as SelectUmpire).id}</td>
+                        <td>{(common as SelectUmpire).name}</td>
+                      </>
+                    )}
+                    {type === "competition" && (
+                      <>
+                        <td>{(common as SelectCompetition).id}</td>
+                        <td>{(common as SelectCompetition).name}</td>
+                        <td>{(common as SelectCompetition).isOpen ? "開催中" : "未開催"}</td>
+                      </>
+                    )}
+                    {type === "assign" && (
+                      <>
+                        <td>{(common as SelectAssignList).competition}</td>
+                        <td>{(common as SelectAssignList).course}</td>
+                        <td>{(common as SelectAssignList).umpire}</td>
+                      </>
+                    )}
                   </tr>
                 ))
               ) : (
