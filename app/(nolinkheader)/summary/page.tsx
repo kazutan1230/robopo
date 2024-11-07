@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { View } from "@/app/summary/view"
+import { View } from "@/app/(nolinkheader)/summary/view"
 
 export default async function Summary() {
   return (

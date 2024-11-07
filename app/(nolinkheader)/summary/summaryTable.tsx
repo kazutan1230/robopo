@@ -149,9 +149,9 @@ export const SummaryTable = () => {
               <th className="border border-gray-400 p-2">名前</th>
               {itemTitle("ふりがな", "", "playerFurigana")}
               {itemTitle("ゼッケン", "", "playerZekken")}
-              {itemTitle("Tコース完走", "なら〇記入")}
+              {itemTitle("ベーシックコース", "完走なら〇記入")}
               {itemTitle("完走は何回", "で達成?", "firstTCourseCount")}
-              {itemTitle("Tコースの", "最高得点", "tCourseMaxResult")}
+              {itemTitle("ベーシックコース", "の最高得点", "tCourseMaxResult")}
               {itemTitle("センサーコースの", "最高得点", "sensorMaxResult")}
               {itemTitle("一本橋の", "合計得点", "sumIpponPoint")}
               {itemTitle("一本橋の", "最高得点", "ipponMaxResult")}

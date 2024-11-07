@@ -13,7 +13,7 @@ import {
   IPPON_BASHI_SIZE,
 } from "@/app/components/course/utils"
 import { Field } from "@/app/components/course/field"
-import { ChallengeModal, CourseOutModal, RetryModal } from "@/app/challenge/challengeModal"
+import { ChallengeModal, CourseOutModal, RetryModal } from "@/app/(nolinkheader)/challenge/challengeModal"
 import { calcPoint, resultSubmit } from "@/app/components/challenge/utils"
 import { IpponBashiUI } from "@/app/components/challenge/ipponBashi"
 import NextSound from "@/app/lib/sound/02_next.mp3"

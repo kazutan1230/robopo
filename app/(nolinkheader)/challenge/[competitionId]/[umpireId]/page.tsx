@@ -1,7 +1,7 @@
 import { getPlayerList } from "@/app/components/challenge/utils"
 import type { SelectCourse, SelectPlayer } from "@/app/lib/db/schema"
 import { getCourseIdByCompetitionIdAndUmpireId, getCourseById } from "@/app/lib/db/queries/queries"
-import { View } from "@/app/challenge/[competitionId]/[umpireId]/view"
+import { View } from "@/app/(nolinkheader)/challenge/[competitionId]/[umpireId]/view"
 
 export default async function Challenge({ params }: { params: { competitionId: number; umpireId: number } }) {
   const initialPlayerDataList: { players: SelectPlayer[] } = await getPlayerList()

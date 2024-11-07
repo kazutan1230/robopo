@@ -1,10 +1,9 @@
 "use client"
-import Link from "next/link"
 import { useState } from "react"
 import useSound from "use-sound"
 import { type SelectCourse, type SelectPlayer } from "@/app/lib/db/schema"
 import CommonList from "@/app/components/common/commonList"
-import Challenge from "@/app/challenge/challenge"
+import Challenge from "@/app/(nolinkheader)/challenge/challenge"
 import CircleButton from "@/app/components/parts/circleButton"
 import { SensorCourse } from "@/app/components/challenge/sensorCourse"
 import StartSound from "@/app/lib/sound/01_start.mp3"
@@ -86,9 +85,12 @@ export const View = ({ courseData, initialPlayerDataList, competitionId, umpireI
       )}
 
       {step !== 3 && (
-        <Link href="/" className="btn btn-primary min-w-28 max-w-fit mx-auto mt-5">
-          トップへ戻る
-        </Link>
+        <button
+          type="button"
+          className="btn btn-primary min-w-28 max-w-fit mx-auto mt-5"
+          onClick={() => window.location.reload()}>
+          再読み込み
+        </button>
       )}
     </div>
   )

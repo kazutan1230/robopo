@@ -29,8 +29,6 @@ export const IpponBashiUI = ({
   const width: number = 1
   const length: number = IPPON_BASHI_SIZE
 
-  const nextMissionPairMF: MissionValue[] = ["mf", 1]
-
   const field: FieldState = []
   for (let i = 0; i < length - 1; i++) {
     field.push(["route"])
