@@ -1,20 +1,30 @@
-import { getCourseList } from "@/app/components/course/listUtils"
 import { getPlayerList } from "@/app/components/challenge/utils"
 import type { SelectCourse, SelectPlayer } from "@/app/lib/db/schema"
-import { View } from "@/app/challenge/view"
+import { getCourseIdByCompetitionIdAndUmpireId, getCourseById } from "@/app/lib/db/queries/queries"
+import { View } from "@/app/challenge/[competitionId]/[umpireId]/view"
 
 export default async function Challenge({ params }: { params: { competitionId: number; umpireId: number } }) {
-  const courseDataList: { selectCourses: SelectCourse[] } = await getCourseList()
   const initialPlayerDataList: { players: SelectPlayer[] } = await getPlayerList()
 
   const { competitionId, umpireId } = params
 
+  // 割り当てられているcourseIdを取得
+  const courseId = await getCourseIdByCompetitionIdAndUmpireId(competitionId, umpireId)
+  // courseIdからcourseDataを取得
+  const courseData: SelectCourse | null = await getCourseById(courseId[0].courseId)
+
   return (
-    <View
-      courseDataList={courseDataList}
-      initialPlayerDataList={initialPlayerDataList}
-      //   compeId={competitionId}
-      //   umpireId={umpireId}
-    />
+    (courseData && (
+      <View
+        courseData={courseData}
+        initialPlayerDataList={initialPlayerDataList}
+        competitionId={competitionId}
+        umpireId={umpireId}
+      />
+    )) || (
+      <div className="flex flex-col justify-center items-center overflow-y-auto w-full">
+        <h2>コースを割り当てられていません。</h2>
+      </div>
+    )
   )
 }

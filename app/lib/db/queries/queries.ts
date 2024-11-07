@@ -337,3 +337,13 @@ export const getAssignList: () => Promise<SelectAssignList[]> = async () => {
     .leftJoin(umpire, eq(umpireCourse.umpireId, umpire.id))
   return result
 }
+
+// competitionIdとumpireIdを指定してumpireCourseからcourseIdを取得する関数
+export const getCourseIdByCompetitionIdAndUmpireId = async (competitionId: number, umpireId: number) => {
+  const result = await db
+    .select({ courseId: umpireCourse.courseId })
+    .from(umpireCourse)
+    .where(and(eq(umpireCourse.competitionId, competitionId), eq(umpireCourse.umpireId, umpireId)))
+    .limit(1)
+  return result
+}
