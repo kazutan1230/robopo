@@ -11,13 +11,15 @@ export default async function Home() {
   const rawAssignList: { assigns: SelectUmpireCourse[] } = await getRawAssignList()
 
   return (
-    <ThreeTabs
-      tab1Title="採点"
-      tab1={<ChallengeTab competitionList={competitionList} umpireList={umpireList} rawAssignList={rawAssignList} />}
-      tab2Title="集計結果"
-      tab2={<SummaryTab />}
-      tab3Title="大会管理"
-      tab3={<ManageTab />}
-    />
+    <>
+      <ThreeTabs
+        tab1Title="採点"
+        tab1={<ChallengeTab competitionList={competitionList} umpireList={umpireList} rawAssignList={rawAssignList} />}
+        tab2Title="集計結果"
+        tab2={<SummaryTab />}
+        tab3Title="大会管理"
+        tab3={<ManageTab />}
+      />
+    </>
   )
 }

@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { EditList } from "@/app/course/editList"
+import { EditList } from "@/app/(linkheader)/course/editList"
 
 export default function Course() {
   return (
