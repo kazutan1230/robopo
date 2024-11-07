@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { resultSubmit } from "@/app/components/challenge/utils"
-import ChallengeModal from "@/app/challenge/challengeModal"
+import { ChallengeModal } from "@/app/challenge/challengeModal"
 
 type SensorCourseProps = {
   compeId: number
@@ -16,7 +16,7 @@ export const SensorCourse = ({ compeId, courseId, playerId, umpireId }: SensorCo
   const [loading, setLoading] = useState<boolean>(false)
   const [isSuccess, setIsSuccess] = useState<boolean>(false)
   const [message, setMessage] = useState<string>("")
-  const [modalOpen, setModalOpen] = useState(false)
+  const [modalOpen, setModalOpen] = useState<number>(0)
   const [pointCount, setPointCount] = useState<number>(0)
   const [isRetry, setIsRetry] = useState<boolean>(false)
 
@@ -137,7 +137,7 @@ export const SensorCourse = ({ compeId, courseId, playerId, umpireId }: SensorCo
           </div>
         </div>
         <div className="flex justify-center w-full">
-          <button type="button" className="btn btn-accent mx-auto m-3" onClick={() => setModalOpen(true)}>
+          <button type="button" className="btn btn-accent mx-auto m-3" onClick={() => setModalOpen(1)}>
             結果送信
           </button>
           <button type="button" className="btn btn-primary mx-auto m-3" onClick={handleRetry} disabled={isRetry}>
@@ -145,7 +145,7 @@ export const SensorCourse = ({ compeId, courseId, playerId, umpireId }: SensorCo
           </button>
         </div>
       </div>
-      {modalOpen && (
+      {modalOpen === 1 && (
         // センサーコースはresultにそのまま得点を入れる。
         <ChallengeModal
           setModalOpen={setModalOpen}
