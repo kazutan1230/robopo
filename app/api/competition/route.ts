@@ -1,27 +1,26 @@
 import { NextRequest, NextResponse } from "next/server"
 import { db } from "@/app/lib/db/db"
-import { player, SelectPlayer } from "@/app/lib/db/schema"
-import { createPlayer } from "@/app/lib/db/queries/insert"
-import { deletePlayerById } from "@/app/lib/db/queries/queries"
+import { competition, SelectCompetition } from "@/app/lib/db/schema"
+import { createCompetition } from "@/app/lib/db/queries/insert"
+import { deleteCompetitionById } from "@/app/lib/db/queries/queries"
+import { getCompetitionList } from "@/app/components/common/utils"
 
 export const revalidate = 0
 
 export async function GET(request: NextRequest) {
-  const players: SelectPlayer[] = await db.select().from(player)
-  return Response.json({ players })
+  const competitions: SelectCompetition[] = await db.select().from(competition)
+  return Response.json({ competitions })
 }
 
 export async function POST(req: NextRequest) {
   const reqbody = await req.json()
-  const { name, furigana, zekken, qr } = reqbody
-  const playerData = {
+  const { name } = reqbody
+  const competitionData = {
     name: name,
-    furigana: furigana,
-    zekken: zekken,
-    qr: qr,
+    isOpen: false,
   }
   try {
-    const result = await createPlayer(playerData)
+    const result = await createCompetition(competitionData)
     return NextResponse.json({ success: true, data: result }, { status: 200 })
   } catch (error) {
     console.log("error: ", error)
@@ -40,8 +39,9 @@ export async function DELETE(req: NextRequest) {
   const reqbody = await req.json()
   const { id } = reqbody
   try {
-    const result = await deletePlayerById(id)
-    return NextResponse.json({ success: true, data: result }, { status: 200 })
+    const result = await deleteCompetitionById(id)
+    const newList = await getCompetitionList()
+    return NextResponse.json({ success: true, data: result, newList: newList }, { status: 200 })
   } catch (error) {
     console.log("error: ", error)
     return NextResponse.json(

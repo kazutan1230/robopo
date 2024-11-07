@@ -65,15 +65,19 @@ export default async function SummaryPlayer({ params }: { params: { ids: number[
       />
 
       <div className="divider">THE一本橋</div>
-      <div className="flex justify-center">
-        <table className="table table-pin-rows">
+      <div className="grid justify-center w-full">
+        <table>
           <tbody>
-            <tr className="flex flex-row">
+            <tr className="grid justify-center text-base grid-cols-5 sm:grid-cols-10 lg:grid-cols-20">
               {resultIpponArray.map((result, index: number) => (
                 <React.Fragment key={index}>
-                  <td className="border border-gray-400 p-2">{calcPoint(ipponPoint, result.results1)}</td>
+                  <td className="border border-gray-400 min-w-9 p-2 text-center">
+                    {calcPoint(ipponPoint, result.results1)}
+                  </td>
                   {result.results2 !== null && (
-                    <td className="border border-gray-400 p-2">{calcPoint(ipponPoint, result.results2)}</td>
+                    <td className="border border-gray-400 min-w-9 p-2 text-center">
+                      {calcPoint(ipponPoint, result.results2)}
+                    </td>
                   )}
                 </React.Fragment>
               ))}
@@ -81,13 +85,12 @@ export default async function SummaryPlayer({ params }: { params: { ids: number[
           </tbody>
         </table>
       </div>
-      <div className="grid justify-end m-3">
+      <div className="grid justify-end m-5">
         <table className="table table-pin-rows">
           <tbody>
             <tr>
               <td className="border bg-cyan-50 border-gray-400 p-2 text-center">一本橋の合計得点</td>
               <td className="border border-gray-400 p-2">{maxIpponResult.length > 0 ? sumIpponPoints : "-"}</td>
-              {/* <td className="border border-gray-400 p-2">{maxIpponResult.length > 0 ? sumIppon : "-"}</td> */}
               <td className="border bg-cyan-50 border-gray-400 p-2 text-center">成功までの回数</td>
               <td className="border border-gray-400 p-2">
                 {maxIpponResult.length > 0 && isCompletedCourse(ipponPoint, maxIpponResult[0].maxResult)
@@ -104,21 +107,23 @@ export default async function SummaryPlayer({ params }: { params: { ids: number[
       </div>
 
       <div className="divider">センサーコース</div>
-      <div className="flex justify-center">
-        <table className="table table-pin-rows">
+      <div className="grid justify-center w-full">
+        <table>
           <tbody>
-            <tr className="flex flex-row">
+            <tr className="grid justify-center text-base grid-cols-5 sm:grid-cols-10 lg:grid-cols-20">
               {resultSensorArray.map((result, index: number) => (
                 <React.Fragment key={index}>
-                  <td className="border border-gray-400 p-2">{result.results1}</td>
-                  {result.results2 !== null && <td className="border border-gray-400 p-2">{result.results2}</td>}
+                  <td className="border border-gray-400 min-w-9 p-2 text-center">{result.results1}</td>
+                  {result.results2 !== null && (
+                    <td className="border border-gray-400 min-w-9 p-2 text-center">{result.results2}</td>
+                  )}
                 </React.Fragment>
               ))}
             </tr>
           </tbody>
         </table>
       </div>
-      <div className="grid justify-end m-3">
+      <div className="grid justify-end m-5">
         <table className="table table-pin-rows">
           <tbody>
             <tr>
@@ -132,7 +137,7 @@ export default async function SummaryPlayer({ params }: { params: { ids: number[
       </div>
 
       <div className="divider">試行回数</div>
-      <div className="grid justify-end m-3">
+      <div className="grid justify-end m-5">
         <table className="table table-pin-rows">
           <tbody>
             <tr>
@@ -143,7 +148,7 @@ export default async function SummaryPlayer({ params }: { params: { ids: number[
         </table>
       </div>
 
-      <div className="grid justify-end m-3">
+      <div className="grid justify-end m-5">
         <table className="table table-pin-rows">
           <tbody>
             <tr>
@@ -157,7 +162,7 @@ export default async function SummaryPlayer({ params }: { params: { ids: number[
           </tbody>
         </table>
       </div>
-      <Link href="/summary" className="btn btn-primary min-w-28 max-w-fit mx-auto m-3">
+      <Link href="/summary" className="btn btn-primary min-w-28 max-w-fit mx-auto m-5">
         集計結果一覧へ戻る
       </Link>
       <Link href="/" className="btn btn-primary min-w-28 max-w-fit mx-auto ml-3">

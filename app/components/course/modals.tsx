@@ -21,8 +21,6 @@ type SaveModalProps = {
   field: FieldState
   mission: MissionState
   point: PointState
-  // successOrNot: string | null
-  // setSuccessOrNot: React.Dispatch<React.SetStateAction<string | null>>
 }
 
 type ValidationModalProps = {

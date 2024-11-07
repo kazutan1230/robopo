@@ -1,32 +1,23 @@
-import Link from "next/link"
+import { SelectCompetition, SelectUmpire, SelectUmpireCourse } from "@/app/lib/db/schema"
+import { getCompetitionList, getUmpireList, getRawAssignList } from "@/app/components/common/utils"
+import { ChallengeTab, SummaryTab, ManageTab } from "@/app/components/home/tabs"
+import { ThreeTabs } from "@/app/components/parts/threeTabs"
 
-export default function Home() {
+export const revalidate = 0
+
+export default async function Home() {
+  const competitionList: { competitions: SelectCompetition[] } = await getCompetitionList()
+  const umpireList: { umpires: SelectUmpire[] } = await getUmpireList()
+  const rawAssignList: { assigns: SelectUmpireCourse[] } = await getRawAssignList()
+
   return (
-    <>
-      {/* vercelでdeployして表示する際に、Linkをいちいちgetしてる感じがするので、一旦コメントアウト */}
-      <div className="flex flex-col justify-center items-center w-full h-2/3">
-        <div className="flex justify-center w-full">
-          <Link href="/challenge" className="btn btn-primary min-w-36 min-h-20 text-3xl max-w-fit mx-5">
-            採点
-          </Link>
-          <Link href="/summary" className="btn btn-primary min-w-36 min-h-20 text-3xl max-w-fit mx-5">
-            集計結果
-          </Link>
-        </div>
-        <div className="flex justify-center w-full mt-10">
-          <Link href="/course" className="btn btn-primary min-w-36 min-h-20 text-3xl max-w-fit mx-5">
-            コース
-            <br />
-            作成
-          </Link>
-          <button className="btn btn-primary min-w-36 min-h-20 text-3xl max-w-fit mx-5" disabled>
-            大会管理
-          </button>
-          {/* <Link href="/competition" className="btn btn-primary min-w-36 min-h-20 text-3xl max-w-fit mx-5">
-            大会管理
-          </Link> */}
-        </div>
-      </div>
-    </>
+    <ThreeTabs
+      tab1Title="採点"
+      tab1={<ChallengeTab competitionList={competitionList} umpireList={umpireList} rawAssignList={rawAssignList} />}
+      tab2Title="集計結果"
+      tab2={<SummaryTab />}
+      tab3Title="大会管理"
+      tab3={<ManageTab />}
+    />
   )
 }

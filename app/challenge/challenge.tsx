@@ -13,13 +13,12 @@ import {
   IPPON_BASHI_SIZE,
 } from "@/app/components/course/utils"
 import { Field } from "@/app/components/course/field"
-import ChallengeModal from "@/app/challenge/challengeModal"
+import { ChallengeModal, CourseOutModal, RetryModal } from "@/app/challenge/challengeModal"
 import { calcPoint, resultSubmit } from "@/app/components/challenge/utils"
 import { IpponBashiUI } from "@/app/components/challenge/ipponBashi"
 import NextSound from "@/app/lib/sound/02_next.mp3"
 import BackSound from "@/app/lib/sound/03_back.mp3"
 import GoalSound from "@/app/lib/sound/04_goal.mp3"
-import next from "next"
 
 type ChallengeProps = {
   field: string | null | undefined
@@ -53,7 +52,7 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
     const [loading, setLoading] = useState<boolean>(false)
     const [isSuccess, setIsSuccess] = useState<boolean>(false)
     const [message, setMessage] = useState<string>("")
-    const [modalOpen, setModalOpen] = useState<boolean>(false)
+    const [modalOpen, setModalOpen] = useState<number>(0)
 
     const start = findStart(fieldState)
     const [botPosition, setBotPosition] = useState({ row: start?.[0] || 0, col: start?.[1] || 0 })
@@ -82,7 +81,7 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
           // これでゴールか
           if (nowMission === missionPair.length - 1) {
             setIsGoal(true)
-            setModalOpen(true)
+            setModalOpen(1)
             goalSound()
           } else {
             // goal以外の時は次のミッションに進む
@@ -170,8 +169,8 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
               </div>
             </div>
             <div className="grid grid-cols-2 justify-items-center w-full h-1/2">
-              <div className="flex flex-col justify-items-center w-full"></div>
-              <div className="flex flex-col items-end w-full">
+              <div className="flex flex-col w-full"></div>
+              <div className="flex flex-col justify-items-end w-full">
                 <button
                   type="button"
                   id="add"
@@ -180,12 +179,23 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
                   disabled={nowMission === 0}>
                   1つ戻る
                 </button>
-                <button type="button" className="btn btn-accent mx-auto m-3" onClick={() => setModalOpen(true)}>
+                <button type="button" className="btn btn-accent mx-auto m-3" onClick={() => setModalOpen(1)}>
                   結果送信
                 </button>
-                <button type="button" className="btn btn-primary mx-auto m-3" onClick={handleRetry} disabled={isRetry}>
-                  やり直し
-                </button>
+                <div className="grid grid-cols-2">
+                  <button type="button" className="btn btn-primary mx-auto m-3" onClick={() => setModalOpen(3)}>
+                    コース
+                    <br />
+                    アウト
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-primary mx-auto m-3"
+                    onClick={() => setModalOpen(2)}
+                    disabled={isRetry}>
+                    やり直し
+                  </button>
+                </div>
               </div>
             </div>
             <div className="absolute flex top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
@@ -214,7 +224,7 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
                 ) : (
                   <button
                     className="btn btn-accent mx-auto text-2xl m-3"
-                    onClick={() => setModalOpen(true)}
+                    onClick={() => setModalOpen(1)}
                     disabled={loading}>
                     {loading ? <span className="loading loading-spinner"></span> : "結果送信"}
                   </button>
@@ -229,7 +239,8 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
                     <p>{isRetry ? "やり直し中" : "チャレンジ中"}</p>
                     <p>↓ミッション↓</p>
                   </div>
-                  <div className="w-1/3 grid items-center justify-end">
+                  {/* 厳密タップモードにできないようにしておく。要らなそうなら機能毎削除する。 */}
+                  {/* <div className="w-1/3 grid items-center justify-end">
                     <label className="cursor-pointer flex items-center w-full">
                       <div className="grid grid-col">
                         <span className="mr-2">厳密タップモード</span>
@@ -241,7 +252,7 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
                         />
                       </div>
                     </label>
-                  </div>
+                  </div> */}
                 </div>
                 <p className="text-3xl font-bold text-orange-600">
                   {nowMission + 1} :{" "}
@@ -277,19 +288,24 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
               <button
                 type="button"
                 className="btn btn-neutral mx-auto"
-                onClick={() => setModalOpen(true)}
+                onClick={() => setModalOpen(1)}
                 disabled={isGoal}>
                 失敗
               </button>
               {!isRetry && (
-                <button type="button" className="btn btn-primary mx-auto " onClick={handleRetry} disabled={isGoal}>
+                <button
+                  type="button"
+                  className="btn btn-primary mx-auto "
+                  onClick={() => setModalOpen(2)}
+                  disabled={isGoal}>
                   やり直し
                 </button>
               )}
             </div>
           </div>
         )}
-        {modalOpen && (
+        {/* 結果送信のモーダル */}
+        {modalOpen === 1 && (
           <ChallengeModal
             setModalOpen={setModalOpen}
             handleSubmit={() =>
@@ -305,6 +321,36 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
                 setLoading
               )
             }
+            loading={loading}
+            isSuccess={isSuccess}
+            message={message}
+            result1Point={isRetry ? calcPoint(pointState, result1) : pointCount}
+            result2Point={isRetry ? pointCount : null}
+          />
+        )}
+        {/* やり直しのモーダル */}
+        {modalOpen === 2 && (
+          <RetryModal setModalOpen={setModalOpen} handleRetry={handleRetry} result1Point={pointCount} />
+        )}
+        {/* コースアウトのモーダル */}
+        {modalOpen === 3 && (
+          <CourseOutModal
+            setModalOpen={setModalOpen}
+            setResult1={setResult1}
+            handleSubmit={() =>
+              resultSubmit(
+                isRetry ? result1 : 0,
+                isRetry ? 0 : result2,
+                compeId,
+                courseId,
+                playerId,
+                umpireId,
+                setMessage,
+                setIsSuccess,
+                setLoading
+              )
+            }
+            handleRetry={handleRetry}
             loading={loading}
             isSuccess={isSuccess}
             message={message}

@@ -1,6 +1,15 @@
 import { CourseSummary } from "@/app/components/summary/utils"
 import { db } from "@/app/lib/db/db"
-import { course, SelectCourse, player, challenge, competition } from "@/app/lib/db/schema"
+import {
+  course,
+  SelectCourse,
+  player,
+  challenge,
+  competition,
+  umpire,
+  umpireCourse,
+  SelectAssignList,
+} from "@/app/lib/db/schema"
 import { eq, sql, and, or } from "drizzle-orm"
 
 // IDを指定してDBからコースを削除する関数
@@ -38,6 +47,30 @@ export const getPlayerById = async (id: number) => {
 export const deleteChallengeById = async (id: number) => {
   const result = await db.delete(challenge).where(eq(challenge.id, id)).returning({ deleatedId: challenge.id })
   return result
+}
+
+// IDを指定してDBからUmpireを削除する関数
+export const deleteUmpireById = async (id: number) => {
+  const result = await db.delete(umpire).where(eq(umpire.id, id)).returning({ deleatedId: umpire.id })
+  return result
+}
+
+// IDからUmpireを取得する関数
+export const getUmpireById = async (id: number) => {
+  const result = await db.select().from(umpire).where(eq(umpire.id, id)).limit(1)
+  return result.length > 0 ? result[0] : null
+}
+
+// IDを指定してDBからCompetitionを削除する関数
+export const deleteCompetitionById = async (id: number) => {
+  const result = await db.delete(competition).where(eq(competition.id, id)).returning({ deleatedId: competition.id })
+  return result
+}
+
+// IDからCompetitionを取得する関数
+export const getCompetitionById = async (id: number) => {
+  const result = await db.select().from(competition).where(eq(competition.id, id)).limit(1)
+  return result.length > 0 ? result[0] : null
 }
 
 // 特定の competition_id と course_id に基づくデータを取得
@@ -277,4 +310,30 @@ export const getChallengeCount = async (competitionId: number, courseId: number,
       )
     )
   return result as { challengeCount: number }[]
+}
+
+// competitionのIDを指定して開催にする関数
+export const openCompetitionById = async (id: number) => {
+  const result = await db.update(competition).set({ isOpen: true }).where(eq(competition.id, id))
+}
+
+// competitionのIDを指定して非開催にする関数
+export const closeCompetitionById = async (id: number) => {
+  const result = await db.update(competition).set({ isOpen: false }).where(eq(competition.id, id))
+}
+
+// umpireCourseをそれぞれの大会・コース・採点者のnameを取得して返す関数
+export const getAssignList: () => Promise<SelectAssignList[]> = async () => {
+  const result = await db
+    .select({
+      id: sql<number>`${umpireCourse.competitionId} * 10000 + ${umpireCourse.umpireId}`,
+      competition: competition.name,
+      course: course.name,
+      umpire: umpire.name,
+    })
+    .from(umpireCourse)
+    .leftJoin(competition, eq(umpireCourse.competitionId, competition.id))
+    .leftJoin(course, eq(umpireCourse.courseId, course.id))
+    .leftJoin(umpire, eq(umpireCourse.umpireId, umpire.id))
+  return result
 }
