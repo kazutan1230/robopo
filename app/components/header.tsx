@@ -9,12 +9,12 @@ export const Header = () => {
       <div className="flex items-center w-auto">
         {/* Logo */}
         <div>
-          <Link href="/" className="mr-auto">
-            <Image src="/logo.png" alt="Logo" className="dark:invert" width={50} height={50} />
-          </Link>
+          {/* <Link href="/" className="mr-auto"> */}
+          <Image src="/logo.png" alt="Logo" className="dark:invert" width={50} height={50} />
+          {/* </Link> */}
         </div>
         {/* メニューボタン (スマホ表示) */}
-        <DropdownMenu />
+        {/* <DropdownMenu /> */}
       </div>
       {/* タイトル */}
       <h1 className="absolute left-1/2 transform -translate-x-1/2 text-center text-xl md:text-3xl font-semibold whitespace-nowrap">
@@ -24,9 +24,9 @@ export const Header = () => {
       </h1>
 
       {/* HOMEボタン (PC表示) */}
-      <Link href="/" className="hidden md:inline-block btn btn-primary p-2 text-xl ml-auto">
+      {/* <Link href="/" className="hidden md:inline-block btn btn-primary p-2 text-xl ml-auto">
         Home
-      </Link>
+      </Link> */}
     </header>
   )
 }
