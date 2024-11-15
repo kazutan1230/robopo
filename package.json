@@ -3,22 +3,22 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
     "drizzle-orm": "^0.36.2",
-    "next": "^14.2.18",
-    "react": "^18",
-    "react-dom": "^18"
+    "next": "^15.0.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@neondatabase/serverless": "^0.10.3",
     "@types/node": "^22",
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18",
+    "@types/react": "npm:types-react@19.0.0-rc.1",
+    "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1",
     "daisyui": "^4.12.14",
     "drizzle-kit": "^0.28.1",
     "eslint": "^9.14.0",
@@ -26,5 +26,9 @@
     "tailwindcss": "^3.4.15",
     "typescript": "^5",
     "use-sound": "^4.0.3"
+  },
+  "overrides": {
+    "@types/react": "npm:types-react@19.0.0-rc.1",
+    "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1"
   }
 }
