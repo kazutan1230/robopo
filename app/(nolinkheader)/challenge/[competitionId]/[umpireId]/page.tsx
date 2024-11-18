@@ -3,7 +3,8 @@ import type { SelectCourse, SelectPlayer } from "@/app/lib/db/schema"
 import { getCourseIdByCompetitionIdAndUmpireId, getCourseById } from "@/app/lib/db/queries/queries"
 import { View } from "@/app/(nolinkheader)/challenge/[competitionId]/[umpireId]/view"
 
-export default async function Challenge({ params }: { params: { competitionId: number; umpireId: number } }) {
+export default async function Challenge(props: { params: Promise<{ competitionId: number; umpireId: number }> }) {
+  const params = await props.params;
   const initialPlayerDataList: { players: SelectPlayer[] } = await getPlayerList()
 
   const { competitionId, umpireId } = params

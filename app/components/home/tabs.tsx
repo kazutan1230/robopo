@@ -1,6 +1,6 @@
 "use client"
 import Link from "next/link"
-import { useMemo, useState } from "react"
+import React, { useMemo, useState } from "react"
 import type { SelectCompetition, SelectUmpire, SelectUmpireCourse } from "@/app/lib/db/schema"
 
 const TabButton = ({ name, link }: { name: string; link: string }) => {
@@ -17,7 +17,7 @@ type ChallengeTabProps = {
   rawAssignList: { assigns: SelectUmpireCourse[] }
 }
 
-export const ChallengeTab = ({ competitionList, umpireList, rawAssignList }: ChallengeTabProps): JSX.Element => {
+export const ChallengeTab = ({ competitionList, umpireList, rawAssignList }: ChallengeTabProps): React.JSX.Element => {
   const [competitionId, setCompetitionId] = useState(0)
   const [umpireId, setUmpireId] = useState(0)
   const disableCondiion = !competitionId || !umpireId || competitionId === 0 || umpireId === 0
@@ -80,7 +80,7 @@ export const ChallengeTab = ({ competitionList, umpireList, rawAssignList }: Cha
   )
 }
 
-export const SummaryTab = (): JSX.Element => {
+export const SummaryTab = (): React.JSX.Element => {
   const [competitionId, setCompetitionId] = useState(1)
   return (
     <div>
@@ -111,7 +111,7 @@ export const SummaryTab = (): JSX.Element => {
   )
 }
 
-export const ManageTab = (): JSX.Element => {
+export const ManageTab = (): React.JSX.Element => {
   return (
     <div className="grid sm:grid-cols-2 md:flex md:flex-col justify-center">
       <TabButton name="コース作成" link={`/course`} />

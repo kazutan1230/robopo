@@ -16,8 +16,8 @@ import { TCourseTable } from "@/app/(nolinkheader)/summary/[...ids]/tCourseTable
 
 export const revalidate = 0
 
-export default async function SummaryPlayer({ params }: { params: { ids: number[] } }) {
-  const { ids } = await params
+export default async function SummaryPlayer(props: { params: Promise<{ ids: number[] }> }) {
+  const { ids } = await props.params
   // ids[0]:competitionId, ids[1]:courseId, ids[2]:playerId
   // 個人成績を取得する
   const player = await getPlayerById(ids[2])

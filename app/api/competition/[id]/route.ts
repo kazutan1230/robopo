@@ -4,8 +4,8 @@ import { getCompetitionList } from "@/app/components/common/utils"
 
 export const revalidate = 0
 
-export async function POST(req: Request, { params }: { params: { id: number } }) {
-  const { id } = await params
+export async function POST(req: Request, props: { params: Promise<{ id: number }> }) {
+  const { id } = await props.params
   const { type } = await req.json()
 
   if (type === "open") {
