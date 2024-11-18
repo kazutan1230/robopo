@@ -28,7 +28,7 @@ export const CompetitionListTab = ({
   setCompetitionId,
   competitionList,
   setCompetitionList,
-}: CompetitionListTabProps): JSX.Element => {
+}: CompetitionListTabProps): React.JSX.Element => {
   const [loading, setLoading] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
   const [message, setMessage] = useState("")
