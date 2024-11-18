@@ -3,11 +3,11 @@ import { useEffect, useState } from "react"
 
 type ThreeTabsProps = {
   tab1Title: string
-  tab1: JSX.Element
+  tab1: React.JSX.Element
   tab2Title: string
-  tab2: JSX.Element
+  tab2: React.JSX.Element
   tab3Title: string
-  tab3: JSX.Element
+  tab3: React.JSX.Element
 }
 
 export const ThreeTabs = ({ tab1Title, tab1, tab2Title, tab2, tab3Title, tab3 }: ThreeTabsProps) => {

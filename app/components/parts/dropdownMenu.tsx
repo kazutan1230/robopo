@@ -2,7 +2,7 @@
 import Link from "next/link"
 import { useEffect, useState, useRef } from "react"
 
-const DropdownMenu = (): JSX.Element => {
+const DropdownMenu = (): React.JSX.Element => {
   const [isOpen, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 

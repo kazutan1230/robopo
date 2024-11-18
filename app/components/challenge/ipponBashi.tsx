@@ -23,7 +23,7 @@ export const IpponBashiUI = ({
   botDirection,
   nextMissionPair,
   onPanelClick,
-}: IpponBashiUIProps): JSX.Element => {
+}: IpponBashiUIProps): React.JSX.Element => {
   const type: string = "ipponBashi"
   // 一本橋の大きさ 幅1パネル 長さ5パネル 1パネル毎の大きさ60×60
   const width: number = 1
