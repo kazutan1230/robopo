@@ -51,7 +51,9 @@ export default async function SummaryPlayer(props: { params: Promise<{ ids: numb
     <>
       <div className="flex mb-5">
         <h1 className="text-3xl font-bold mr-5 mt-2">個人成績シート</h1>
+        <h1 className="text-3xl text-violet-800 font-bold mr-5 mt-2">{player?.zekken}</h1>
         <h1 className="text-3xl text-violet-800 font-bold mr-5 mt-2">{player?.name}</h1>
+        <h1 className="text-3xl text-violet-800 font-bold mr-5 mt-2">{player?.furigana}</h1>
         <h1 className="text-3xl font-bold mr-5 mt-2">{player ? "選手" : ""}</h1>
       </div>
       <div className="divider">{course?.name}コース</div>
