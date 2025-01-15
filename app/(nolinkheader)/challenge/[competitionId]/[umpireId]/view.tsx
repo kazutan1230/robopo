@@ -30,6 +30,9 @@ export const View = ({ initialPlayerDataList, competitionId, umpireId }: ViewPro
         onClick={() => window.location.reload()}>
         再読み込み
       </button>
+      <Link href="/" className="btn btn-primary min-w-28 max-w-fit mx-auto mt-5">
+        トップへ戻る
+      </Link>
     </div>
   )
 }

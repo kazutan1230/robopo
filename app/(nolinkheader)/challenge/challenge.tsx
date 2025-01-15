@@ -158,8 +158,8 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
                   <div className="stat">
                     <div className="stat-title text-3xl font-bold text-orange-600">現在:</div>
                     <div className="stat-value text-3xl font-bold text-orange-600">{pointCount}ポイント</div>
-
                     <p className="text-3xl font-bold text-orange-600">
+                      {isRetry ? "2回目" : "1回目"}
                       {nowMission < IPPON_BASHI_SIZE - 1 ? "行き" : "帰り"}
                     </p>
                   </div>
@@ -193,7 +193,7 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
                     className="btn btn-primary mx-auto m-3"
                     onClick={() => setModalOpen(2)}
                     disabled={isRetry}>
-                    やり直し
+                    再挑戦
                   </button>
                 </div>
               </div>
@@ -233,14 +233,14 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
               </div>
             ) : (
               <div className="grid justify-items-center w-full h-full min-h-32">
-                <div className="flex flex-row w-full">
+                {/* <div className="flex flex-row w-full">
                   <div className="w-1/3"></div>
-                  <div className="w-1/3 grid justify-items-center">
-                    <p>{isRetry ? "やり直し中" : "チャレンジ中"}</p>
-                    <p>↓ミッション↓</p>
-                  </div>
-                  {/* 厳密タップモードにできないようにしておく。要らなそうなら機能毎削除する。 */}
-                  {/* <div className="w-1/3 grid items-center justify-end">
+                  <div className="w-1/3 grid justify-items-center"> */}
+                <p className="text-3xl font-bold text-orange-600">チャレンジ{isRetry ? "2回目" : "1回目"}</p>
+                <p>↓ミッション↓</p>
+                {/* </div> */}
+                {/* 厳密タップモードにできないようにしておく。要らなそうなら機能毎削除する。 */}
+                {/* <div className="w-1/3 grid items-center justify-end">
                     <label className="cursor-pointer flex items-center w-full">
                       <div className="grid grid-col">
                         <span className="mr-2">厳密タップモード</span>
@@ -253,7 +253,7 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
                       </div>
                     </label>
                   </div> */}
-                </div>
+                {/* </div> */}
                 <p className="text-3xl font-bold text-orange-600">
                   {nowMission + 1} :{" "}
                   {missionPair[nowMission][0] === null ? "-" : MissionString[missionPair[nowMission][0]]}
@@ -292,15 +292,6 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
                 disabled={isGoal}>
                 失敗
               </button>
-              {!isRetry && (
-                <button
-                  type="button"
-                  className="btn btn-primary mx-auto "
-                  onClick={() => setModalOpen(2)}
-                  disabled={isGoal}>
-                  やり直し
-                </button>
-              )}
             </div>
           </div>
         )}
@@ -321,6 +312,7 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
                 setLoading
               )
             }
+            handleRetry={handleRetry}
             loading={loading}
             isSuccess={isSuccess}
             message={message}

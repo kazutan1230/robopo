@@ -26,7 +26,7 @@ export const View = ({ courseDataList, initialPlayerDataList }: ViewProps) => {
   const [startSound] = useSound(StartSound, { volume: 0.4 })
 
   return (
-    <div className="flex flex-col justify-center items-center overflow-y-auto w-full">
+    <div className="flex flex-col justify-center items-center overflow-y-auto w-full pt-10">
       {step === 0 && (
         <>
           {/* 通常コース */}

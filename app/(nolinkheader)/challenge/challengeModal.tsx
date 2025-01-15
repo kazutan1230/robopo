@@ -1,6 +1,7 @@
 type ChallengeModalProps = {
   setModalOpen: React.Dispatch<React.SetStateAction<number>>
   handleSubmit: () => void
+  handleRetry: () => void
   loading: boolean
   isSuccess: boolean
   message: string
@@ -11,6 +12,7 @@ type ChallengeModalProps = {
 export const ChallengeModal = ({
   setModalOpen,
   handleSubmit,
+  handleRetry,
   loading,
   isSuccess,
   message,
@@ -18,6 +20,10 @@ export const ChallengeModal = ({
   result2Point,
 }: ChallengeModalProps) => {
   const handleClick = () => {
+    setModalOpen(0)
+  }
+  const thisHandleRetry = () => {
+    handleRetry()
     setModalOpen(0)
   }
   return (
@@ -32,14 +38,19 @@ export const ChallengeModal = ({
           </>
         ) : (
           <>
-            <p>結果を送信してチャレンジを終了しますか?</p>
-            <p>1回目: {result1Point}ポイント</p>
-            {result2Point !== null && <p>2回目: {result2Point}ポイント</p>}
-            <div className="modal-action">
-              <button className="btn btn-accent" onClick={handleSubmit}>
-                {loading ? <span className="loading loading-spinner"></span> : "はい"}
+            <p className="text-2xl">チャレンジを終了しますか?</p>
+            <p className="text-2xl">1回目: {result1Point}ポイント</p>
+            {result2Point !== null && <p className="text-2xl">2回目: {result2Point}ポイント</p>}
+            <div className="modal-action flex-col">
+              <button className="btn btn-accent m-3" onClick={handleSubmit}>
+                {loading ? <span className="loading loading-spinner"></span> : "結果を送信してチャレンジを終わる"}
               </button>
-              <button className="btn btn-accent" onClick={handleClick} disabled={loading}>
+              {result2Point === null && (
+                <button className="btn btn-accent m-3" onClick={thisHandleRetry} disabled={loading}>
+                  2回目のチャレンジへ
+                </button>
+              )}
+              <button className="btn btn-accent m-3" onClick={handleClick} disabled={loading}>
                 チャレンジに戻る
               </button>
             </div>
@@ -128,15 +139,15 @@ export const CourseOutModal = ({
               </>
             )}
             <div className="modal-action flex-col">
-              <button className="btn btn-accent mx-auto m-3" onClick={handleSubmit}>
+              <button className="btn btn-accent m-3" onClick={handleSubmit}>
                 {loading ? <span className="loading loading-spinner"></span> : "結果送信"}
               </button>
               {result2Point === null && (
-                <button className="btn btn-accent mx-auto m-3" onClick={thisHandleRetry} disabled={loading}>
-                  再チャレンジする
+                <button className="btn btn-accent m-3" onClick={thisHandleRetry} disabled={loading}>
+                  2回目のチャレンジへ
                 </button>
               )}
-              <button className="btn btn-accent mx-auto m-3" onClick={() => setModalOpen(0)} disabled={loading}>
+              <button className="btn btn-accent m-3" onClick={() => setModalOpen(0)} disabled={loading}>
                 チャレンジに戻る
               </button>
             </div>
