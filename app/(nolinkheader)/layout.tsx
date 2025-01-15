@@ -17,10 +17,5 @@ export default function Layout({
 Readonly<{
   children: React.ReactNode
 }>) {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <Nolinkheader />
-      {children}
-    </Suspense>
-  )
+  return <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
 }

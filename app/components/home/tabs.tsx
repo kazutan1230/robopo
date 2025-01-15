@@ -67,15 +67,13 @@ export const ChallengeTab = ({ competitionList, umpireList, rawAssignList }: Cha
         )}
       </select>
 
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
+      <Link
+        href={disableCondiion ? "" : `/challenge/${competitionId}/${umpireId}`}
         className={
           "btn min-w-40 min-h-20 text-2xl max-w-fit m-3" + (disableCondiion ? " btn-disabled" : " btn-primary")
-        }
-        href={disableCondiion ? undefined : `/challenge/${competitionId}/${umpireId}`}>
+        }>
         採点
-      </a>
+      </Link>
     </div>
   )
 }
