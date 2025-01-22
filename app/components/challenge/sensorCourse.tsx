@@ -162,6 +162,7 @@ export const SensorCourse = ({ compeId, courseId, playerId, umpireId }: SensorCo
               setLoading
             )
           }
+          handleRetry={handleRetry}
           loading={loading}
           isSuccess={isSuccess}
           message={message}
