@@ -20,7 +20,7 @@ export const View = ({ initialPlayerDataList, competitionId, umpireId }: ViewPro
     <div className="flex flex-col justify-center items-center overflow-y-auto w-full pt-10">
       <CommonList type="player" commonId={playerId} setCommonId={setPlayerId} commonDataList={playerDataList} />
       <Link
-        href={`/challenge/${competitionId}/${umpireId}/${playerId}`}
+        href={`/challenge/${competitionId}/${umpireId}/${playerId}/confirm`}
         className={"btn min-w-28 max-w-fit mx-auto mt-5" + (disableCondiion ? " btn-disabled" : " btn-primary")}>
         確認へ
       </Link>

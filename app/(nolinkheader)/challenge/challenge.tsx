@@ -91,11 +91,9 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
           // 一回目か
           if (!isRetry) {
             setResult1(result1 + 1)
-            console.log("result1", result1)
           } else if (result2 !== null) {
             // リトライか
             setResult2(result2 + 1)
-            console.log("result2", result2)
           }
           // ロボットを動かす
           setBotPosition({ row: newRow, col: newCol })
