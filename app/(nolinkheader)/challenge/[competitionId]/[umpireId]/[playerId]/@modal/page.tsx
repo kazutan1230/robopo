@@ -2,6 +2,7 @@ import type { SelectCourse, SelectPlayer } from "@/app/lib/db/schema"
 import { getCourseIdByCompetitionIdAndUmpireId, getCourseById, getPlayerById } from "@/app/lib/db/queries/queries"
 import { Modal } from "./modal"
 
+export const revalidate = 0
 export default async function Confirm(props: {
   params: Promise<{ competitionId: number; umpireId: number; playerId: number }>
 }) {
