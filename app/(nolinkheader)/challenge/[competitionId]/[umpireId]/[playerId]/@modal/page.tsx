@@ -1,6 +1,6 @@
 import type { SelectCourse, SelectPlayer } from "@/app/lib/db/schema"
 import { getCourseIdByCompetitionIdAndUmpireId, getCourseById, getPlayerById } from "@/app/lib/db/queries/queries"
-import { View } from "@/app/(nolinkheader)/challenge/[competitionId]/[umpireId]/[playerId]/confirm/view"
+import { Modal } from "./modal"
 
 export default async function Confirm(props: {
   params: Promise<{ competitionId: number; umpireId: number; playerId: number }>
@@ -17,11 +17,7 @@ export default async function Confirm(props: {
   const playerData: SelectPlayer | null = await getPlayerById(playerId)
 
   return (
-    (courseData && playerData && (
-      <div className="px-6">
-        <View courseData={courseData} playerData={playerData} competitionId={competitionId} umpireId={umpireId} />
-      </div>
-    )) || (
+    (courseData && playerData && <Modal courseData={courseData} playerData={playerData} />) || (
       <div className="flex flex-col justify-center items-center overflow-y-auto w-full">
         <h2>コースを割り当てられていません。</h2>
       </div>
