@@ -24,8 +24,6 @@ export const Modal = ({ courseData, playerData }: ViewProps) => {
   }
 
   useEffect(() => {
-    console.log("modalOpen", modalOpen)
-    console.log("dialogRef.current?.open", dialogRef.current?.open)
     if (!dialogRef.current?.open) {
       dialogRef.current?.showModal()
     }

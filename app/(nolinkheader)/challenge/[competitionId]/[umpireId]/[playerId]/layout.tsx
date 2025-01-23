@@ -1,7 +1,7 @@
-// import { Suspense } from "react"
+import { Suspense } from "react"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
-// import { PageLoading } from "@/app/components/parts/pageLoading"
+import { PageLoading } from "@/app/components/parts/pageLoading"
 import "@/app/globals.css"
 
 const inter = Inter({ subsets: ["latin"] })
@@ -19,11 +19,9 @@ export default function Layout({
   modal: React.ReactNode
 }>) {
   return (
-    // <Suspense fallback={<PageLoading />}>
-    <>
+    <Suspense fallback={<PageLoading />}>
       {children}
       {modal}
-    </>
-    // </Suspense>
+    </Suspense>
   )
 }
