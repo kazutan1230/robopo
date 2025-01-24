@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import CourseEdit from "@/app/(linkheader)/course/edit/courseEdit"
 import MissionEdit from "@/app/(linkheader)/course/edit/missionEdit"
@@ -15,6 +15,7 @@ import {
 } from "@/app/components/course/utils"
 import { getCourse } from "@/app/components/course/listUtils"
 import { finModal, saveModal, validationModal } from "@/app/components/course/modals"
+import { PageLoading } from "@/app/components/parts/pageLoading"
 
 export default function Edit() {
   const searchParams = useSearchParams()
@@ -45,7 +46,7 @@ export default function Edit() {
   }
 
   return (
-    <>
+    <Suspense fallback={<PageLoading />}>
       <div className="h-full w-full">
         <div className="sm:max-h-screen sm:grid sm:grid-cols-2 gap-4">
           <div className="sm:w-full sm:justify-self-end">
@@ -71,6 +72,6 @@ export default function Edit() {
       {modalOpen === 1 && finModal({ setModalOpen })}
       {modalOpen === 2 && saveModal({ setModalOpen, name, setName, field, mission, point })}
       {modalOpen === 3 && validationModal({ setModalOpen, field, mission })}
-    </>
+    </Suspense>
   )
 }
