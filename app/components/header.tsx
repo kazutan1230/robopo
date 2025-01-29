@@ -1,16 +1,25 @@
 import Link from "next/link"
-import Image from "next/legacy/image"
+import Image from "next/image"
 import DropdownMenu from "@/app/components/parts/dropdownMenu"
 
 export const Header = () => {
   return (
-    <header className="flex flex-row h-24 md:h-14 items-center relative">
+    (<header className="flex flex-row h-24 md:h-14 items-center relative">
       {/* Logo & DropdownMenu */}
       <div className="flex items-center w-auto">
         {/* Logo */}
         <div>
           <Link href="/" className="mr-auto">
-            <Image src="/logo.png" alt="Logo" className="dark:invert" width={50} height={50} />
+            <Image
+              src="/logo.png"
+              alt="Logo"
+              className="dark:invert"
+              width={50}
+              height={50}
+              style={{
+                maxWidth: "100%",
+                height: "auto"
+              }} />
           </Link>
         </div>
         {/* メニューボタン (スマホ表示) */}
@@ -22,11 +31,10 @@ export const Header = () => {
         <br className="md:hidden" />
         ROBOPO
       </h1>
-
       {/* HOMEボタン (PC表示) */}
       <Link href="/" className="hidden md:inline-block btn btn-primary p-2 text-xl ml-auto">
         Home
       </Link>
-    </header>
-  )
+    </header>)
+  );
 }

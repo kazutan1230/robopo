@@ -1,13 +1,22 @@
-import Image from "next/legacy/image"
+import Image from "next/image"
 
 export const Nolinkheader = () => {
   return (
-    <header className="flex flex-row h-24 md:h-14 items-center relative">
+    (<header className="flex flex-row h-24 md:h-14 items-center relative">
       {/* Logo & DropdownMenu */}
       <div className="flex items-center w-auto">
         {/* Logo */}
         <div>
-          <Image src="/logo.png" alt="Logo" className="dark:invert" width={50} height={50} />
+          <Image
+            src="/logo.png"
+            alt="Logo"
+            className="dark:invert"
+            width={50}
+            height={50}
+            style={{
+              maxWidth: "100%",
+              height: "auto"
+            }} />
         </div>
       </div>
       {/* タイトル */}
@@ -16,6 +25,6 @@ export const Nolinkheader = () => {
         <br className="md:hidden" />
         ROBOPO
       </h1>
-    </header>
-  )
+    </header>)
+  );
 }
