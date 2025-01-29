@@ -316,6 +316,7 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
             message={message}
             result1Point={isRetry ? calcPoint(pointState, result1) : pointCount}
             result2Point={isRetry ? pointCount : null}
+            isGoal={isGoal}
           />
         )}
         {/* やり直しのモーダル */}

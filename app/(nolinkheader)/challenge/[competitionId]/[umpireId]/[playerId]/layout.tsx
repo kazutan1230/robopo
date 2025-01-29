@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
+import { UnloadProvider } from "@/app/components/beforeUnload/provider"
 import "@/app/globals.css"
 
 const inter = Inter({ subsets: ["latin"] })
@@ -17,9 +18,9 @@ export default function Layout({
   modal: React.ReactNode
 }>) {
   return (
-    <>
+    <UnloadProvider>
       {children}
       {modal}
-    </>
+    </UnloadProvider>
   )
 }

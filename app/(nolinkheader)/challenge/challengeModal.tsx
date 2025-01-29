@@ -7,6 +7,7 @@ type ChallengeModalProps = {
   message: string
   result1Point: number | null
   result2Point: number | null
+  isGoal: boolean
 }
 
 export const ChallengeModal = ({
@@ -18,6 +19,7 @@ export const ChallengeModal = ({
   message,
   result1Point,
   result2Point,
+  isGoal,
 }: ChallengeModalProps) => {
   const handleClick = () => {
     setModalOpen(0)
@@ -45,12 +47,12 @@ export const ChallengeModal = ({
               <button className="btn btn-accent m-3" onClick={handleSubmit}>
                 {loading ? <span className="loading loading-spinner"></span> : "結果を送信してチャレンジを終わる"}
               </button>
-              {result2Point === null && (
+              {result2Point === null && !isGoal && (
                 <button className="btn btn-accent m-3" onClick={thisHandleRetry} disabled={loading}>
                   2回目のチャレンジへ
                 </button>
               )}
-              <button className="btn btn-accent m-3" onClick={handleClick} disabled={loading}>
+              <button className="btn btn-neutral m-3" onClick={handleClick} disabled={loading}>
                 チャレンジに戻る
               </button>
             </div>
@@ -81,7 +83,7 @@ export const RetryModal = ({ setModalOpen, handleRetry, result1Point }: RetryMod
           <button className="btn btn-accent" onClick={thisHandleRetry}>
             再チャレンジする
           </button>
-          <button className="btn btn-accent" onClick={() => setModalOpen(0)}>
+          <button className="btn btn-neutral" onClick={() => setModalOpen(0)}>
             戻る
           </button>
         </div>
@@ -147,7 +149,7 @@ export const CourseOutModal = ({
                   2回目のチャレンジへ
                 </button>
               )}
-              <button className="btn btn-accent m-3" onClick={() => setModalOpen(0)} disabled={loading}>
+              <button className="btn btn-neutral m-3" onClick={() => setModalOpen(0)} disabled={loading}>
                 チャレンジに戻る
               </button>
             </div>
