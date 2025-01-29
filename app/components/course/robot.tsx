@@ -1,4 +1,4 @@
-import Image from "next/image"
+import Image from "next/legacy/image"
 import botImage from "@/public/robot.png"
 import { getPanelWidth, getPanelHeight, type MissionValue } from "@/app/components/course/utils"
 

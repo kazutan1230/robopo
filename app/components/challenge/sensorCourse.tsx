@@ -58,7 +58,7 @@ export const SensorCourse = ({ compeId, courseId, playerId, umpireId }: SensorCo
   }
 
   return (
-    <div className="relative flex flex-col justify-items-center w-full h-[calc(100vh-100px)]">
+    (<div className="relative flex flex-col justify-items-center w-full h-[calc(100vh-100px)]">
       <div className="grid justify-items-center w-full">
         <p className="text-xl font-bold">センサーコース</p>
       </div>
@@ -147,7 +147,7 @@ export const SensorCourse = ({ compeId, courseId, playerId, umpireId }: SensorCo
       </div>
       {modalOpen === 1 && (
         // センサーコースはresultにそのまま得点を入れる。
-        <ChallengeModal
+        (<ChallengeModal
           setModalOpen={setModalOpen}
           handleSubmit={() =>
             resultSubmit(
@@ -169,8 +169,8 @@ export const SensorCourse = ({ compeId, courseId, playerId, umpireId }: SensorCo
           result1Point={isRetry ? result1 : pointCount}
           result2Point={isRetry ? pointCount : null}
           isGoal={false}
-        />
+        />)
       )}
-    </div>
-  )
+    </div>)
+  );
 }
