@@ -168,6 +168,7 @@ export const SensorCourse = ({ compeId, courseId, playerId, umpireId }: SensorCo
           message={message}
           result1Point={isRetry ? result1 : pointCount}
           result2Point={isRetry ? pointCount : null}
+          isGoal={false}
         />
       )}
     </div>
