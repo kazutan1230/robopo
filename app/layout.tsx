@@ -1,4 +1,3 @@
-import { Suspense } from "react"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
@@ -20,7 +19,7 @@ Readonly<{
     <html lang="ja" className={inter.className}>
       <body className="font-zenKakuGothicNew">
         <main className="max-w-screen-xl mx-auto text-xs sm:px-12 lg:text-base w-screen h-screen">
-          <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
+          {children}
           {/* <ScrollToTop /> */}
         </main>
         {/* <Footer /> */}

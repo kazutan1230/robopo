@@ -30,7 +30,7 @@ const CommonList = ({ type, commonId, setCommonId, commonDataList }: commonListP
         </h2>
       )}
       <div className="w-full">
-        <div className="border overflow-x-auto overflow-y-auto max-h-80 sm:h-96 m-3">
+        <div className="border overflow-x-auto overflow-y-auto max-h-96 sm:h-96 m-3">
           <table className="table table-pin-rows">
             <thead>
               <tr>

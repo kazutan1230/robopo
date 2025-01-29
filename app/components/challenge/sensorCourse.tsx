@@ -162,11 +162,13 @@ export const SensorCourse = ({ compeId, courseId, playerId, umpireId }: SensorCo
               setLoading
             )
           }
+          handleRetry={handleRetry}
           loading={loading}
           isSuccess={isSuccess}
           message={message}
           result1Point={isRetry ? result1 : pointCount}
           result2Point={isRetry ? pointCount : null}
+          isGoal={false}
         />
       )}
     </div>
