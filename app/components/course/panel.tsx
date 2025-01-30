@@ -23,7 +23,7 @@ export const Panel = ({ value, type, onClick }: PanelProps) => {
       style={{ width: `${panelWidth}` + "px", height: `${panelHeight}` + "px" }}>
       {hasRole && (
         <div
-          className={routeStyle + textStyle + " flex justify-center items-center font-bold rounded"}
+          className={routeStyle + textStyle + " flex justify-center items-center font-bold rounded-sm"}
           style={{ width: `${panelWidth - 10}` + "px", height: `${panelWidth - 10}` + "px" }}>
           {PanelString[value]}
         </div>

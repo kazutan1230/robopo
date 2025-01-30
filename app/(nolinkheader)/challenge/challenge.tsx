@@ -151,7 +151,7 @@ const Challenge = ({ field, mission, point, compeId, courseId, playerId, umpireI
           </div>
           <div className="grid grid-cols-2 justify-items-center w-full h-1/2">
             <div className="flex flex-col">
-              <div className="stats shadow">
+              <div className="stats shadow-sm">
                 <div className="stat">
                   <div className="stat-title text-3xl font-bold text-orange-600">現在:</div>
                   <div className="stat-value text-3xl font-bold text-orange-600">{pointCount}ポイント</div>

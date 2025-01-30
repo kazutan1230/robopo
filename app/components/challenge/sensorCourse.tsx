@@ -63,7 +63,7 @@ export const SensorCourse = ({ compeId, courseId, playerId, umpireId }: SensorCo
         <p className="text-xl font-bold">センサーコース</p>
       </div>
       <div className="flex flex-col">
-        <div className="stats shadow">
+        <div className="stats shadow-sm">
           <div className="stat">
             <div className="stat-title text-3xl font-bold text-orange-600">現在:</div>
             <div className="stat-value text-3xl font-bold text-orange-600">{pointCount}ポイント</div>

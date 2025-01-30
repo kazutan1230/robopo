@@ -88,7 +88,7 @@ export const View = ({ courseDataList, initialPlayerDataList }: ViewProps) => {
           <h2>スタートを押すと始まります。</h2>
           <CircleButton
             onClick={() => (setStep(4), startSound())}
-            classNameText="mt-20 mb-20 w-48 h-48 text-3xl bg-gradient-to-r from-green-400 to-green-600 text-white"
+            classNameText="mt-20 mb-20 w-48 h-48 text-3xl bg-linear-to-r from-green-400 to-green-600 text-white"
             buttonText="スタート"
           />
         </div>

@@ -44,7 +44,7 @@ export const Modal = ({ courseData, playerData }: ViewProps) => {
 
           {/* ここにコースプレビューを入れる */}
           <button
-            className="rounded-full flex justify-center items-center font-bold relative mt-10 mb-10 w-48 h-48 text-3xl bg-gradient-to-r from-green-400 to-green-600 text-white"
+            className="rounded-full flex justify-center items-center font-bold relative mt-10 mb-10 w-48 h-48 text-3xl bg-linear-to-r from-green-400 to-green-600 text-white"
             onClick={() => {
               startSound()
               modalClose()
