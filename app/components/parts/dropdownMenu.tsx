@@ -59,7 +59,7 @@ const DropdownMenu = (): React.JSX.Element => {
       {isOpen && (
         <ul
           tabIndex={0}
-          className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+          className="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
           onClick={() => setOpen(false)} // メニュー内のアイテムクリック時に閉じる
         >
           <li>

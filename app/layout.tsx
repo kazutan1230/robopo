@@ -11,14 +11,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: // modal
-Readonly<{
+}: Readonly<{
   children: React.ReactNode
 }>) {
   return (
     <html lang="ja" className={inter.className}>
       <body className="font-zenKakuGothicNew">
-        <main className="max-w-screen-xl mx-auto text-xs sm:px-12 lg:text-base w-screen h-screen">
+        <main className="max-w-(--breakpoint-xl) mx-auto text-xs sm:px-12 lg:text-base w-screen h-screen">
           {children}
           {/* <ScrollToTop /> */}
         </main>
