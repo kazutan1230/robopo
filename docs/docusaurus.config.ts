@@ -5,8 +5,8 @@ import type * as Preset from "@docusaurus/preset-classic"
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  title: "ROBOPO Manual",
-  tagline: "ROBOPO is easy to use",
+  title: "ROBOPOマニュアル",
+  tagline: "-ロボサバ採点集計アプリ手引書-",
   favicon: "img/favicon.ico",
 
   // Set the production url of your site here
@@ -39,21 +39,7 @@ const config: Config = {
           sidebarPath: "./sidebars.ts",
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl: "https://github.com/kazutan1230/robopo/",
-        },
-        blog: {
-          showReadingTime: true,
-          feedOptions: {
-            type: ["rss", "atom"],
-            xslt: true,
-          },
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          editUrl: "https://github.com/kazutan1230/robopo/",
-          // Useful options to enforce blogging best practices
-          onInlineTags: "warn",
-          onInlineAuthors: "warn",
-          onUntruncatedBlogPosts: "warn",
+          editUrl: "https://github.com/kazutan1230/robopo/tree/docusaurus",
         },
         theme: {
           customCss: "./src/css/custom.css",
@@ -66,9 +52,9 @@ const config: Config = {
     // Replace with your project's social card
     image: "img/docusaurus-social-card.jpg",
     navbar: {
-      title: "My Site",
+      title: "ROBOPOマニュアル",
       logo: {
-        alt: "My Site Logo",
+        alt: "ROBOPO Logo",
         src: "img/logo.svg",
       },
       items: [
@@ -76,11 +62,11 @@ const config: Config = {
           type: "docSidebar",
           sidebarId: "tutorialSidebar",
           position: "left",
-          label: "Tutorial",
+          label: "目次",
         },
-        { to: "/blog", label: "Blog", position: "left" },
+        // { to: "/blog", label: "Blog", position: "left" },
         {
-          href: "https://github.com/kazutan1230/robopo/",
+          href: "https://github.com/kazutan1230/robopo/tree/docusaurus",
           label: "GitHub",
           position: "right",
         },
@@ -99,32 +85,11 @@ const config: Config = {
           ],
         },
         {
-          title: "Community",
-          items: [
-            {
-              label: "Stack Overflow",
-              href: "https://stackoverflow.com/questions/tagged/docusaurus",
-            },
-            {
-              label: "Discord",
-              href: "https://discordapp.com/invite/docusaurus",
-            },
-            {
-              label: "X",
-              href: "https://x.com/docusaurus",
-            },
-          ],
-        },
-        {
           title: "More",
           items: [
             {
-              label: "Blog",
-              to: "/blog",
-            },
-            {
               label: "GitHub",
-              href: "https://github.com/kazutan1230/robopo/",
+              href: "https://github.com/kazutan1230/robopo/tree/docusaurus",
             },
           ],
         },
