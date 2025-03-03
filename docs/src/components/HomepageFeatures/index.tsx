@@ -1,59 +1,44 @@
-import type {ReactNode} from 'react';
-import clsx from 'clsx';
-import Heading from '@theme/Heading';
-import styles from './styles.module.css';
+import type { ReactNode } from "react"
+import clsx from "clsx"
+import Heading from "@theme/Heading"
+import styles from "./styles.module.css"
 
 type FeatureItem = {
-  title: string;
-  Svg: React.ComponentType<React.ComponentProps<'svg'>>;
-  description: ReactNode;
-};
+  title: string
+  src: string
+  description: ReactNode
+}
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Easy to Use',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
-    description: (
-      <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
-      </>
-    ),
+    title: "採点機能",
+    src: require("@site/static/img/screen/03_challenge_resize.webp").default,
+    description: <>競技の採点ができます。</>,
   },
   {
-    title: 'Focus on What Matters',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
-    description: (
-      <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
-      </>
-    ),
+    title: "集計結果表示",
+    src: require("@site/static/img/screen/07_pointlist_mosaic_resize.webp").default,
+    description: <>競技の結果を一覧で表示します。</>,
   },
   {
-    title: 'Powered by React',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
-    description: (
-      <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
-      </>
-    ),
+    title: "大会運営",
+    src: require("@site/static/img/screen/09_toppage_resize.webp").default,
+    description: <>ロボサバコースを入力したり、選手登録の機能を提供します。</>,
   },
-];
+]
 
-function Feature({title, Svg, description}: FeatureItem) {
+function Feature({ title, src, description }: FeatureItem) {
   return (
-    <div className={clsx('col col--4')}>
+    <div className={clsx("col col--4")}>
       <div className="text--center">
-        <Svg className={styles.featureSvg} role="img" />
+        <img src={src} role="img" className={styles.featureImg} />
       </div>
       <div className="text--center padding-horiz--md">
         <Heading as="h3">{title}</Heading>
         <p>{description}</p>
       </div>
     </div>
-  );
+  )
 }
 
 export default function HomepageFeatures(): ReactNode {
@@ -67,5 +52,5 @@ export default function HomepageFeatures(): ReactNode {
         </div>
       </div>
     </section>
-  );
+  )
 }

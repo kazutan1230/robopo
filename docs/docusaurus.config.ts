@@ -50,7 +50,7 @@ const config: Config = {
 
   themeConfig: {
     // Replace with your project's social card
-    image: "img/docusaurus-social-card.jpg",
+    // image: "img/docusaurus-social-card.jpg",
     navbar: {
       title: "ROBOPOマニュアル",
       logo: {
@@ -64,7 +64,6 @@ const config: Config = {
           position: "left",
           label: "目次",
         },
-        // { to: "/blog", label: "Blog", position: "left" },
         {
           href: "https://github.com/kazutan1230/robopo/tree/docusaurus",
           label: "GitHub",
@@ -79,7 +78,7 @@ const config: Config = {
           title: "Docs",
           items: [
             {
-              label: "Tutorial",
+              label: "Manual",
               to: "/docs/intro",
             },
           ],

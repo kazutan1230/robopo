@@ -21,6 +21,25 @@ function HomepageHeader() {
             マニュアルトップへ
           </Link>
         </div>
+        <br />
+        <div className={styles.buttons}>
+          <Link
+            className="button button--secondary button--lg"
+            to="https://robopo.vercel.app/"
+            style={{ display: "flex", alignItems: "center" }}>
+            <img role="img" src="img/logo.svg" alt="ROBOPOアプリへ" width="30" height="30" />
+            ROBOPOアプリへ
+          </Link>
+        </div>
+        <br />
+        <div className={styles.buttons}>
+          <Link
+            className="button button--secondary button--lg"
+            to="https://github.com/kazutan1230/robopo/tree/docusaurus">
+            <img role="img" src="img/github-mark.png" alt="ROBOPO Githubへ" width="20" height="20" />
+            ROBOPO Githubへ
+          </Link>
+        </div>
       </div>
     </header>
   )
@@ -33,7 +52,9 @@ export default function Home(): ReactNode {
       title={`${siteConfig.title}へようこそ`}
       description="このサイトはロボサバ採点集計アプリについての手引書です。This site is a manual for the scoring aggregation app using in competitions of the ROBOT SURVIVAL PROJECT.">
       <HomepageHeader />
-      <main>{/* <HomepageFeatures /> */}</main>
+      <main>
+        <HomepageFeatures />
+      </main>
     </Layout>
   )
 }
