@@ -29,6 +29,18 @@ const config: Config = {
   i18n: {
     defaultLocale: "ja",
     locales: ["ja"],
+    localeConfigs: {
+      ja: {
+        label: "日本語",
+        direction: "ltr",
+      },
+    },
+  },
+
+  markdown: {
+    remarkRehypeOptions: {
+      footnoteLabel: "脚注",
+    },
   },
 
   presets: [

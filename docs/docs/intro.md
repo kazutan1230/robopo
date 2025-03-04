@@ -2,46 +2,48 @@
 sidebar_position: 1
 ---
 
-# Tutorial Intro
+# はじめに
 
-Let's discover **Docusaurus in less than 5 minutes**.
+本ドキュメントでは、こどもテックキャラバン開催時に実施されるロボサバ大会の集計・採点のサポート用アプリケーションのシステム(以下、「ROBOPO アプリ[^1]」と記す)とその開発について解説する。この情報では 2025 年 3 月時点の現状と筆者の考える今後の展望を記す。
 
-## Getting Started
+## 解説目的
 
-Get started by **creating a new site**.
+主として ROBOPO アプリの引継ぎ。また、ROBOPO アプリの概要把握。
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
+ROBOPO アプリを引き継ぐことを強制する立場を筆者はとらないが、引き続き、保守開発を実施することができるように残し、関係者内(ラボ、こどもテックキャラバン)で必要性を含め議論できるようにしておくこと。
 
-### What you'll need
+## 対象読者
 
-- [Node.js](https://nodejs.org/en/download/) version 18.0 or above:
-  - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
+OpenUp ラボ滝沢構成員
 
-## Generate a new site
+こどもテックキャラバン事務局構成員(OpenUp グループ、BNT)
 
-Generate a new Docusaurus site using the **classic template**.
+## 前提知識
 
-The classic template will automatically be added to your project after you run the command:
+- ユーザー編
 
-```bash
-npm init docusaurus@latest my-website classic
-```
+  こどもテックキャラバンのロボサバ大会について知っている。(参加したことがなくてもどんなことをするか、何となく分かる。)
 
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
+- 開発編
 
-The command also installs all necessary dependencies you need to run Docusaurus.
+  こどもテックキャラバンのロボサバ大会について。
 
-## Start your site
+  Web 開発についての多少の知識。
 
-Run the development server:
+  あるとなおよい技術的知識 →Github, Node.js, Typescript, AWS
 
-```bash
-cd my-website
-npm run start
-```
+## アプリケーション本体・ソースコードについて
 
-The `cd` command changes the directory you're working with. In order to work with your newly created Docusaurus site, you'll need to navigate the terminal there.
+実際の Web アプリケーションは Vercel にホスティングしているため、以下からアクセス可能である。
 
-The `npm run start` command builds your website locally and serves it through a development server, ready for you to view at http://localhost:3000/.
+(Vercel でなくなる可能性ある)
 
-Open `docs/intro.md` (this page) and edit some lines: the site **reloads automatically** and displays your changes.
+[https://robopo.vercel.app/](https://robopo.vercel.app/)
+
+また、code 自体も以下 Github から取得することが可能である。
+
+(Organization の Github にする予定)
+
+[https://github.com/kazutan1230/robopo](https://github.com/kazutan1230/robopo)
+
+[^1]: ROBOPO とは Robot Survival Point Counting System からきている。
