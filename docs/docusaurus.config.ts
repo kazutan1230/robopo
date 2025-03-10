@@ -58,6 +58,7 @@ const config: Config = {
       } satisfies Preset.Options,
     ],
   ],
+  plugins: [["drawio", {}]],
 
   themeConfig: {
     // Replace with your project's social card
