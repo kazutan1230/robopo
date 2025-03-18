@@ -40,7 +40,10 @@ const config: Config = {
     remarkRehypeOptions: {
       footnoteLabel: "脚注",
     },
+    mermaid: true,
   },
+
+  themes: ["@docusaurus/theme-mermaid"],
 
   presets: [
     [
