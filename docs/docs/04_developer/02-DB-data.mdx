@@ -2,11 +2,13 @@
 sidebar_position: 2
 ---
 
+import { GithubLink } from "@site/src/components/variables.tsx"
+
 # DB 構造
 
 この章では DB 構造に関わる情報を記載する。
 [Drizzle ORM](https://orm.drizzle.team/)という OR マッパーを使っている。
-構造自体は[schema.ts](https://github.com/kazutan1230/robopo/blob/main/app/lib/db/schema.ts)に定義している。
+構造自体は<GithubLink filePath="app/lib/db/schema.ts" />に定義している。
 
 また、1 から環境構築する場合は、この章の[DB 初期設定](#db-初期設定)を参照して実施する。
 
@@ -98,7 +100,7 @@ erDiagram
 - 2024 年 11 月関東第一回では漢字選手名は入れず、フリガナとゼッケン番号だけにした。選手名漢字は無くして良いかもしれない。
 - 今のところ、修正できるようにしていない。削除->新規登録で対応している。特に理由はないので、必要なら update できるようにすると良い。
 - 関連ファイル
-  - [/app/api/player/route.ts](https://github.com/kazutan1230/robopo/blob/main/app/api/player/route.ts)
+  - <GithubLink filePath="/app/api/player/route.ts" />
 
 ### course
 
@@ -115,8 +117,7 @@ erDiagram
 
 - [url]/course で新規登録・削除・更新
 - [url]/course/edit で編集
-- field, mission, point に入るデータについては別の章で解説する。
-  {/* - field, mission, point に入るデータについては[別の章](./03-course-and-mission.mdx)で解説する。 */}
+- field, mission, point に入るデータについては[別の章](./03-course-and-mission.mdx)で解説する。
 
 ### umpire
 
@@ -177,7 +178,7 @@ DB は Neon Postgres を使用している。
 
 **2 Setup connection string variable** `DATABASE_URL` は localhost の場合、`.env`に記載するが、Vercel 等に host する場合は、Vercel の環境変数に設定する。
 
-**4 Create tables**の`schema.ts`は[`schema.ts`](https://github.com/kazutan1230/robopo/blob/main/app/lib/db/schema.ts)を使う。
+**4 Create tables**の`schema.ts`は<GithubLink filePath="app/lib/db/schema.ts" />を使う。
 
 正常に DB が設定できたら、ターミナル(Powershell 等)で DB に接続して、手動で THE 一本橋コースとセンサーコースを入れる。
 
@@ -185,7 +186,7 @@ DB は Neon Postgres を使用している。
 psql "postgres://[username]:[password]@[databaseURL]:[port]/[databaseName]"
 ```
 
-入れるクエリは[insertIpponBashiCourse.sql](https://github.com/kazutan1230/robopo/blob/main/app/lib/db/queries/insertIpponBashiCourse.sql)と[insertSensorCourse.sql](https://github.com/kazutan1230/robopo/blob/main/app/lib/db/queries/insertSensorCourse.sql)
+入れるクエリは<GithubLink filePath="app/lib/db/queries/insertIpponBashiCourse.sql" />と<GithubLink filePath="main/app/lib/db/queries/insertSensorCourse.sql" />
 
 ```sql
 INSERT INTO course (id, name, field, fieldvalid, mission, missionvalid, point) VALUES (-1, 'THE IpponBashi', 'route,route,route,route,route,route,route,route,route,start', TRUE, 'u;null;mf;1;mf;1;mf;1;mf;1;mf;1;mf;1;mf;1;mf;1;mf;1;mb;1;mb;1;mb;1;mb;1;mb;1;mb;1;mb;1;mb;1;mb;1', TRUE, '0;0;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1');

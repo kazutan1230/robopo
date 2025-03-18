@@ -1,0 +1,100 @@
+---
+sidebar_position: 3
+---
+
+# コースとミッションの概念とモデル
+
+import fieldAndPanel from "./img/fieldAndPanel.webp"
+import { GithubLink } from "@site/src/components/variables.tsx"
+
+この章では コースとミッションの概念とモデルについて解説する。
+コースはロボットが移動するためのフィールドを表現したものであり、ミッションはコース上でロボットが行うべきタスクを表現したものである。
+ロボサバのコースは、ベーシックコース、THE 一本橋、センサーコースと 3 つに区分でき、本アプリケーションでもそれぞれに適した形で表現している。
+前者 2 つの UI は似ている部分があるが、センサーコースは大きく異なっている。
+
+アプリケーション上でコースを表現するにあたって参考にしたのは[オセロゲームのアプリ開発](https://qiita.com/Ryukuu0919/items/329aac4d738d328a6929)である。
+
+まず、ベーシックコース、THE 一本橋を表現するための描画モデルから解説する。
+
+## 関連ファイル
+
+### コース・ミッションモデル
+
+- <GithubLink filePath="app/components/course/utils.tsx" />
+
+### エディター関連
+
+- <GithubLink filePath="app/components/course/courseList.tsx" />
+- <GithubLink filePath="app/components/course/listUtils.tsx" />
+- <GithubLink filePath="app/components/course/missionList.tsx" />
+- <GithubLink filePath="app/components/course/missionUI.tsx" />
+- <GithubLink filePath="app/components/course/modals.tsx" />
+- <GithubLink filePath="app/components/course/selectPanel.tsx" />
+- <GithubLink filePath="app/components/course/utils.tsx" />
+
+### コースの描画・UI
+
+- <GithubLink filePath="app/components/course/field.tsx" />
+- <GithubLink filePath="app/components/course/nextArrow.tsx" />
+- <GithubLink filePath="app/components/course/panel.tsx" />
+- <GithubLink filePath="app/components/course/robot.tsx" />
+- <GithubLink filePath="app/components/course/utils.tsx" />
+
+### THE 一本橋・センサーコース
+
+- <GithubLink filePath="app/components/challenge/ipponBashi.tsx" />
+- <GithubLink filePath="app/components/challenge/sensorCourse.tsx" />
+
+## 描画モデル
+
+field.tsx で定義された碁盤の目フィールド上に panel.tsx で定義されたパネルや robot.tsx によるロボット、nextArrow.tsx による次の動きを配置することでロボサバの場面を表現する。
+
+<img role="img" src={fieldAndPanel} alt="Field and panel" width="600" />
+
+フィールドの定数とパネルの定数は<GithubLink filePath="app/components/course/utils.tsx" />の冒頭部分で定義されている。
+
+```tsx
+// コース作成の最大サイズ
+export const MAX_FIELD_WIDTH: number = 3
+export const MAX_FIELD_HEIGHT: number = 3
+
+// 一本橋のサイズ
+export const IPPON_BASHI_SIZE: number = 5
+
+// デフォルトのパネルサイズ
+const PANEL_WIDTH: number = 85
+const PANEL_HEIGHT: number = 85
+
+// THE 一本橋のパネルサイズ
+const BASHI_PANEL_WIDTH: number = 85
+const BASHI_PANEL_HEIGHT: number = 85
+
+// パネルの幅を返す関数
+export const getPanelWidth = (type?: string): number => {
+  if (type === "ipponBashi") return BASHI_PANEL_WIDTH
+  else return PANEL_WIDTH
+}
+
+// パネルの高さを返す関数
+export const getPanelHeight = (type?: string): number => {
+  if (type === "ipponBashi") return BASHI_PANEL_HEIGHT
+  else return PANEL_HEIGHT
+}
+
+// Panelの種類
+export type PanelValue = "start" | "goal" | "route" | null
+export const PanelString: { [key in Exclude<PanelValue, null>]: string } = {
+  start: "スタート",
+  goal: "ゴール",
+  route: "",
+}
+```
+
+ベーシックコースと THE 一本橋の定数がデフォルトで同じにしているため、高さと幅を返す関数は冗長と言える。
+今後もずっと同じで良いならまとめても良いだろう。
+
+`MAX_FIELD_WIDTH` と `MAX_FIELD_HEIGHT` を増加させれば、より大きなコースを表現できるが、
+実際に 4,5,6,7,8,...と増やしてみるとうまく描画できない場合も見られるため注意。
+(恐らく、描画の際の割り算がうまくいかない場所があるのだろうと予想している。)
+
+パネルの種類は `PanelValue` で定義されており、3 種類+null、 `PanelString` はパネルの表示テキストを定義している。
