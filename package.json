@@ -22,7 +22,7 @@
     "@types/react-dom": "^19.0.2",
     "daisyui": "^5.0.0",
     "drizzle-kit": "^0.30.4",
-    "drizzle-orm": "^0.40.0",
+    "drizzle-orm": "^0.41.0",
     "eslint": "^9.17.0",
     "lodash-es": "^4.17.21",
     "postcss": "^8",
