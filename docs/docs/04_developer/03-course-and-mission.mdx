@@ -217,6 +217,43 @@ start 時のポイントはこれまでのところ、必要は無いが、将�
 
 他に、fieldvalid, missionvalid はコースとミッションが有効かどうかを示す boolean 型フラグである。こちらの実装はできていない。
 
+## THE 一本橋
+
+THE 一本橋のコース描画は、<GithubLink filePath="app/components/challenge/ipponBashi.tsx" />である。
+基本の描画はベーシックコースと同じである。
+
+<GithubLink filePath="app/components/course/utils.tsx" />
+で定義された`IPPON_BASHI_SIZE`を変更することで任意の長さの一本橋を描画できる。
+
+```tsx title="utils.tsx"
+// 一本橋のサイズ
+export const IPPON_BASHI_SIZE: number = 5
+```
+
+ただし、ミッションやポイントに関しては、DB の`courseID=-1`で定義しているため、そちらの変更が必要である。
+
+```sql title="DBデータ例"
+robopo=> select * from course where id=-1;
+ id |    name    |             field             | fieldvalid |                        mission                        | missionvalid |         point          |         created_at
+----+------------+-------------------------------+------------+-------------------------------------------------------+--------------+------------------------+----------------------------
+ -1 | THE 一本橋 | route;route;route;route;start | t          | u;null;mf;1;mf;1;mf;1;mf;1;tr;180;mf;1;mf;1;mf;1;mf;1 | t            | 0;20;1;1;1;1;0;2;2;2;2 | 2024-10-04 09:18:53.416168
+```
+
+field と mission,point を長さに合わせて UPDATE する。
+
+```sql title="DB UPDATE例"
+-- THE 一本橋のコースを更新する
+UPDATE course SET field = 'route;route;route;route;start', mission = 'u;null;mf;1;mf;1;mf;1;mf;1;tr;180;mf;1;mf;1;mf;1;mf;1', point = '0;20;1;1;1;1;0;2;2;2;2' WHERE id = -1;
+```
+
+## センサーコース
+
+センサーコースのモジュールは、<GithubLink filePath="app/components/challenge/sensorCourse.tsx" />である。
+実際のセンサーコースのチャレンジを筆者が見たことが無いのもあるが、
+ミッションのルールからコース自体の描画の必要性が乏しいため、
+コースの描画は行わない。
+トンネル停止と壁停止のミッションの得点を選択して入れる機能のみを付けている。
+
 [^1]:
     後になってから、向きは回転座標系にして、右回転を正の回転、左回転を負の回転としたモデルの方が汎用性あると気付いた。
     なので、総とっかえした方が良いと筆者は考える。

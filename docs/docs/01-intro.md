@@ -28,9 +28,9 @@ OpenUp ラボ滝沢構成員
 
   こどもテックキャラバンのロボサバ大会について。
 
-  Web 開発についての多少の知識。
+  Web 開発についての知識。
 
-  あるとなおよい技術的知識 →Github, Node.js, Typescript, AWS
+  あるとよい技術的知識 →Github, Node.js, Typescript, AWS
 
 ## アプリケーション本体・ソースコードについて
 
@@ -48,4 +48,4 @@ OpenUp ラボ滝沢構成員
 
 ご参考願う。
 
-[^1]: ROBOPO とは Robot Survival Point Counting System からきている。
+[^1]: ROBOPO とは ROBOt survival POint counting system からきている。(筆者命名)
