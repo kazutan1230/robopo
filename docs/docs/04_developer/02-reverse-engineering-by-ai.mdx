@@ -1,0 +1,81 @@
+---
+sidebar_position: 2
+---
+
+import Tabs from "@theme/Tabs"
+import TabItem from "@theme/TabItem"
+import { GithubLink } from "@site/src/components/variables.tsx"
+import CsvTable from "@site/src/components/table.tsx"
+import Architecture from "@site/static/aiDocs/architecture.mdx"
+import ERDiagram from "@site/static/aiDocs/ER.mdx"
+import kinoyokenList from "!!raw-loader!@site/static/aiDocs/kinoyokenList.csv"
+import tableDef from "!!raw-loader!@site/static/aiDocs/tableDef.csv"
+import backend from "!!raw-loader!@site/static/aiDocs/backend.csv"
+import SeqAssign from "@site/static/aiDocs/sequence/seq_assign.mdx"
+import SeqManUmpire from "@site/static/aiDocs/sequence/seq_manage_umpire.mdx"
+import SeqSummary from "@site/static/aiDocs/sequence/seq_summary.mdx"
+import SeqManage from "@site/static/aiDocs/sequence/seq_manage.mdx"
+import SeqManCourse from "@site/static/aiDocs/sequence/seq_manage_course.mdx"
+import SeqDisplay from "@site/static/aiDocs/sequence/seq_display.mdx"
+
+# AI によるリバースエンジニアリング
+
+最初から詳細なコード全体の設計図を作成していなかったため、現時点でのシステムを AI にリバースエンジニアリングしてもらった。
+使用したツールは、[GEAR.indigo](https://gearindigo.app/)
+
+## アーキテクチャ図
+
+見づらくて確認しきれていないが、大体間違ってそう。
+
+<GithubLink filePath="app/docs/static/aiDocs/architecture.mdx" />
+
+<Architecture />
+
+## 機能要件一覧
+
+<GithubLink filePath="app/docs/static/aiDocs/kinoyokenList.csv" />
+
+<CsvTable csvFile={kinoyokenList} />
+
+## テーブル定義
+
+<GithubLink filePath="app/docs/static/aiDocs/tableDef.csv" />
+
+<CsvTable csvFile={tableDef} />
+
+## ER 図
+
+<GithubLink filePath="app/docs/static/aiDocs/ER.mdx" />
+
+<ERDiagram />
+
+## バックエンド処理
+
+<GithubLink filePath="app/docs/static/aiDocs/backend.csv" />
+
+<CsvTable csvFile={backend} />
+
+## シーケンス図
+
+<GithubLink filePath="app/docs/static/aiDocs/sequence" />
+
+<Tabs>
+  <TabItem value="割り当て" Label="assign" default>
+    <SeqAssign />
+  </TabItem>
+  <TabItem value="採点者管理" Label="manageUmpire">
+    <SeqManUmpire />
+  </TabItem>
+  <TabItem value="集計" Label="summary">
+    <SeqSummary />
+  </TabItem>
+  <TabItem value="管理" Label="manage">
+    <SeqManage />
+  </TabItem>
+  <TabItem value="コース管理" Label="manageCourse">
+    <SeqManCourse />
+  </TabItem>
+  <TabItem value="表示" Label="display">
+    <SeqDisplay />
+  </TabItem>
+</Tabs>
