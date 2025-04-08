@@ -78,6 +78,31 @@ erDiagram
     timestamp created_at "作成日時"
   }
 
+  competition_player {
+	integer id PK "ID"
+	integer competition_id
+	integer player_id
+  }
+
+  competition_course {
+	integer id PK "ID"
+	integer competition_id
+	integer course_id
+  }
+
+  competition_umpire {
+	integer id PK "ID"
+	integer competition_id
+	integer umpire_id
+  }
+
+  competition ||--o{ competition_player : "competition_id:id"
+  competition ||--o{ competition_course : "competition_id:id"
+  competition ||--o{ competition_umpire : "competition_id:id"
+  player ||--o{ competition_player : "player_id:id"
+  course ||--o{ competition_course : "course_id:id"
+  umpire ||--o{ competition_umpire : "umpire_id:id"
+
 ```
 
 ## 各テーブル詳細
