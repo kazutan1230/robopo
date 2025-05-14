@@ -2,17 +2,25 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { type CourseSummary, isCompletedCourse } from "@/app/components/summary/utils"
-import { getCourseList } from "@/app/components/course/listUtils"
 import { deserializePoint, PointValue } from "@/app/components/course/utils"
 import { calcPoint } from "@/app/components/challenge/utils"
 import { type SelectCourse } from "@/app/lib/db/schema"
 
-export const SummaryTable = () => {
-  const competitionId: number = 1 //一旦1
-  const [courseData, setCourseData] = useState<{ selectCourses: SelectCourse[] }>({ selectCourses: [] })
+type Props = {
+  id: number
+  courseList: { selectCourses: SelectCourse[] }
+  ipponBashiPoint: PointValue[]
+}
+
+export const SummaryTable = ({ id, courseList, ipponBashiPoint }: Props) => {
+  const competitionId: number = id
+  const courseData: { selectCourses: SelectCourse[] } = courseList
+  const initialCourseId = courseData.selectCourses
+    .filter((course) => course.id > 0)
+    .reduce((mincourse, currentCourse) => (currentCourse.id < mincourse.id ? currentCourse : mincourse)).id
+
   const [pointData, setPointData] = useState<PointValue[]>([])
-  const [ipponBashiPoint, setIpponBashiPoint] = useState<PointValue[]>([])
-  const [courseId, setCourseId] = useState<number | null>(0)
+  const [courseId, setCourseId] = useState<number | null>(initialCourseId)
   const [courseSummary, setCourseSummary] = useState<CourseSummary[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [sortKey, setSortKey] = useState<string>("") // ソートする列名
@@ -21,23 +29,7 @@ export const SummaryTable = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // コースリストを取得
-        const newCourseData: { selectCourses: SelectCourse[] } = await getCourseList()
-        setCourseData(newCourseData)
-
-        const newIpponBashiPoint = newCourseData.selectCourses.find((course) => course.id === -1)?.point
-        newIpponBashiPoint && setIpponBashiPoint(await deserializePoint(newIpponBashiPoint))
-
-        // コースIDが選択されている場合、そのコースのデータを取得
-        // コースIDが選択されてない場合(最初)、一番若いidのコースデータを取得
-        if (courseId === null || courseId === undefined || courseId === 0) {
-          setCourseId(
-            newCourseData.selectCourses
-              .filter((course) => course.id > 0)
-              .reduce((mincourse, currentCourse) => (currentCourse.id < mincourse.id ? currentCourse : mincourse)).id
-          )
-        }
-        const selectedCourse = courseData.selectCourses.find((course) => course.id === courseId)
+        const selectedCourse = courseData.selectCourses?.find((course) => course.id === courseId)
         if (selectedCourse) {
           const point = await deserializePoint(selectedCourse.point)
           setPointData(point)
@@ -61,22 +53,37 @@ export const SummaryTable = () => {
     setSortKey(key)
     setSortOrder(order)
     const sortedData = [...courseSummary].sort((a, b) => {
+      // 日時keyのときはDate.parseで比較
+      if (key === "firstTCourseTime") {
+        // a[key] / b[key]は「YYYY/MM/DD hh:mm:ss」等の文字列
+        const getTimeVal = (v: CourseSummary | null) => {
+          if (!v || v["firstTCourseTime"] === "-" || !isCompletedCourse(pointData, v["tCourseMaxResult"])) {
+            return order === "asc" ? Infinity : -Infinity
+          }
+          const t = Date.parse(v["firstTCourseTime"] as string)
+          return isNaN(t) ? (order === "asc" ? Infinity : -Infinity) : t
+        }
+        const aTime = getTimeVal(a)
+        const bTime = getTimeVal(b)
+        return order === "asc" ? aTime - bTime : bTime - aTime
+      }
+
       const aValue: number | string =
         key === "playerFurigana" || key === "playerZekken"
           ? a[key] === null
             ? "" // 何も入ってない時に何入れるかは考える余地あり。
             : a[key]
           : a[key] === null
-          ? 0
-          : +a[key]
+            ? 0
+            : +a[key]
       const bValue: number | string =
         key === "playerFurigana" || key === "playerZekken"
           ? b[key] === null
             ? "" // 何も入ってない時に何入れるかは考える余地あり。
             : b[key]
           : b[key] === null
-          ? 0
-          : +b[key]
+            ? 0
+            : +b[key]
 
       if (order === "asc") {
         return aValue > bValue ? 1 : -1
@@ -89,9 +96,9 @@ export const SummaryTable = () => {
 
   const renderSortIcon = (key: string) => {
     if (sortKey === key) {
-      return sortOrder === "asc" ? "▲" : "▼"
+      return sortOrder === "asc" ? <span className="text-blue-500">▲</span> : <span className="text-red-500">▼</span> // sortOrder === "asc" ? "▲" : "▼"
     }
-    return ""
+    return "▲"
   }
 
   const itemTitle = (title1: string, title2?: string, key?: keyof CourseSummary) => {
@@ -110,7 +117,7 @@ export const SummaryTable = () => {
   }
 
   return (
-    <div className="h-full w-full">
+    <div className="w-full">
       <div className="flex mb-5">
         <h1 className="text-3xl font-bold m-2">
           <span className="hidden sm:inline">成績判定シート</span>
@@ -128,7 +135,7 @@ export const SummaryTable = () => {
             コースを選んでください
           </option>
           {courseData ? (
-            courseData.selectCourses.map(
+            courseData.selectCourses?.map(
               (course) =>
                 course.id !== -1 &&
                 course.id !== -2 && (
@@ -142,14 +149,14 @@ export const SummaryTable = () => {
           )}
         </select>
       </div>
-      <div className="flex m-5 overflow-x-auto 2xl:justify-center 2xl:overflow-x-visible">
+      <div className="flex m-5 overflow-x-auto overflow-y-auto 2xl:overflow-x-visible max-h-96">
         <table className="table table-pin-rows table-pin-cols">
           <thead>
             <tr>
               <th className="border border-gray-400 p-2">名前</th>
               {itemTitle("ふりがな", "", "playerFurigana")}
               {itemTitle("ゼッケン", "", "playerZekken")}
-              {itemTitle("ベーシックコース", "完走なら〇記入")}
+              {itemTitle("ベーシックコース", "完走時刻", "firstTCourseTime")}
               {itemTitle("完走は何回", "で達成?", "firstTCourseCount")}
               {itemTitle("ベーシックコース", "の最高得点", "tCourseMaxResult")}
               {itemTitle("センサーコースの", "最高得点", "sensorMaxResult")}
@@ -169,7 +176,7 @@ export const SummaryTable = () => {
                 </td>
               </tr>
             ) : courseSummary.length > 0 ? (
-              courseSummary.map((player) => (
+              courseSummary?.map((player) => (
                 <tr key={player.playerId}>
                   <th className="border border-gray-400 p-2">
                     <Link
@@ -183,7 +190,7 @@ export const SummaryTable = () => {
                   </td>
                   <td className="border border-gray-400 p-2">{player.playerZekken ? player.playerZekken : "-"}</td>
                   <td className="border border-gray-400 p-2">
-                    {isCompletedCourse(pointData, player.tCourseMaxResult) ? "〇" : "-"}
+                    {isCompletedCourse(pointData, player.tCourseMaxResult) ? player.firstTCourseTime : "-"}
                   </td>
                   <td className="border border-gray-400 p-2">
                     {isCompletedCourse(pointData, player.tCourseMaxResult) && player.firstTCourseCount

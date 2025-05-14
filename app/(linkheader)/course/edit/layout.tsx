@@ -1,7 +1,6 @@
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import { Suspense } from "react"
-import { Header } from "@/app/components/header"
 import "@/app/globals.css"
 import { PageLoading } from "@/app/components/parts/pageLoading"
 
@@ -15,8 +14,8 @@ export const metadata: Metadata = {
 export default function Layout({
   children,
 }: // modal
-Readonly<{
-  children: React.ReactNode
-}>) {
+  Readonly<{
+    children: React.ReactNode
+  }>) {
   return <Suspense fallback={<PageLoading />}>{children}</Suspense>
 }

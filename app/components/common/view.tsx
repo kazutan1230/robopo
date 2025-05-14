@@ -1,130 +1,150 @@
 "use client"
 import { useState, useEffect } from "react"
-import type { SelectPlayer, SelectUmpire } from "@/app/lib/db/schema"
-import { getPlayerList } from "@/app/components/challenge/utils"
-import { getUmpireList } from "@/app/components/common/utils"
-import CommonList from "@/app/components/common/commonList"
+import type { SelectPlayer, SelectUmpire, SelectPlayerWithCompetition, SelectUmpireWithCompetition, SelectCourseWithCompetition } from "@/app/lib/db/schema"
+import { CommonCheckboxList } from "@/app/components/common/commonList"
 import CommonRegister from "@/app/components/common/commonRegister"
+import Link from "next/link"
 
 type PlayerProps = {
   type: "player"
-  initialCommonDataList: { players: SelectPlayer[] }
+  initialCommonDataList: SelectPlayerWithCompetition[]
 }
 
 type UmpireProps = {
   type: "umpire"
-  initialCommonDataList: { umpires: SelectUmpire[] }
+  initialCommonDataList: SelectUmpireWithCompetition[]
 }
 
-type ViewProps = PlayerProps | UmpireProps
+type CourseProps = {
+  type: "course"
+  initialCommonDataList: SelectUmpireWithCompetition[]
+}
+
+type ViewProps = PlayerProps | UmpireProps | CourseProps
 
 export const View = ({ type, initialCommonDataList }: ViewProps) => {
-  const [commonId, setCommonId] = useState<number | null>(null)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [commonDataList, setCommonDataList] = useState<SelectPlayer[] | SelectUmpire[]>(
-    type === "player" ? initialCommonDataList.players : initialCommonDataList.umpires
+  const commonString = type === "player" ? "選手" : type === "umpire" ? "採点者" : "コース"
+  const [commonDataList, setCommonDataList] = useState<SelectPlayerWithCompetition[] | SelectUmpireWithCompetition[] | SelectCourseWithCompetition[] | SelectPlayer[] | SelectUmpire[]>(
+    initialCommonDataList
   )
-  const [loading, setLoading] = useState(false)
-  const [modalOpen, setModalOpen] = useState<boolean>(false)
-
-  const commonString = type === "player" ? "選手" : "採点者"
+  // 配列をクエリ文字列に変換する関数
+  const createQueryParams = (ids: number[] | null) => {
+    if (!ids || ids.length === 0) return ""
+    return ids.map((id) => `${id}`).join("/")
+  }
 
   useEffect(() => {
     setCommonDataList(commonDataList)
   }, [commonDataList])
 
-  const handleDelete = async () => {
-    try {
-      setLoading(true)
-      const url = type === "player" ? "/api/player" : "/api/umpire"
-      const response = await fetch(url, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id: commonId }),
-      })
-
-      if (response.ok) {
-        // 削除成功時の処理
-        if (type === "player") {
-          const newPlayerDataList: { players: SelectPlayer[] } = await getPlayerList()
-          setCommonDataList(newPlayerDataList.players)
-        } else if (type === "umpire") {
-          const newUmpireDataList: { umpires: SelectUmpire[] } = await getUmpireList()
-          setCommonDataList(newUmpireDataList.umpires)
-        }
-        setCommonId(null)
-        setSuccessMessage(commonString + "が正常に削除されました")
-        setModalOpen(false)
-      } else {
-        setErrorMessage(commonString + "を削除できませんでした")
-      }
-    } catch (error) {
-      console.log("error: ", error)
-    } finally {
-      setLoading(false)
-    }
+  // 選択したitemに実施する行動の選択肢
+  const ItemManager = ({ commonId }: { commonId: number[] | null }) => {
+    return (
+      <>
+        {successMessage && <div className="text-green-500 font-semibold">{successMessage}</div>}
+        {errorMessage && <div className="text-red-500 font-semibold">{errorMessage}</div>}
+        <div className="flex w-fit">
+          <p className="flex m-3">選択した{commonString}を</p>
+          {type === "course" &&
+            <Link
+              href={`/course/edit?${commonId?.map((id) => `id=${id}`).join("&")}`}
+              className={
+                "flex btn mx-auto m-3 " +
+                (commonId?.length !== 1 ? "pointer-events-none btn-disabled" : "btn-primary")
+              }
+              aria-disabled={commonId?.length !== 1}
+              tabIndex={commonId?.length !== 1 ? -1 : undefined}
+              onClick={() => {
+                setSuccessMessage(null)
+              }}>
+              編集
+            </Link>}
+          <Link
+            href={
+              type === "player"
+                ? `/player/assign/${createQueryParams(commonId)}`
+                : type === "umpire" ? `/umpire/assign/${createQueryParams(commonId)}`
+                  : `/course/assign/${createQueryParams(commonId)}`
+            }
+            className={
+              "flex btn mx-auto m-3 ml-5 " +
+              (commonId === null || commonId?.length === 0 ? "pointer-events-none btn-disabled" : "btn-primary")
+            }
+            aria-disabled={commonId === null || commonId?.length === 0}
+            tabIndex={commonId === null || commonId?.length === 0 ? -1 : undefined}
+            onClick={() => {
+              setSuccessMessage(null)
+            }}>
+            大会割当
+          </Link>
+          <Link
+            href={
+              type === "player"
+                ? `/player/delete/${createQueryParams(commonId)}`
+                : type === "umpire" ? `/umpire/delete/${createQueryParams(commonId)}`
+                  : `/course/delete/${createQueryParams(commonId)}`
+            }
+            className={
+              "flex btn mx-auto m-3 ml-5 " +
+              (commonId === null || commonId?.length === 0 ? "pointer-events-none btn-disabled" : "btn-warning")
+            }
+            aria-disabled={commonId === null || commonId?.length === 0}
+            tabIndex={commonId === null || commonId?.length === 0 ? -1 : undefined}
+            onClick={() => {
+              setSuccessMessage(null)
+            }}>
+            削除
+          </Link>
+        </div>
+      </>
+    )
   }
 
-  const DeleteModal = () => {
-    const handleClick = () => {
-      setModalOpen(false)
-    }
+  // 新規登録UIを持つView
+  const ViewWithRegister = () => {
+    const [commonId, setCommonId] = useState<number[] | null>(null)
     return (
-      <dialog id="challenge-modal" className="modal modal-open" onClose={() => setModalOpen(false)}>
-        <div className="modal-box">
-          {successMessage ? successMessage : <p>選択した{commonString}を削除しますか?</p>}
-          {!successMessage && (
-            <button className="btn btn-accent m-3" onClick={handleDelete} disabled={loading}>
-              はい
-            </button>
-          )}
-          <button className="btn btn-accent m-3" onClick={handleClick} disabled={loading}>
-            戻る
-          </button>
+      <div className="lg:flex lg:flex-row">
+        <div className="flex-col lg:w-2/3">
+          <CommonCheckboxList
+            props={{ type: type, commonDataList: commonDataList }}
+            commonId={commonId}
+            setCommonId={setCommonId}
+          />
+          <ItemManager commonId={commonId} />
         </div>
-        <form method="dialog" className="modal-backdrop" onClick={handleClick}>
-          <button className="cursor-default">close</button>
-        </form>
-      </dialog>
+        <div className="lg:w-1/3">
+          <CommonRegister
+            type={type}
+            setSuccessMessage={setSuccessMessage}
+            setErrorMessage={setErrorMessage}
+            setCommonDataList={
+              setCommonDataList as React.Dispatch<React.SetStateAction<SelectPlayer[] | SelectUmpire[]>>
+            }
+          />
+        </div>
+      </div>
+    )
+  }
+
+  // 新規登録UIを持たないView
+  const ViewNoRegister = () => {
+    const [commonId, setCommonId] = useState<number[] | null>(null)
+    return (
+      <>
+        <CommonCheckboxList
+          props={{ type: type, commonDataList: commonDataList }}
+          commonId={commonId}
+          setCommonId={setCommonId}
+        />
+        <ItemManager commonId={commonId} />
+      </>
     )
   }
 
   return (
-    <div className="lg:flex lg:flex-row">
-      <div className="flex-col lg:w-2/3">
-        <CommonList type={type} commonDataList={commonDataList} commonId={commonId} setCommonId={setCommonId} />
-        {successMessage && <div className="text-green-500 font-semibold">{successMessage}</div>}
-
-        {errorMessage && <div className="text-red-500 font-semibold">{errorMessage}</div>}
-
-        <div className="flex w-fit">
-          <p className="flex m-3">選択した{commonString}を</p>
-          <button
-            type="button"
-            className="flex btn btn-primary mx-auto m-3"
-            disabled={commonId === null}
-            onClick={() => {
-              setSuccessMessage(null)
-              setModalOpen(true)
-            }}>
-            削除
-          </button>
-        </div>
-      </div>
-      <div className="lg:w-1/3">
-        <CommonRegister
-          type={type}
-          setCommonId={setCommonId}
-          setSuccessMessage={setSuccessMessage}
-          setErrorMessage={setErrorMessage}
-          setCommonDataList={setCommonDataList as React.Dispatch<React.SetStateAction<SelectPlayer[] | SelectUmpire[]>>}
-        />
-      </div>
-
-      {modalOpen && <DeleteModal />}
-    </div>
+    type === "player" || type === "umpire" ? <ViewWithRegister /> : <ViewNoRegister />
   )
 }

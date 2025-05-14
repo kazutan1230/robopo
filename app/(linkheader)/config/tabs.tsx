@@ -1,7 +1,7 @@
 "use client"
 import { useState } from "react"
 import Link from "next/link"
-import CommonList from "@/app/components/common/commonList"
+import { CommonRadioList } from "@/app/components/common/commonList"
 import type { SelectCompetition, SelectPlayer, SelectUmpire, SelectCourse } from "@/app/lib/db/schema"
 import CommonRegister from "@/app/components/common/commonRegister"
 
@@ -39,12 +39,12 @@ export const CompetitionListTab = ({
     const requestBody =
       type === "delete"
         ? {
-            type: type,
-            id: competitionId,
-          }
+          type: type,
+          id: competitionId,
+        }
         : {
-            type: type,
-          }
+          type: type,
+        }
 
     const url = type === "delete" ? "/api/competition/" : "/api/competition/" + competitionId
     try {
@@ -106,17 +106,16 @@ export const CompetitionListTab = ({
 
   return (
     <>
-      <CommonList
-        type="competition"
+      <CommonRadioList
+        props={{ type: "competition", commonDataList: competitionList }}
         commonId={competitionId}
         setCommonId={setCompetitionId}
-        commonDataList={competitionList}
       />
       <button
         className="btn btn-primary text-default max-w-fit m-1"
         value="open"
         disabled={
-          competitionId === null || loading || competitionList.find((c) => c.id === competitionId)?.isOpen === true
+          competitionId === null || loading || competitionList?.find((c) => c.id === competitionId)?.step === 1
         }
         onClick={(e) => handleButtonClick(e)}>
         開催
@@ -125,7 +124,7 @@ export const CompetitionListTab = ({
         className="btn btn-primary text-default max-w-fit m-1"
         value="close"
         disabled={
-          competitionId === null || loading || competitionList.find((c) => c.id === competitionId)?.isOpen === false
+          competitionId === null || loading || competitionList?.find((c) => c.id === competitionId)?.step !== 1
         }
         onClick={(e) => handleButtonClick(e)}>
         停止
@@ -147,7 +146,6 @@ export const CompetitionListTab = ({
 }
 
 export const NewCompetitionTab = ({ setCompetitionList }: NewCompetitionTabProps) => {
-  const [commonId, setCommonId] = useState<number | null>(null)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   return (
@@ -155,7 +153,6 @@ export const NewCompetitionTab = ({ setCompetitionList }: NewCompetitionTabProps
       <p>新しい大会を追加します</p>
       <CommonRegister
         type="competition"
-        setCommonId={setCommonId}
         setSuccessMessage={setSuccessMessage}
         setErrorMessage={setErrorMessage}
         setCommonDataList={
@@ -215,11 +212,11 @@ export const AssignTab = ({ competitionId, competitionList, courseList, umpireLi
     <>
       <div className="grid grid-cols-2 mt-5 mb-5">
         <p>選択中大会:</p>
-        <p>{competitionList.find((c) => c.id === competitionId)?.name}</p>
+        <p>{competitionList?.find((c) => c.id === competitionId)?.name}</p>
         <p>選択中コース:</p>
-        <p>{courseList.selectCourses.find((c) => c.id === courseId)?.name}</p>
+        <p>{courseList.selectCourses?.find((c) => c.id === courseId)?.name}</p>
         <p>選択中採点者:</p>
-        <p>{umpireList.umpires.find((u) => u.id === umpireId)?.name}</p>
+        <p>{umpireList.umpires?.find((u) => u.id === umpireId)?.name}</p>
       </div>
       <form onSubmit={handleSubmit} className="space-y-4">
         <label htmlFor="course" className="block text-sm font-medium text-gray-700">

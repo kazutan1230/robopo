@@ -1,64 +1,81 @@
-import { SelectCompetition, SelectUmpire, SelectUmpireCourse } from "@/app/lib/db/schema"
-import { BASE_URL } from "@/app/lib/const"
+"use server"
+
+import {
+  competition,
+  course,
+  umpire,
+  player,
+  competitionCourse,
+  umpireCourse,
+  SelectCompetition,
+  SelectUmpire,
+  SelectUmpireCourse,
+  SelectCourse,
+  SelectPlayer,
+} from "@/app/lib/db/schema"
+import { db } from "@/app/lib/db/db"
+import { eq } from "drizzle-orm"
+
+// 選手一覧情報を取得する関数
+export async function getPlayerList(): Promise<{
+  players: SelectPlayer[]
+}> {
+  const players: SelectPlayer[] = await db.select().from(player)
+  return { players }
+}
 
 // 採点者一覧情報を取得する関数
 export async function getUmpireList(): Promise<{
   umpires: SelectUmpire[]
 }> {
-  return fetch(`${BASE_URL}/api/umpire`, { cache: "no-store" })
-    .then((res) => {
-      if (!res.ok) {
-        return { umpires: [] }
-      }
-      return res.json()
-    })
-    .then((data) => {
-      // ここの形式が色々変わるみたいな気がする。
-      // console.log("data: ", data)
-      return { umpires: data.umpires }
-    })
-    .catch((err) => {
-      console.error("error: ", err)
-      return { umpires: [] } //エラーが発生した場合、空の配列を返す
-    })
+  const umpires: SelectUmpire[] = await db.select().from(umpire)
+  return { umpires }
 }
 
 // 大会一覧情報を取得する関数
 export async function getCompetitionList(): Promise<{
   competitions: SelectCompetition[]
 }> {
-  return fetch(`${BASE_URL}/api/competition`, { cache: "no-store" })
-    .then((res) => {
-      if (!res.ok) {
-        return { competitions: [] }
-      }
-      return res.json()
-    })
-    .then((data) => {
-      return { competitions: data.competitions }
-    })
-    .catch((err) => {
-      console.error("error: ", err)
-      return { competitions: [] } //エラーが発生した場合、空の配列を返す
-    })
+  const competitions: SelectCompetition[] = await db.select().from(competition)
+  return { competitions }
 }
 
 // コース・採点者割当一覧を取得する関数
 export async function getRawAssignList(): Promise<{
   assigns: SelectUmpireCourse[]
 }> {
-  return fetch(`${BASE_URL}/api/assign`, { cache: "no-store" })
-    .then((res) => {
-      if (!res.ok) {
-        return { assigns: [] }
-      }
-      return res.json()
+  const assigns: SelectUmpireCourse[] = await db.select().from(umpireCourse)
+  return { assigns }
+}
+
+// コース一覧情報を取得する関数
+export async function getCourseList(): Promise<{
+  selectCourses: SelectCourse[]
+}> {
+  const selectCourses: SelectCourse[] = await db.select().from(course)
+  return { selectCourses }
+}
+
+// 大会IDからコース一覧を取得する関数
+export async function getCompetitionCourseList(competitionId: number): Promise<{
+  selectCourses: SelectCourse[]
+}> {
+  const selectCourses = await db
+    .select({
+      id: course.id,
+      name: course.name,
+      field: course.field,
+      fieldValid: course.fieldValid,
+      mission: course.mission,
+      missionValid: course.missionValid,
+      point: course.point,
+      createdAt: course.createdAt,
     })
-    .then((data) => {
-      return { assigns: data.assigns }
-    })
-    .catch((err) => {
-      console.error("error: ", err)
-      return { assigns: [] } //エラーが発生した場合、空の配列を返す
-    })
+    .from(course)
+    .innerJoin(competitionCourse,
+      eq(course.id, competitionCourse.courseId),
+    )
+    .where(eq(competitionCourse.competitionId, competitionId))
+
+  return { selectCourses }
 }
