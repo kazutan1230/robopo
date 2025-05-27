@@ -55,8 +55,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             return session
         },
         authorized: async ({ auth }) => {
-            // Logged in users are authenticated, otherwise redirect to login page
-            return !!auth
+            return !!auth?.user
         },
     },
     session: {
@@ -66,6 +65,4 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     pages: {
         signIn: "/signIn",
     },
-    trustHost: process.env.NETLIFY === "true" //netlifyで動かす場合
-    || process.env.TRUST_HOST === "true", // localhostその他で動かす場合
 })
