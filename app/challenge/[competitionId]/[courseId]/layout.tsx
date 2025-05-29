@@ -1,6 +1,5 @@
 import type { Metadata } from "next"
 import { NavigationGuardProvider } from "next-navigation-guard"
-import { CourseEditProvider } from "@/app/course/edit/courseEditContext"
 import "@/app/globals.css"
 
 export const metadata: Metadata = {
@@ -10,17 +9,12 @@ export const metadata: Metadata = {
 
 export default function Layout({
   children,
-  modal,
 }: Readonly<{
   children: React.ReactNode
-  modal: React.ReactNode
 }>) {
   return (
     <NavigationGuardProvider>
-      <CourseEditProvider>
-        {children}
-        {modal}
-      </CourseEditProvider>
+      {children}
     </NavigationGuardProvider>
   )
 }

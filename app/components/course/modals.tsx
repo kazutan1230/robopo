@@ -1,27 +1,18 @@
-import Link from "next/link"
+"use client"
+
+import { useRouter } from "next/navigation"
 import { useFormStatus } from "react-dom"
 import {
   FieldState,
   MissionState,
-  PointState,
   serializeField,
   serializeMission,
   serializePoint,
   checkValidity,
 } from "@/app/components/course/utils"
-
-type FinModalProps = {
-  setModalOpen: React.Dispatch<React.SetStateAction<number>>
-}
-
-type SaveModalProps = {
-  setModalOpen: React.Dispatch<React.SetStateAction<number>>
-  name: string
-  setName: React.Dispatch<React.SetStateAction<string>>
-  field: FieldState
-  mission: MissionState
-  point: PointState
-}
+import { useCourseEdit } from "@/app/course/edit/courseEditContext"
+import { useState } from "react"
+import Link from "next/link"
 
 type ValidationModalProps = {
   setModalOpen: React.Dispatch<React.SetStateAction<number>>
@@ -30,25 +21,31 @@ type ValidationModalProps = {
 }
 
 // 終了前に保存するかどうか聞くmodal
-export const finModal = ({ setModalOpen }: FinModalProps) => {
+export const BackModal = () => {
+  const router = useRouter()
   const handleYes = () => {
-    setModalOpen(2)
+    // 今のurlから/back を削除して、/saveに遷移する
+    const currentUrl = window.location.href
+    const newUrl = currentUrl.replace(/\/back$/, "/save")
+    router.push(newUrl)
   }
 
   const handleCancel = () => {
-    setModalOpen(0)
+    router.back()
   }
   return (
-    <dialog id="fin-modal" className="modal modal-open" onClose={() => setModalOpen(0)}>
+    <dialog id="fin-modal" className="modal modal-open" >
       <div className="modal-box">
         <p>保存しますか?保存していない編集内容は失われます。</p>
         <div className="modal-action">
           <button className="btn btn-accent" onClick={handleYes}>
             はい
           </button>
-          <Link href="/course" className="btn">
+          {/* router.push("/course")でもLinkでの遷移でも、どんだけ/course/@modal/page.tsx, /course/@modal/[...catchAll]/page.tsxでnull返すようにしてもmodalが閉じてくれることはない。
+            仕方無しに、window.location.replace("/course")での遷移で手を打つ。 */}
+          <button className="btn" onClick={() => window.location.replace("/course")}>
             保存せず終わる
-          </Link>
+          </button>
           <button className="btn" onClick={handleCancel}>
             キャンセル
           </button>
@@ -62,8 +59,13 @@ export const finModal = ({ setModalOpen }: FinModalProps) => {
 }
 
 // コースを保存するmodal
-export const saveModal = ({ setModalOpen, name, setName, field, mission, point }: SaveModalProps) => {
-  const handleClick = async () => {
+export const SaveModal = ({ courseId }: { courseId: number | null }) => {
+  const { name, setName, field, mission, point } = useCourseEdit()
+  const router = useRouter()
+  const [isSuccess, setIsSuccess] = useState<boolean>(false)
+  const { pending } = useFormStatus()
+
+  const handleClick = async (id: number | null) => {
     if (name.trim() === "") {
       alert("コース名を入力してください")
       return
@@ -77,7 +79,8 @@ export const saveModal = ({ setModalOpen, name, setName, field, mission, point }
       missionValid: true,
       point: serializePoint(point),
     }
-    const res = await fetch("/api/course", {
+
+    const res = await fetch(id ? `/api/course?id=${id}` : "/api/course", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -85,33 +88,16 @@ export const saveModal = ({ setModalOpen, name, setName, field, mission, point }
       body: JSON.stringify(courseData),
     })
     if (res.ok) {
-      // setSuccessOrNot("コースを保存しました")
+      setIsSuccess(true)
       alert("コースを保存しました")
-      setModalOpen(0)
     } else {
-      // setSuccessOrNot("コースの保存に失敗しました")
+      setIsSuccess(false)
       alert("コースの保存に失敗しました")
     }
   }
 
-  const YesButton = () => {
-    const { pending } = useFormStatus()
-
-    return (
-      <button
-        type="button"
-        className="btn btn-accent"
-        disabled={pending}
-        onClick={() => {
-          handleClick()
-        }}>
-        {pending ? <span className="loading loading-spinner"></span> : "はい"}
-      </button>
-    )
-  }
-
   const handleClickNo = () => {
-    setModalOpen(0)
+    router.back()
   }
 
   return (
@@ -128,16 +114,44 @@ export const saveModal = ({ setModalOpen, name, setName, field, mission, point }
               onChange={(e) => setName(e.target.value)}
             />
           </label>
-          <p>保存しますか?</p>
+          {isSuccess ? <p>コース一覧に戻りますか?</p> : <p>保存しますか?</p>}
           <div className="modal-action">
-            <YesButton />
-            <button className="btn" onClick={handleClickNo}>
-              いいえ
+            {isSuccess ? (
+              <Link href="/course" className="btn btn-accent">
+                はい
+              </Link>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  className="btn btn-accent"
+                  disabled={pending}
+                  onClick={() => {
+                    handleClick(null)
+                  }}>
+                  {pending ? <span className="loading loading-spinner"></span> : "新規保存"}
+                </button>
+                {courseId && (
+                  <button
+                    type="button"
+                    className="btn btn-accent"
+                    disabled={pending}
+                    onClick={() => {
+                      handleClick(courseId)
+                    }}>
+                    {pending ? <span className="loading loading-spinner"></span> : "上書き保存"}
+                  </button>
+                )}
+              </>
+            )}
+
+            <button type="button" disabled={pending} className="btn" onClick={handleClickNo}>
+              {pending ? <span className="loading loading-spinner"></span> : "いいえ"}
             </button>
           </div>
         </form>
       </div>
-      <form method="dialog" className="modal-backdrop">
+      <form method="dialog" className="modal-backdrop" onClick={handleClickNo}>
         <button className="cursor-default">close</button>
       </form>
     </dialog>
