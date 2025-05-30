@@ -1,12 +1,10 @@
 name: Deploy to GitHub Pages
-permissions:
-  contents: read # to download the repository
-  pull-requests: write # to comment on the pull request
 
 on:
   push:
-    branches:
-      - docusaurus
+    branches: main
+    paths:
+      - "docs/**"
     # Review gh actions docs if you want to further define triggers, paths, etc
     # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#on
 
@@ -18,6 +16,10 @@ jobs:
   build:
     name: Build Docusaurus
     runs-on: ubuntu-latest
+    permissions:
+      contents: read # to download the repository
+      pull-requests: write # to comment on the pull request
+
     steps:
       - uses: actions/checkout@v4
         with:
