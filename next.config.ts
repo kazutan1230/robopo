@@ -6,6 +6,7 @@ const mp3TestRegExp = /\.(mp3)$/
 
 const nextConfig: NextConfig = {
   env: {
+    // biome-ignore lint/style/useNamingConvention: ここをcamelCaseにすると、Next.jsの環境変数の仕様に合わないため。
     NEXT_PUBLIC_BASE_URL: process.env.URL ?? undefined,
   },
   webpack(config) {
@@ -25,4 +26,5 @@ const nextConfig: NextConfig = {
   },
 }
 
+// biome-ignore lint/style/noDefaultExport: ここはdefault exportを消しては駄目であろうから。
 export default nextConfig
