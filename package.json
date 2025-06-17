@@ -9,14 +9,13 @@
     "lint": "biome check --write"
   },
   "dependencies": {
-    "next": "^15.4.0",
+    "next": "^15.4.0-canary.84",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@heroicons/react": "^2.2.0",
-    "@neondatabase/serverless": "^1.0.1",
     "@tailwindcss/postcss": "^4.1.10",
     "@types/node": "^24.0.1",
     "@types/react": "^19.1.8",
@@ -28,6 +27,7 @@
     "next-auth": "^5.0.0-beta.28",
     "next-navigation-guard": "^0.1.2",
     "next-rspack": "canary",
+    "pg": "^8.16.0",
     "postcss": "^8.5.5",
     "tailwindcss": "^4.1.10",
     "typescript": "^5.8.3",
@@ -35,16 +35,14 @@
   },
   "overrides": {
     "@esbuild-kit/core-utils": {
-      "esbuild": "^0.25.5"
-    },
-    "@esbuild-kit/esm-loader": {
-      "esbuild": "^0.25.5"
-    },
-    "drizzle-kit": {
-      "esbuild": "^0.25.5"
+      "esbuild": "0.25.5"
     },
     "next-navigation-guard": {
-      "react": "^19.0.0"
+      "react": "^19.0.0",
+      "next": "^15.4.0-canary.84"
+    },
+    "next-auth": {
+      "next": "^15.4.0-canary.84"
     }
   }
 }
